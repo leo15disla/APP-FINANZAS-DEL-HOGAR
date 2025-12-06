@@ -6,12 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- ICONO iOS -->
-  <link rel="apple-touch-icon" href="icon-180.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+  <link rel="apple-touch-icon" href="icon-app.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-app.svg">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#ffffff" />
+  <meta name="theme-color" content="#7A4DFF" />
+
+  <!-- Tipografía premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Tipografía premium -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,13 +29,68 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body>
+<body class="light-theme">
+
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;">
+  <symbol id="icon-dashboard" viewBox="0 0 24 24">
+    <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z" fill="currentColor" />
+  </symbol>
+  <symbol id="icon-registrar" viewBox="0 0 24 24">
+    <path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+  </symbol>
+  <symbol id="icon-lista" viewBox="0 0 24 24">
+    <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+  </symbol>
+  <symbol id="icon-cuenta" viewBox="0 0 24 24">
+    <path d="M3 7h18v10H3V7z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11h4M7 13h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></symbol>
+  <symbol id="icon-prestamo" viewBox="0 0 24 24">
+    <path d="M5 8a7 7 0 1 1 0 8" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 12h6M12 9v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="icon-calendario" viewBox="0 0 24 24">
+    <rect x="4" y="6" width="16" height="14" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+    <path d="M4 10h16M9 3v4M15 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="icon-presupuesto" viewBox="0 0 24 24">
+    <path d="M12 4a8 8 0 1 0 8 8" stroke="currentColor" stroke-width="2" fill="none" />
+    <path d="M12 4v8l5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+  </symbol>
+  <symbol id="icon-exportar" viewBox="0 0 24 24">
+    <path d="M12 4v12m0-12 4 4m-4-4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M5 18h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+  </symbol>
+  <symbol id="icon-ajustes" viewBox="0 0 24 24">
+    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2" fill="none" />
+    <path d="M4.7 9.5 4 8l2-3 1.5.5M19.3 9.5 20 8l-2-3-1.5.5M4.7 14.5 4 16l2 3 1.5-.5M19.3 14.5 20 16l-2 3-1.5-.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+  </symbol>
+</svg>
+
+<div id="splash-screen">
+  <div class="splash-content">
+    <div class="splash-icon">FH</div>
+    <p class="splash-title">Finanzas</p>
+    <p class="splash-sub">Finanzas del Hogar</p>
+  </div>
+</div>
+
+<div id="onboarding-overlay" class="hidden">
+  <div class="onboarding-card">
+    <button class="onboarding-close" aria-label="Cerrar onboarding" id="onboarding-close">×</button>
+    <div class="onboarding-illustration">💜</div>
+    <div class="onboarding-title" id="onboarding-title">Organiza tus gastos e ingresos fácilmente</div>
+    <div class="onboarding-text" id="onboarding-text">Control completo desde un panel sencillo.</div>
+    <div class="onboarding-dots">
+      <span class="active"></span><span></span><span></span>
+    </div>
+    <div class="onboarding-actions">
+      <button type="button" class="btn-secondary pill-btn" id="onboarding-skip">Omitir</button>
+      <button type="button" class="btn-primary pill-btn" id="onboarding-next">Continuar</button>
+    </div>
+  </div>
+</div>
+
 <header>
-  <!-- Casita sin texto -->
   <button id="btnDashboard" class="active">
-    <svg class="icon-casa" viewBox="0 0 24 24">
-      <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z"/>
-    </svg>
+    <svg class="nav-icon"><use href="#icon-dashboard"></use></svg>
+    <span class="nav-label">Dashboard</span>
   </button>
 
   <button id="btnRegistrar">Registrar</button>
@@ -120,6 +180,15 @@
     <div class="card deuda-widget">
       <div class="section-title">Total de deudas del mes</div>
       <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
+      </div>
       <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 

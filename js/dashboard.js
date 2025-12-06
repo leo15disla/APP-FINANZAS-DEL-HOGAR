@@ -1,3 +1,4 @@
+
 import { state, formatCurrency } from './utils.js';
 import { obtenerMovimientosDelMes } from './movimientos.js';
 import { obtenerTotalPrestamos } from './prestamos.js';
