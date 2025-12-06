@@ -751,3 +751,56 @@
       align-items: center;
       gap: 6px;
     }
+/* Notificaciones flotantes */
+#notificaciones-stack {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2000;
+}
+
+.toast {
+  min-width: 240px;
+  background: #1f2937;
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.25s ease;
+}
+
+.toast.visible { opacity: 1; transform: translateY(0); }
+.toast-info { border-left: 4px solid #60a5fa; }
+.toast-success { border-left: 4px solid #22c55e; }
+.toast-warning { border-left: 4px solid #f59e0b; }
+.toast-error { border-left: 4px solid #ef4444; }
+
+/* Tarjetas de cuentas y prestamos simplificadas */
+.cuenta-card {
+  background: var(--color-tarjeta);
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 10px;
+  border-left: 5px solid var(--cuenta-color, #0f172a);
+}
+.cuenta-nombre { font-weight: 700; }
+.cuenta-saldo { font-size: 20px; margin: 6px 0; }
+
+.prestamo-item, .presupuesto-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-tarjeta);
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  margin-bottom: 8px;
+}
+
+.presupuesto-item button { margin-left: 12px; }
