@@ -37,8 +37,6 @@
   <button id="btnExportar">Exportar</button>
 </header>
 
-<div id="notificacion" style="position: fixed; top: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 1000; display: none; white-space: pre-wrap;"></div>
-
 <main>
 
   <!-- DASHBOARD -->
@@ -503,23 +501,49 @@
     <div class="card">
       <div class="section-title">Presupuesto mensual</div>
       <p class="section-subtitle">Define cuánto quieres destinar a cada parte del 50 / 30 / 20.</p>
+      <form id="form-presupuesto">
+        <div class="row">
+          <div>
+            <label>Necesidades (50%)</label>
+            <input type="number" id="presupuesto-necesidad" name="presupuesto-necesidad" placeholder="Ej: 20000">
+          </div>
+          <div>
+            <label>Deseos (30%)</label>
+            <input type="number" id="presupuesto-deseo" name="presupuesto-deseo" placeholder="Ej: 12000">
+          </div>
+          <div>
+            <label>Ahorros (20%)</label>
+            <input type="number" id="presupuesto-ahorro" name="presupuesto-ahorro" placeholder="Ej: 8000">
+          </div>
+        </div>
+        <button class="btn-primary" type="submit">Guardar presupuesto</button>
+      </form>
+    </div>
 
-      <div class="row">
-        <div>
-          <label>Necesidades (50%)</label>
-          <input type="number" id="presu-nec" placeholder="Ej: 20000">
+    <div class="card">
+      <div class="section-title">Presupuestos personalizados</div>
+      <p class="section-subtitle">Base estructural para crear categorías propias, fijas o variables.</p>
+      <form id="form-presupuesto-personalizado">
+        <div class="row">
+          <div>
+            <label for="categoria-nombre">Nombre de la categoría</label>
+            <input type="text" id="categoria-nombre" name="categoria-nombre" required placeholder="Ej: Transporte, Educación">
+          </div>
+          <div>
+            <label for="categoria-tipo">Tipo</label>
+            <select id="categoria-tipo" name="categoria-tipo">
+              <option value="Fija">Fija</option>
+              <option value="Variable">Variable</option>
+            </select>
+          </div>
+          <div>
+            <label for="categoria-limite">Límite</label>
+            <input type="number" id="categoria-limite" name="categoria-limite" placeholder="Ej: 5000">
+          </div>
         </div>
-        <div>
-          <label>Deseos (30%)</label>
-          <input type="number" id="presu-des" placeholder="Ej: 12000">
-        </div>
-        <div>
-          <label>Ahorros (20%)</label>
-          <input type="number" id="presu-aho" placeholder="Ej: 8000">
-        </div>
-      </div>
-
-      <button class="btn-primary" id="btn-presu">Guardar presupuesto</button>
+        <button class="btn-primary" type="submit">Crear categoría</button>
+      </form>
+      <div id="lista-presupuesto-personalizado"></div>
     </div>
   </section>
 
@@ -533,7 +557,7 @@
     </div>
   </section>
 
-<script src="js/script.js"></script>
+<script type="module" src="js/main.js"></script>
 </main>
 </body>
 </html>
