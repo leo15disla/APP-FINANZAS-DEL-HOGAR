@@ -1,5 +1,5 @@
-import { state, createNotifier, createRouter, refreshStorage, formatDate } from './utils.js';
-import { initMovimientos, renderMovimientos, obtenerMovimientosDelMes } from './movimientos.js';
+import { state, createNotifier, createRouter, refreshStorage } from './utils.js';
+import { initMovimientos, renderMovimientos } from './movimientos.js';
 import { initCuentas } from './cuentas.js';
 import { initPrestamos } from './prestamos.js';
 import { initPresupuesto } from './presupuesto.js';
@@ -47,49 +47,6 @@ function initApp() {
   initMovimientos({ notify, onChange: onDataChange });
   initPresupuesto({ notify });
   initDashboard();
-  setupExport();
-}
-
-function movimientosMesActual() {
-  return obtenerMovimientosDelMes().map((m) => ({ ...m }));
-}
-
-function descargarArchivo(nombre, contenido, tipo) {
-  const blob = new Blob([contenido], { type: tipo });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = nombre;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function exportarCSV() {
-  const movimientos = movimientosMesActual();
-  const header = ['Fecha', 'Tipo', 'Monto', 'Categoría', 'Cuenta', '50/30/20', 'Nota'];
-  const rows = movimientos.map((m) => [
-    formatDate(m.fecha),
-    m.tipo,
-    m.monto,
-    m.categoria || '',
-    m.cuentaId || '',
-    m.tipo503020,
-    (m.nota || '').replace(/\n/g, ' ')
-  ]);
-  const csv = [header, ...rows].map((r) => r.join(',')).join('\n');
-  descargarArchivo('movimientos-mes.csv', csv, 'text/csv');
-}
-
-function exportarJSON() {
-  const movimientos = movimientosMesActual();
-  descargarArchivo('movimientos-mes.json', JSON.stringify(movimientos, null, 2), 'application/json');
-}
-
-function setupExport() {
-  const btnCSV = document.getElementById('btn-exportar');
-  const btnJSON = document.getElementById('btn-exportar-json');
-  btnCSV?.addEventListener('click', exportarCSV);
-  btnJSON?.addEventListener('click', exportarJSON);
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
