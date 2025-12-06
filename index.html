@@ -37,8 +37,6 @@
   <button id="btnExportar">Exportar</button>
 </header>
 
-<div id="notificacion" style="position: fixed; top: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 1000; display: none; white-space: pre-wrap;"></div>
-
 <main>
 
   <!-- DASHBOARD -->
@@ -47,7 +45,7 @@
       <h3>Resumen del mes</h3>
 
       <div class="month-row">
-        <div id="dashboard-mes" class="month-badge"></div>
+        <div id="dashboard-mes" class="month-badge calendar-style"></div>
         <button type="button" id="btn-resumen-anterior" class="btn-link-small">
           Ver resumen del mes anterior
         </button>
@@ -64,6 +62,7 @@
           <div class="kpi-label">Gastos</div>
           <div class="kpi-value" id="kpi-gastos">RD$ 0</div>
           <span class="kpi-tag" id="kpi-gastos-alerta">Dinero que sale</span>
+          <div class="kpi-extra" id="kpi-gastos-variacion">Sin datos del mes anterior</div>
         </div>
 
         <div class="kpi-box">
@@ -84,25 +83,26 @@
           <div class="kpi-value" id="kpi-prestamos">RD$ 0</div>
           <span class="kpi-tag">Capital en préstamos</span>
         </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Total en cuentas</div>
-          <div class="kpi-value" id="kpi-total-cuentas">RD$ 0</div>
-          <span class="kpi-tag">Saldo combinado</span>
-        </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Deudas del mes</div>
-          <div class="kpi-value" id="kpi-deuda-mes">RD$ 0</div>
-          <span class="kpi-tag" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</span>
-        </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Liquidez disponible</div>
-          <div class="kpi-value" id="kpi-liquidez">RD$ 0</div>
-          <span class="kpi-tag">Ingresos – gastos – deudas</span>
-        </div>
       </div>
+    </div>
+
+    <div class="card kpi-duo-card">
+      <div class="duo-item">
+        <div class="duo-label">Total en cuentas bancarias</div>
+        <div class="duo-value" id="kpi-total-cuentas">RD$ 0</div>
+        <div class="duo-hint">Saldo combinado de todas las cuentas.</div>
+      </div>
+      <div class="duo-item">
+        <div class="duo-label">Liquidez disponible</div>
+        <div class="duo-value" id="kpi-liquidez">RD$ 0</div>
+        <div class="duo-hint">Cuentas bancarias menos deudas del mes.</div>
+      </div>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
     <div class="charts-grid">
@@ -503,23 +503,49 @@
     <div class="card">
       <div class="section-title">Presupuesto mensual</div>
       <p class="section-subtitle">Define cuánto quieres destinar a cada parte del 50 / 30 / 20.</p>
+      <form id="form-presupuesto">
+        <div class="row">
+          <div>
+            <label>Necesidades (50%)</label>
+            <input type="number" id="presupuesto-necesidad" name="presupuesto-necesidad" placeholder="Ej: 20000">
+          </div>
+          <div>
+            <label>Deseos (30%)</label>
+            <input type="number" id="presupuesto-deseo" name="presupuesto-deseo" placeholder="Ej: 12000">
+          </div>
+          <div>
+            <label>Ahorros (20%)</label>
+            <input type="number" id="presupuesto-ahorro" name="presupuesto-ahorro" placeholder="Ej: 8000">
+          </div>
+        </div>
+        <button class="btn-primary" type="submit">Guardar presupuesto</button>
+      </form>
+    </div>
 
-      <div class="row">
-        <div>
-          <label>Necesidades (50%)</label>
-          <input type="number" id="presu-nec" placeholder="Ej: 20000">
+    <div class="card">
+      <div class="section-title">Presupuestos personalizados</div>
+      <p class="section-subtitle">Base estructural para crear categorías propias, fijas o variables.</p>
+      <form id="form-presupuesto-personalizado">
+        <div class="row">
+          <div>
+            <label for="categoria-nombre">Nombre de la categoría</label>
+            <input type="text" id="categoria-nombre" name="categoria-nombre" required placeholder="Ej: Transporte, Educación">
+          </div>
+          <div>
+            <label for="categoria-tipo">Tipo</label>
+            <select id="categoria-tipo" name="categoria-tipo">
+              <option value="Fija">Fija</option>
+              <option value="Variable">Variable</option>
+            </select>
+          </div>
+          <div>
+            <label for="categoria-limite">Límite</label>
+            <input type="number" id="categoria-limite" name="categoria-limite" placeholder="Ej: 5000">
+          </div>
         </div>
-        <div>
-          <label>Deseos (30%)</label>
-          <input type="number" id="presu-des" placeholder="Ej: 12000">
-        </div>
-        <div>
-          <label>Ahorros (20%)</label>
-          <input type="number" id="presu-aho" placeholder="Ej: 8000">
-        </div>
-      </div>
-
-      <button class="btn-primary" id="btn-presu">Guardar presupuesto</button>
+        <button class="btn-primary" type="submit">Crear categoría</button>
+      </form>
+      <div id="lista-presupuesto-personalizado"></div>
     </div>
   </section>
 
@@ -533,7 +559,7 @@
     </div>
   </section>
 
-<script src="js/script.js"></script>
+<script type="module" src="js/main.js"></script>
 </main>
 </body>
 </html>
