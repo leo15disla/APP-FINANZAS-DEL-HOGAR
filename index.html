@@ -63,7 +63,6 @@
           <div class="kpi-value" id="kpi-gastos">RD$ 0</div>
           <span class="kpi-tag" id="kpi-gastos-alerta">Dinero que sale</span>
           <div class="kpi-extra" id="kpi-gastos-variacion">Sin datos del mes anterior</div>
-          <div class="kpi-extra" id="kpi-gastos-restante">Define tu presupuesto mensual.</div>
         </div>
 
         <div class="kpi-box">
@@ -98,33 +97,22 @@
         <div class="duo-value" id="kpi-liquidez">RD$ 0</div>
         <div class="duo-hint">Cuentas bancarias menos deudas del mes.</div>
       </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
-    <div class="card card-mes-anterior">
-      <div class="card-header-row">
-        <div>
-          <div class="section-title">Mes anterior</div>
-          <p class="section-subtitle">Resumen rápido para comparar avances.</p>
-        </div>
-        <button type="button" class="btn-link-small" id="btn-mes-anterior-detalle">Mes anterior</button>
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
       </div>
-      <div class="mes-anterior-detalle hidden" id="mes-anterior-detalle">
-        <div class="mes-anterior-grid">
-          <div>
-            <div class="duo-label">Ingresos previos</div>
-            <div class="duo-value" id="kpi-mes-anterior-ing">RD$ 0</div>
-          </div>
-          <div>
-            <div class="duo-label">Gastos previos</div>
-            <div class="duo-value" id="kpi-mes-anterior-gas">RD$ 0</div>
-          </div>
-          <div>
-            <div class="duo-label">Balance previo</div>
-            <div class="duo-value" id="kpi-mes-anterior-bal">RD$ 0</div>
-          </div>
-        </div>
-        <div class="mes-anterior-comparacion" id="kpi-mes-anterior-comparacion"></div>
-      </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
     <div class="card deuda-widget">
@@ -142,7 +130,6 @@
         <canvas id="chart-503020"></canvas>
         <p id="texto-503020" class="chart-footnote"></p>
         <p id="limite-503020" class="chart-footnote"></p>
-        <div id="estado-503020" class="estado-503020"></div>
       </div>
 
       <div class="chart-container">
@@ -231,14 +218,6 @@
           <datalist id="sugerencias-nota"></datalist>
         </div>
 
-        <div class="form-row toggle-row">
-          <label for="toggle-sonido">Sonido al guardar</label>
-          <label class="switch">
-            <input type="checkbox" id="toggle-sonido" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-
         <div class="form-row">
           <button type="submit" class="btn-primary" id="btn-guardar">
             Guardar movimiento
@@ -271,6 +250,21 @@
             <button type="button" class="view-btn active" data-view="lista">Lista</button>
             <button type="button" class="view-btn" data-view="tarjetas">Tarjetas</button>
           </div>
+        </div>
+
+        <div class="chip-row" id="chips-tipo">
+          <span class="chip-label">Tipo:</span>
+          <button class="chip active" data-chip="tipo" data-value="Todos">Todos</button>
+          <button class="chip" data-chip="tipo" data-value="Ingreso">Ingresos</button>
+          <button class="chip" data-chip="tipo" data-value="Gasto">Gastos</button>
+          <button class="chip" data-chip="tipo" data-value="Transferencia">Transferencias</button>
+        </div>
+
+        <div class="chip-row" id="chips-tiempo">
+          <span class="chip-label">Rango:</span>
+          <button class="chip active" data-chip="tiempo" data-value="mes">Mes</button>
+          <button class="chip" data-chip="tiempo" data-value="semana">Semana</button>
+          <button class="chip" data-chip="tiempo" data-value="hoy">Hoy</button>
         </div>
 
         <div class="chip-row" id="chips-tipo">
