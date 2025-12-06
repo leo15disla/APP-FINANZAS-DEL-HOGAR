@@ -37,8 +37,6 @@
   <button id="btnExportar">Exportar</button>
 </header>
 
-<div id="notificacion" style="position: fixed; top: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 1000; display: none; white-space: pre-wrap;"></div>
-
 <main>
 
   <!-- DASHBOARD -->
@@ -47,7 +45,7 @@
       <h3>Resumen del mes</h3>
 
       <div class="month-row">
-        <div id="dashboard-mes" class="month-badge"></div>
+        <div id="dashboard-mes" class="month-badge calendar-style"></div>
         <button type="button" id="btn-resumen-anterior" class="btn-link-small">
           Ver resumen del mes anterior
         </button>
@@ -64,14 +62,16 @@
           <div class="kpi-label">Gastos</div>
           <div class="kpi-value" id="kpi-gastos">RD$ 0</div>
           <span class="kpi-tag" id="kpi-gastos-alerta">Dinero que sale</span>
+          <div class="kpi-extra" id="kpi-gastos-variacion">Sin datos del mes anterior</div>
+          <div class="kpi-extra" id="kpi-gastos-restante">Define tu presupuesto mensual.</div>
         </div>
 
         <div class="kpi-box">
-          <div class="kpi-label">Balance</div>
-          <div class="kpi-value" id="kpi-balance">RD$ 0</div>
-          <div class="kpi-extra" id="kpi-balance-tendencia">
-            Sin datos suficientes para comparar la semana.
-          </div>
+        <div class="kpi-label">Balance</div>
+        <div class="kpi-value" id="kpi-balance">RD$ 0</div>
+        <div class="kpi-extra" id="kpi-balance-tendencia">
+          Sin datos suficientes para comparar la semana.
+        </div>
         </div>
 
         <div class="kpi-box">
@@ -84,25 +84,56 @@
           <div class="kpi-value" id="kpi-prestamos">RD$ 0</div>
           <span class="kpi-tag">Capital en préstamos</span>
         </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Total en cuentas</div>
-          <div class="kpi-value" id="kpi-total-cuentas">RD$ 0</div>
-          <span class="kpi-tag">Saldo combinado</span>
-        </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Deudas del mes</div>
-          <div class="kpi-value" id="kpi-deuda-mes">RD$ 0</div>
-          <span class="kpi-tag" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</span>
-        </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Liquidez disponible</div>
-          <div class="kpi-value" id="kpi-liquidez">RD$ 0</div>
-          <span class="kpi-tag">Ingresos – gastos – deudas</span>
-        </div>
       </div>
+    </div>
+
+    <div class="card kpi-duo-card">
+      <div class="duo-item">
+        <div class="duo-label">Total en cuentas bancarias</div>
+        <div class="duo-value" id="kpi-total-cuentas">RD$ 0</div>
+        <div class="duo-hint">Saldo combinado de todas las cuentas.</div>
+      </div>
+      <div class="duo-item">
+        <div class="duo-label">Liquidez disponible</div>
+        <div class="duo-value" id="kpi-liquidez">RD$ 0</div>
+        <div class="duo-hint">Cuentas bancarias menos deudas del mes.</div>
+      </div>
+    </div>
+
+    <div class="card card-mes-anterior">
+      <div class="card-header-row">
+        <div>
+          <div class="section-title">Mes anterior</div>
+          <p class="section-subtitle">Resumen rápido para comparar avances.</p>
+        </div>
+        <button type="button" class="btn-link-small" id="btn-mes-anterior-detalle">Mes anterior</button>
+      </div>
+      <div class="mes-anterior-detalle hidden" id="mes-anterior-detalle">
+        <div class="mes-anterior-grid">
+          <div>
+            <div class="duo-label">Ingresos previos</div>
+            <div class="duo-value" id="kpi-mes-anterior-ing">RD$ 0</div>
+          </div>
+          <div>
+            <div class="duo-label">Gastos previos</div>
+            <div class="duo-value" id="kpi-mes-anterior-gas">RD$ 0</div>
+          </div>
+          <div>
+            <div class="duo-label">Balance previo</div>
+            <div class="duo-value" id="kpi-mes-anterior-bal">RD$ 0</div>
+          </div>
+        </div>
+        <div class="mes-anterior-comparacion" id="kpi-mes-anterior-comparacion"></div>
+      </div>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
+      </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
     <div class="charts-grid">
@@ -110,6 +141,8 @@
         <h4>Distribución 50 / 30 / 20</h4>
         <canvas id="chart-503020"></canvas>
         <p id="texto-503020" class="chart-footnote"></p>
+        <p id="limite-503020" class="chart-footnote"></p>
+        <div id="estado-503020" class="estado-503020"></div>
       </div>
 
       <div class="chart-container">
@@ -117,7 +150,7 @@
           <h4>Ingresos vs Gastos</h4>
           <div class="chart-toggle">
             <button class="chart-toggle-btn active" data-modo="mes">Mes</button>
-            <button class="chart-toggle-btn" data-modo="semana">Semanas</button>
+            <button class="chart-toggle-btn" data-modo="semana">Semana</button>
           </div>
         </div>
         <canvas id="chart-ing-gastos"></canvas>
@@ -141,20 +174,40 @@
             </select>
           </div>
 
-          <div>
+          <div class="calendar-field">
             <label for="fecha">Fecha</label>
-            <input type="date" id="fecha">
+            <div class="calendar-control">
+              <input type="text" id="fecha" readonly placeholder="Selecciona una fecha" />
+              <div id="calendario-visual" class="calendar-picker hidden">
+                <div class="calendar-header">
+                  <button type="button" id="cal-prev">‹</button>
+                  <div id="cal-mes"></div>
+                  <button type="button" id="cal-next">›</button>
+                </div>
+                <div class="calendar-weekdays">
+                  <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sá</span><span>Do</span>
+                </div>
+                <div id="cal-grid" class="calendar-grid"></div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="form-row">
           <label for="monto">Monto</label>
-          <input type="text" id="monto" placeholder="Ej: 30,000">
+          <input type="text" id="monto" placeholder="Ej: RD$ 30,000" data-prefijo="RD$ ">
         </div>
 
         <div class="form-row">
           <label for="categoria">Categoría</label>
           <select id="categoria"></select>
+        </div>
+
+        <div class="quick-actions" id="acciones-rapidas">
+          <span class="quick-label">Rápido:</span>
+          <button type="button" data-accion="Comida" data-icon="💸">💸 Comida</button>
+          <button type="button" data-accion="Transporte" data-icon="🚗">🚗 Transporte</button>
+          <button type="button" data-accion="Supermercado" data-icon="🛒">🛒 Supermercado</button>
         </div>
 
         <!-- NUEVO: seleccionar cuenta asociada -->
@@ -174,7 +227,16 @@
 
         <div class="form-row">
           <label for="nota">Nota (opcional)</label>
-          <textarea id="nota" placeholder="Ej: Supermercado, luz, salida, etc."></textarea>
+          <textarea id="nota" placeholder="Ej: Supermercado, luz, salida, etc." list="sugerencias-nota"></textarea>
+          <datalist id="sugerencias-nota"></datalist>
+        </div>
+
+        <div class="form-row toggle-row">
+          <label for="toggle-sonido">Sonido al guardar</label>
+          <label class="switch">
+            <input type="checkbox" id="toggle-sonido" checked>
+            <span class="slider"></span>
+          </label>
         </div>
 
         <div class="form-row">
@@ -204,17 +266,29 @@
             <label>Buscar</label>
             <input type="text" id="buscar" placeholder="Filtrar por categoría, nota, monto...">
           </div>
+
+          <div class="view-toggle">
+            <button type="button" class="view-btn active" data-view="lista">Lista</button>
+            <button type="button" class="view-btn" data-view="tarjetas">Tarjetas</button>
+          </div>
+        </div>
+
+        <div class="chip-row" id="chips-tipo">
+          <span class="chip-label">Tipo:</span>
+          <button class="chip active" data-chip="tipo" data-value="Todos">Todos</button>
+          <button class="chip" data-chip="tipo" data-value="Ingreso">Ingresos</button>
+          <button class="chip" data-chip="tipo" data-value="Gasto">Gastos</button>
+          <button class="chip" data-chip="tipo" data-value="Transferencia">Transferencias</button>
+        </div>
+
+        <div class="chip-row" id="chips-tiempo">
+          <span class="chip-label">Rango:</span>
+          <button class="chip active" data-chip="tiempo" data-value="mes">Mes</button>
+          <button class="chip" data-chip="tiempo" data-value="semana">Semana</button>
+          <button class="chip" data-chip="tiempo" data-value="hoy">Hoy</button>
         </div>
 
         <div class="row">
-          <div>
-            <label>Tipo</label>
-            <select id="filtro-tipo">
-              <option value="Todos">Todos</option>
-              <option value="Ingreso">Ingresos</option>
-              <option value="Gasto">Gastos</option>
-            </select>
-          </div>
           <div>
             <label>50 / 30 / 20</label>
             <select id="filtro503020">
@@ -224,12 +298,17 @@
               <option value="Ahorro">Ahorro</option>
             </select>
           </div>
+
+          <div>
+            <label>Categoría</label>
+            <select id="filtro-categoria"></select>
+          </div>
         </div>
 
         <!-- Resumen de movimientos filtrados -->
         <p id="resumen-mov" class="section-subtitle" style="margin-top:4px;"></p>
 
-        <div style="margin-top:10px; overflow-x:auto;">
+        <div id="tabla-wrap" style="margin-top:10px; overflow-x:auto;">
           <table>
             <thead>
               <tr>
@@ -246,6 +325,13 @@
             </thead>
             <tbody id="tabla-actual"></tbody>
           </table>
+        </div>
+
+        <div id="tarjetas-actual" class="mov-cards hidden"></div>
+        <div id="mov-empty" class="mov-empty-state hidden">
+          <div class="mov-empty-icon">🗒️</div>
+          <div class="mov-empty-text">Aún no tienes movimientos registrados.</div>
+          <button type="button" id="btn-empty-registrar" class="btn-primary">Registrar movimiento</button>
         </div>
       </div>
 
@@ -273,9 +359,55 @@
             <tbody id="tabla-historial"></tbody>
           </table>
         </div>
+
+        <div class="hist-resumen">
+          <div class="hist-item">
+            <div class="hist-label">Mes más caro</div>
+            <div class="hist-value" id="hist-mes-caro">—</div>
+          </div>
+          <div class="hist-item">
+            <div class="hist-label">Mes más barato</div>
+            <div class="hist-value" id="hist-mes-barato">—</div>
+          </div>
+          <div class="hist-item">
+            <div class="hist-label">Gasto promedio</div>
+            <div class="hist-value" id="hist-mes-promedio">—</div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
+
+  <div id="modal-editar" class="modal hidden">
+    <div class="modal-content">
+      <button type="button" class="modal-close" data-modal-close>&times;</button>
+      <h3>Editar movimiento</h3>
+      <form id="form-editar-mov">
+        <input type="hidden" id="edit-id">
+        <div class="row form-row">
+          <div>
+            <label for="edit-fecha">Fecha</label>
+            <input type="date" id="edit-fecha">
+          </div>
+          <div>
+            <label for="edit-monto">Monto</label>
+            <input type="text" id="edit-monto" placeholder="RD$ 0">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="edit-categoria">Categoría</label>
+          <select id="edit-categoria"></select>
+        </div>
+        <div class="form-row">
+          <label for="edit-nota">Nota</label>
+          <input type="text" id="edit-nota" placeholder="Detalle opcional">
+        </div>
+        <div class="form-row">
+          <button type="submit" class="btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- CUENTAS & TARJETAS -->
   <section id="seccion-cuentas" class="hidden">
@@ -324,6 +456,24 @@
             <label for="cuenta-color">Color de tarjeta</label>
             <input type="color" id="cuenta-color" value="#0f172a">
             <div id="cuenta-color-preview" class="cuenta-color-preview"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="cuenta-limite">Límite (tarjeta)</label>
+            <input type="number" id="cuenta-limite" placeholder="Ej: 50000">
+          </div>
+          <div>
+            <label for="cuenta-minimo">Pago mínimo (%)</label>
+            <input type="number" id="cuenta-minimo" placeholder="Ej: 5" step="0.1">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="cuenta-interes">Interés mensual estimado (%)</label>
+            <input type="number" id="cuenta-interes" placeholder="Ej: 2.5" step="0.01">
           </div>
         </div>
 
@@ -434,6 +584,8 @@
       <div class="section-title" id="detalle-prestamo-titulo">Detalle del préstamo</div>
       <p class="section-subtitle" id="detalle-prestamo-subtitulo"></p>
 
+      <div class="resumen-prestamo" id="detalle-prestamo-resumen"></div>
+
       <div style="max-height:300px; overflow:auto; margin-top:10px;">
         <table>
           <thead>
@@ -448,6 +600,10 @@
           </thead>
           <tbody id="tabla-detalle-prestamo"></tbody>
         </table>
+      </div>
+
+      <div class="chart-container" style="margin-top:12px;">
+        <canvas id="chart-prestamo" height="180"></canvas>
       </div>
     </div>
   </section>
@@ -503,23 +659,49 @@
     <div class="card">
       <div class="section-title">Presupuesto mensual</div>
       <p class="section-subtitle">Define cuánto quieres destinar a cada parte del 50 / 30 / 20.</p>
+      <form id="form-presupuesto">
+        <div class="row">
+          <div>
+            <label>Necesidades (50%)</label>
+            <input type="number" id="presupuesto-necesidad" name="presupuesto-necesidad" placeholder="Ej: 20000">
+          </div>
+          <div>
+            <label>Deseos (30%)</label>
+            <input type="number" id="presupuesto-deseo" name="presupuesto-deseo" placeholder="Ej: 12000">
+          </div>
+          <div>
+            <label>Ahorros (20%)</label>
+            <input type="number" id="presupuesto-ahorro" name="presupuesto-ahorro" placeholder="Ej: 8000">
+          </div>
+        </div>
+        <button class="btn-primary" type="submit">Guardar presupuesto</button>
+      </form>
+    </div>
 
-      <div class="row">
-        <div>
-          <label>Necesidades (50%)</label>
-          <input type="number" id="presu-nec" placeholder="Ej: 20000">
+    <div class="card">
+      <div class="section-title">Presupuestos personalizados</div>
+      <p class="section-subtitle">Base estructural para crear categorías propias, fijas o variables.</p>
+      <form id="form-presupuesto-personalizado">
+        <div class="row">
+          <div>
+            <label for="categoria-nombre">Nombre de la categoría</label>
+            <input type="text" id="categoria-nombre" name="categoria-nombre" required placeholder="Ej: Transporte, Educación">
+          </div>
+          <div>
+            <label for="categoria-tipo">Tipo</label>
+            <select id="categoria-tipo" name="categoria-tipo">
+              <option value="Fija">Fija</option>
+              <option value="Variable">Variable</option>
+            </select>
+          </div>
+          <div>
+            <label for="categoria-limite">Límite</label>
+            <input type="number" id="categoria-limite" name="categoria-limite" placeholder="Ej: 5000">
+          </div>
         </div>
-        <div>
-          <label>Deseos (30%)</label>
-          <input type="number" id="presu-des" placeholder="Ej: 12000">
-        </div>
-        <div>
-          <label>Ahorros (20%)</label>
-          <input type="number" id="presu-aho" placeholder="Ej: 8000">
-        </div>
-      </div>
-
-      <button class="btn-primary" id="btn-presu">Guardar presupuesto</button>
+        <button class="btn-primary" type="submit">Crear categoría</button>
+      </form>
+      <div id="lista-presupuesto-personalizado"></div>
     </div>
   </section>
 
@@ -527,13 +709,35 @@
   <section id="seccion-exportar" class="hidden">
     <div class="card">
       <div class="section-title">Exportar datos</div>
-      <p class="section-subtitle">Descarga tus movimientos en un archivo CSV para abrir en Excel o Numbers.</p>
+      <p class="section-subtitle">Descarga tus movimientos y reportes en PDF, Excel o JSON.</p>
 
-      <button class="btn-primary" id="btn-exportar">Descargar CSV del mes actual</button>
+      <div class="export-grid">
+        <div>
+          <h4>Exportación rápida</h4>
+          <button class="btn-primary" id="btn-exportar">CSV del mes actual</button>
+          <button class="btn-primary" id="btn-exportar-json">JSON del mes actual</button>
+        </div>
+        <div>
+          <h4>PDF</h4>
+          <button class="btn-primary" id="btn-exportar-pdf-mes">Movimientos del mes</button>
+          <button class="btn-primary" id="btn-exportar-pdf-historial">Historial mensual seleccionado</button>
+          <button class="btn-primary" id="btn-exportar-pdf-dashboard">Resumen del dashboard</button>
+        </div>
+        <div>
+          <h4>Excel</h4>
+          <button class="btn-primary" id="btn-exportar-xlsx">finanzas_mes.xlsx</button>
+          <p class="section-subtitle" style="margin-top:6px;">Incluye fecha, categoría, tipo, nota, monto y totales.</p>
+        </div>
+      </div>
+
+      <div class="share-row">
+        <button class="btn-secondary" id="btn-share-whatsapp" disabled>Compartir por WhatsApp</button>
+        <span class="section-subtitle" id="share-hint">Genera un PDF o Excel para habilitar compartir.</span>
+      </div>
     </div>
   </section>
 
-<script src="js/script.js"></script>
+<script type="module" src="js/main.js"></script>
 </main>
 </body>
 </html>
