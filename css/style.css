@@ -172,6 +172,63 @@
       transition: transform 0.4s ease;
     }
 
+    .month-badge.calendar-style {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, rgba(224,106,123,0.12), #fff);
+      border: 1px dashed #f0b6c3;
+      border-radius: 12px;
+      font-weight: 600;
+      color: #9f1239;
+    }
+
+    .kpi-duo-card {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      align-items: center;
+    }
+
+    .duo-item {
+      background: linear-gradient(135deg, #eef2ff, #ffffff);
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      box-shadow: var(--shadow);
+    }
+
+    .duo-label {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 4px;
+    }
+
+    .duo-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .duo-hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .deuda-widget {
+      background: linear-gradient(135deg, #fff7ed, #ffffff);
+      border: 1px solid #fed7aa;
+    }
+
+    .deuda-value {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 8px 0;
+      color: #b45309;
+    }
+
     /* Semáforo del estado */
     .estado-badge {
       display: inline-flex;
@@ -417,6 +474,12 @@
       background: #fafafa;
       font-weight: 600;
       color: #555;
+    }
+
+    td.empty {
+      text-align: center;
+      color: #9ca3af;
+      font-style: italic;
     }
 
     .btn-small {
@@ -751,3 +814,70 @@
       align-items: center;
       gap: 6px;
     }
+/* Notificaciones flotantes */
+#notificaciones-stack {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2000;
+}
+
+.toast {
+  min-width: 240px;
+  background: #1f2937;
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.toast.visible { opacity: 1; transform: translateY(0); }
+.toast-info { border-left: 4px solid #60a5fa; }
+.toast-success { border-left: 4px solid #22c55e; }
+.toast-warning { border-left: 4px solid #f59e0b; }
+.toast-error { border-left: 4px solid #ef4444; }
+.toast-close {
+  background: transparent;
+  color: #cbd5e1;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+.toast-close:hover { color: #fff; }
+
+/* Tarjetas de cuentas y prestamos simplificadas */
+.cuenta-card {
+  background: var(--color-tarjeta);
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 10px;
+  border-left: 5px solid var(--cuenta-color, #0f172a);
+}
+.cuenta-nombre { font-weight: 700; }
+.cuenta-saldo { font-size: 20px; margin: 6px 0; }
+
+.prestamo-item, .presupuesto-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-tarjeta);
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  margin-bottom: 8px;
+}
+
+.presupuesto-item button { margin-left: 12px; }
