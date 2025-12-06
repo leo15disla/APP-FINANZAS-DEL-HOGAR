@@ -127,15 +127,28 @@
           Ver resumen del mes anterior
         </button>
       </div>
+      <div class="hero-actions">
+        <p class="hero-actions-title">Atajos rápidos</p>
+        <div class="hero-actions-row">
+          <button type="button" class="pill-action" onclick="document.getElementById('btnRegistrar').click()">+ Ingreso</button>
+          <button type="button" class="pill-action" onclick="document.getElementById('btnRegistrar').click()">+ Gasto</button>
+          <button type="button" class="pill-action" onclick="document.getElementById('btnRegistrar').click()">+ Transferencia</button>
+        </div>
+        <p class="hero-note">Lleva tu flujo al día y vuelve al dashboard cuando quieras.</p>
+      </div>
+    </div>
 
-      <div class="dashboard-grid">
-        <div class="kpi-box">
+    <div class="card kpi-panel">
+      <div class="kpi-grid">
+        <div class="kpi-box kpi-ingresos">
+          <div class="kpi-icon">💰</div>
           <div class="kpi-label">Ingresos</div>
           <div class="kpi-value" id="kpi-ingresos">RD$ 0</div>
           <div class="kpi-extra" id="kpi-ingresos-variacion">Sin datos del mes anterior</div>
         </div>
 
-        <div class="kpi-box">
+        <div class="kpi-box kpi-gastos">
+          <div class="kpi-icon">💸</div>
           <div class="kpi-label">Gastos</div>
           <div class="kpi-value" id="kpi-gastos">RD$ 0</div>
           <span class="kpi-tag" id="kpi-gastos-alerta">Dinero que sale</span>
@@ -160,7 +173,8 @@
             <div class="kpi-extra" id="kpi-ingresos-variacion">Sin datos del mes anterior</div>
           </div>
 
-        <div class="kpi-box">
+        <div class="kpi-box kpi-prestamos">
+          <div class="kpi-icon">📈</div>
           <div class="kpi-label">Préstamos activos</div>
           <div class="kpi-value" id="kpi-prestamos">RD$ 0</div>
           <span class="kpi-tag">Capital en préstamos</span>
@@ -248,15 +262,15 @@
             <button class="chart-toggle-btn active" data-modo="mes">Mes</button>
             <button class="chart-toggle-btn" data-modo="semana">Semana</button>
           </div>
+          <canvas id="chart-ing-gastos"></canvas>
         </div>
-        <canvas id="chart-ing-gastos"></canvas>
       </div>
     </div>
   </section>
 
   <!-- REGISTRAR -->
   <section id="seccion-registrar" class="hidden">
-    <div class="card">
+    <div class="card form-shell">
       <div class="section-title" data-role="titulo-form">Registrar movimiento</div>
       <p class="section-subtitle">Agrega ingresos o gastos del hogar.</p>
 
@@ -338,7 +352,7 @@
 
   <!-- MOVIMIENTOS + HISTORIAL -->
   <section id="seccion-movimientos" class="hidden">
-    <div class="card">
+    <div class="card section-card">
       <div class="section-title">Movimientos</div>
       <p class="section-subtitle">Revisa los movimientos del mes o consulta el historial mensual.</p>
 
