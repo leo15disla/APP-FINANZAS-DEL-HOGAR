@@ -3,13 +3,6 @@ import { renderCuentas } from './cuentas.js';
 import { actualizarCalendario } from './prestamos.js';
 
 let onDataChange = () => {};
-let notifier = () => {};
-
-function nombreCuenta(id) {
-  if (!id) return '-';
-  const cuenta = state.cuentas.find((c) => String(c.id) === String(id));
-  return cuenta?.nombre || id;
-}
 
 function aplicarMovimientoEnCuenta(mov, factor = 1) {
   if (!mov.cuentaId) return;
@@ -22,26 +15,12 @@ function aplicarMovimientoEnCuenta(mov, factor = 1) {
   actualizarCalendario();
 }
 
-function validarMovimiento(inputs) {
-  const errores = [];
-  if (!inputs.fecha.value) errores.push('La fecha es obligatoria.');
-  const monto = parseAmount(inputs.monto.value);
-  if (monto <= 0) errores.push('Ingresa un monto válido mayor a cero.');
-  if (!inputs.categoria.value) errores.push('Selecciona una categoría.');
-  return { esValido: errores.length === 0, monto, errores };
-}
-
 function agregarMovimiento(inputs) {
-  const { esValido, monto, errores } = validarMovimiento(inputs);
-  if (!esValido) {
-    errores.forEach((msg) => notifier(msg, 'warning'));
-    return false;
-  }
   const mov = {
     id: Date.now(),
     tipo: inputs.tipo.value,
     fecha: inputs.fecha.value,
-    monto,
+    monto: parseAmount(inputs.monto.value),
     categoria: inputs.categoria.value,
     tipo503020: inputs.tipo503020.value,
     nota: inputs.nota.value,
@@ -51,7 +30,6 @@ function agregarMovimiento(inputs) {
   aplicarMovimientoEnCuenta(mov, 1);
   refreshStorage();
   onDataChange();
-  return true;
 }
 
 function eliminarMovimiento(id) {
@@ -63,9 +41,8 @@ function eliminarMovimiento(id) {
   onDataChange();
 }
 
-function movimientosDelMesActual(offset = 0) {
+function movimientosDelMesActual() {
   const hoy = new Date();
-  hoy.setMonth(hoy.getMonth() + offset);
   const mes = hoy.getMonth();
   const year = hoy.getFullYear();
   return state.movimientos.filter((m) => {
@@ -74,46 +51,8 @@ function movimientosDelMesActual(offset = 0) {
   });
 }
 
-function filtrarMovimientos(movimientosMes) {
-  const buscar = document.getElementById('buscar').value.toLowerCase();
-  const filtroTipo = document.getElementById('filtro-tipo').value;
-  const filtro503020 = document.getElementById('filtro503020').value;
-
-  return movimientosMes.filter((m) => {
-    if (filtroTipo !== 'Todos' && m.tipo !== filtroTipo) return false;
-    if (filtro503020 !== 'Todos' && m.tipo503020 !== filtro503020) return false;
-    if (!buscar) return true;
-    const texto = `${m.categoria} ${m.nota} ${m.monto}`.toLowerCase();
-    return texto.includes(buscar);
-  });
-}
-
-function renderResumenMovimientos(movs) {
-  const resumen = document.getElementById('resumen-mov');
-  if (!resumen) return;
-  if (!movs.length) {
-    resumen.textContent = 'Sin resultados para los filtros seleccionados.';
-    return;
-  }
-  const ingresos = movs
-    .filter((m) => m.tipo === 'Ingreso')
-    .reduce((acc, m) => acc + Number(m.monto || 0), 0);
-  const gastos = movs
-    .filter((m) => m.tipo === 'Gasto')
-    .reduce((acc, m) => acc + Number(m.monto || 0), 0);
-  resumen.textContent = `Ingresos: ${formatCurrency(ingresos)} | Gastos: ${formatCurrency(gastos)} | Balance: ${formatCurrency(
-    ingresos - gastos
-  )}`;
-}
-
 function renderTablaActual(container) {
-  const movimientosMes = filtrarMovimientos(movimientosDelMesActual());
-  renderResumenMovimientos(movimientosMes);
-  if (!movimientosMes.length) {
-    container.innerHTML = '<tr><td colspan="9" class="empty">Sin movimientos este mes.</td></tr>';
-    return;
-  }
-
+  const movimientosMes = movimientosDelMesActual();
   container.innerHTML = movimientosMes
     .map(
       (m) => `
@@ -122,7 +61,7 @@ function renderTablaActual(container) {
           <td>${m.tipo}</td>
           <td>${formatCurrency(m.monto)}</td>
           <td>${m.categoria || ''}</td>
-          <td>${nombreCuenta(m.cuentaId)}</td>
+          <td>${m.cuentaId || '-'}</td>
           <td>${m.tipo503020}</td>
           <td>${m.nota || ''}</td>
           <td><button class="btn-link-small" data-edit="${m.id}">Editar</button></td>
@@ -155,7 +94,6 @@ function renderHistorial(select, container) {
 }
 
 export function initMovimientos({ notify, onChange }) {
-  notifier = notify;
   onDataChange = onChange;
   const form = document.getElementById('form-mov');
   const inputs = {
@@ -175,22 +113,9 @@ export function initMovimientos({ notify, onChange }) {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const guardado = agregarMovimiento(inputs);
-    if (guardado) {
-      notify('Movimiento guardado');
-      form.reset();
-      inputs.fecha.value = new Date().toISOString().slice(0, 10);
-    }
-  });
-
-  inputs.monto.addEventListener('blur', () => {
-    const monto = parseAmount(inputs.monto.value);
-    if (monto) inputs.monto.value = formatCurrency(monto);
-  });
-
-  ['buscar', 'filtro-tipo', 'filtro503020'].forEach((id) => {
-    const control = document.getElementById(id);
-    control.addEventListener('input', () => renderMovimientos());
+    agregarMovimiento(inputs);
+    notify('Movimiento guardado');
+    form.reset();
   });
 
   tablaActual.addEventListener('click', (e) => {
@@ -215,6 +140,6 @@ export function renderMovimientos() {
   renderHistorial(historialSelect, tablaHistorial);
 }
 
-export function obtenerMovimientosDelMes(offset = 0) {
-  return movimientosDelMesActual(offset);
+export function obtenerMovimientosDelMes() {
+  return movimientosDelMesActual();
 }
