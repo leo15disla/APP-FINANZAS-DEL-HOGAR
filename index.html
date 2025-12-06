@@ -161,9 +161,22 @@
             </select>
           </div>
 
-          <div>
+          <div class="calendar-field">
             <label for="fecha">Fecha</label>
-            <input type="date" id="fecha">
+            <div class="calendar-control">
+              <input type="text" id="fecha" readonly placeholder="Selecciona una fecha" />
+              <div id="calendario-visual" class="calendar-picker hidden">
+                <div class="calendar-header">
+                  <button type="button" id="cal-prev">‹</button>
+                  <div id="cal-mes"></div>
+                  <button type="button" id="cal-next">›</button>
+                </div>
+                <div class="calendar-weekdays">
+                  <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sá</span><span>Do</span>
+                </div>
+                <div id="cal-grid" class="calendar-grid"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -232,6 +245,26 @@
             <label>Buscar</label>
             <input type="text" id="buscar" placeholder="Filtrar por categoría, nota, monto...">
           </div>
+
+          <div class="view-toggle">
+            <button type="button" class="view-btn active" data-view="lista">Lista</button>
+            <button type="button" class="view-btn" data-view="tarjetas">Tarjetas</button>
+          </div>
+        </div>
+
+        <div class="chip-row" id="chips-tipo">
+          <span class="chip-label">Tipo:</span>
+          <button class="chip active" data-chip="tipo" data-value="Todos">Todos</button>
+          <button class="chip" data-chip="tipo" data-value="Ingreso">Ingresos</button>
+          <button class="chip" data-chip="tipo" data-value="Gasto">Gastos</button>
+          <button class="chip" data-chip="tipo" data-value="Transferencia">Transferencias</button>
+        </div>
+
+        <div class="chip-row" id="chips-tiempo">
+          <span class="chip-label">Rango:</span>
+          <button class="chip active" data-chip="tiempo" data-value="mes">Mes</button>
+          <button class="chip" data-chip="tiempo" data-value="semana">Semana</button>
+          <button class="chip" data-chip="tiempo" data-value="hoy">Hoy</button>
         </div>
 
         <div class="chip-row" id="chips-tipo">
@@ -259,12 +292,17 @@
               <option value="Ahorro">Ahorro</option>
             </select>
           </div>
+
+          <div>
+            <label>Categoría</label>
+            <select id="filtro-categoria"></select>
+          </div>
         </div>
 
         <!-- Resumen de movimientos filtrados -->
         <p id="resumen-mov" class="section-subtitle" style="margin-top:4px;"></p>
 
-        <div style="margin-top:10px; overflow-x:auto;">
+        <div id="tabla-wrap" style="margin-top:10px; overflow-x:auto;">
           <table>
             <thead>
               <tr>
@@ -281,6 +319,13 @@
             </thead>
             <tbody id="tabla-actual"></tbody>
           </table>
+        </div>
+
+        <div id="tarjetas-actual" class="mov-cards hidden"></div>
+        <div id="mov-empty" class="mov-empty-state hidden">
+          <div class="mov-empty-icon">🗒️</div>
+          <div class="mov-empty-text">Aún no tienes movimientos registrados.</div>
+          <button type="button" id="btn-empty-registrar" class="btn-primary">Registrar movimiento</button>
         </div>
       </div>
 
@@ -326,6 +371,37 @@
       </div>
     </div>
   </section>
+
+  <div id="modal-editar" class="modal hidden">
+    <div class="modal-content">
+      <button type="button" class="modal-close" data-modal-close>&times;</button>
+      <h3>Editar movimiento</h3>
+      <form id="form-editar-mov">
+        <input type="hidden" id="edit-id">
+        <div class="row form-row">
+          <div>
+            <label for="edit-fecha">Fecha</label>
+            <input type="date" id="edit-fecha">
+          </div>
+          <div>
+            <label for="edit-monto">Monto</label>
+            <input type="text" id="edit-monto" placeholder="RD$ 0">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="edit-categoria">Categoría</label>
+          <select id="edit-categoria"></select>
+        </div>
+        <div class="form-row">
+          <label for="edit-nota">Nota</label>
+          <input type="text" id="edit-nota" placeholder="Detalle opcional">
+        </div>
+        <div class="form-row">
+          <button type="submit" class="btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- CUENTAS & TARJETAS -->
   <section id="seccion-cuentas" class="hidden">
