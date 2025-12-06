@@ -17,24 +17,6 @@
       color: var(--color-texto);
     }
 
-    .section-enter {
-      animation: fadeSlide 0.35s ease;
-    }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card-refresh {
-      animation: fadeSlideSoft 0.45s ease;
-    }
-
-    @keyframes fadeSlideSoft {
-      from { opacity: 0.7; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     /* Navegación */
     header {
       display: flex;
@@ -93,27 +75,6 @@
       margin-bottom: 18px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --color-principal: #f472b6;
-        --color-fondo: #0f172a;
-        --color-texto: #e5e7eb;
-        --color-tarjeta: #111827;
-        --shadow: 0px 2px 10px rgba(0,0,0,0.3);
-      }
-
-      body { background: var(--color-fondo); color: var(--color-texto); }
-      header { background: #111827; border-color: #1f2937; }
-      header button { color: #e5e7eb; }
-      .card { border: 1px solid #1f2937; }
-      .kpi-box { border-color: #1f2937; background: linear-gradient(135deg, #1f2937, #111827); }
-      .chip { background: #0f172a; color: #e5e7eb; border-color: #1f2937; }
-      table { color: #e5e7eb; }
-      th { background: #1f2937; color: #e5e7eb; }
-      tr { background: #111827; }
-      .hist-item { background: #111827; border-color: #1f2937; }
-    }
-
     .card h3 {
       margin: 0;
       font-size: 18px;
@@ -160,17 +121,6 @@
       font-weight: 700;
       color: #222;
       transition: color 0.2s ease;
-      position: relative;
-    }
-
-    .kpi-value::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 10px;
-      opacity: 0;
-      transition: opacity 0.35s ease, transform 0.35s ease;
-      z-index: -1;
     }
 
     .kpi-tag {
@@ -222,137 +172,6 @@
       transition: transform 0.4s ease;
     }
 
-    .kpi-pulse-up {
-      color: #15803d;
-      animation: kpiUp 0.6s ease-out;
-    }
-
-    .kpi-pulse-down {
-      color: #b91c1c;
-      animation: kpiDown 0.6s ease-out;
-    }
-
-    .kpi-gasto-alertado {
-      animation: pulseGlow 1s ease-out;
-    }
-
-    @keyframes pulseGlow {
-      0% { text-shadow: 0 0 0 rgba(239, 68, 68, 0.2); }
-      50% { text-shadow: 0 6px 16px rgba(239, 68, 68, 0.35); }
-      100% { text-shadow: 0 0 0 rgba(239, 68, 68, 0.05); }
-    }
-
-    .month-badge.calendar-style {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      background: linear-gradient(135deg, rgba(224,106,123,0.12), #fff);
-      border: 1px dashed #f0b6c3;
-      border-radius: 12px;
-      font-weight: 600;
-      color: #9f1239;
-    }
-
-    .kpi-duo-card {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      align-items: center;
-    }
-
-    .duo-item {
-      background: linear-gradient(135deg, #eef2ff, #ffffff);
-      border-radius: 12px;
-      padding: 12px;
-      border: 1px solid #e5e7eb;
-      box-shadow: var(--shadow);
-    }
-
-    .card-mes-anterior {
-      background: linear-gradient(135deg, #f8fafc, #ffffff);
-      border: 1px solid #e2e8f0;
-    }
-
-    .card-header-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .mes-anterior-detalle {
-      margin-top: 8px;
-      border-top: 1px dashed #e2e8f0;
-      padding-top: 10px;
-      animation: fadeSlide 0.35s ease;
-    }
-
-    .mes-anterior-comparacion {
-      margin-top: 10px;
-      padding: 10px;
-      background: #eef2ff;
-      border: 1px solid #e0e7ff;
-      color: #312e81;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .mes-anterior-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .duo-label {
-      font-size: 13px;
-      color: #4b5563;
-      margin-bottom: 4px;
-    }
-
-    .duo-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1f2937;
-    }
-
-    .duo-hint {
-      font-size: 12px;
-      color: #6b7280;
-      margin-top: 4px;
-    }
-
-    .deuda-widget {
-      background: linear-gradient(135deg, #fff7ed, #ffffff);
-      border: 1px solid #fed7aa;
-    }
-
-    .deuda-value {
-      font-size: 22px;
-      font-weight: 800;
-      margin: 8px 0;
-      color: #b45309;
-    }
-
-    .progress {
-      width: 100%;
-      height: 10px;
-      background: #fff7ed;
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid #fed7aa;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #f97316, #facc15);
-      width: 0;
-      transition: width 0.6s ease;
-    }
-
     /* Semáforo del estado */
     .estado-badge {
       display: inline-flex;
@@ -363,26 +182,21 @@
       border-radius: 999px;
       background: #f3f4f6;
       color: #4b5563;
-      border: 1px solid #e5e7eb;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
     }
 
     .estado-verde {
-      background: linear-gradient(120deg, #dcfce7, #bbf7d0);
+      background: #dcfce7;
       color: #166534;
-      border-color: #86efac;
     }
 
     .estado-amarillo {
-      background: linear-gradient(120deg, #fef3c7, #fde68a);
+      background: #fef3c7;
       color: #92400e;
-      border-color: #fcd34d;
     }
 
     .estado-rojo {
-      background: linear-gradient(120deg, #fee2e2, #fecdd3);
+      background: #fee2e2;
       color: #b91c1c;
-      border-color: #fca5a5;
     }
 
     /* Alertas gastos */
@@ -431,41 +245,6 @@
       font-size: 11px;
       color: #6b7280;
       margin-top: 6px;
-    }
-
-    .chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      margin: 10px 0 4px;
-    }
-
-    .chip-label {
-      font-size: 12px;
-      color: #6b7280;
-      font-weight: 600;
-    }
-
-    .chip {
-      border: 1px solid #e5e7eb;
-      background: #fff;
-      color: #374151;
-      padding: 6px 10px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.2s ease;
-    }
-
-    .chip:hover {
-      background: #f3f4f6;
-    }
-
-    .chip.active {
-      background: var(--color-principal);
-      color: #fff;
-      border-color: var(--color-principal);
     }
 
     /* Encabezado de gráfico con toggle */
@@ -640,63 +419,6 @@
       color: #555;
     }
 
-    td.empty {
-      text-align: center;
-      color: #9ca3af;
-      font-style: italic;
-    }
-
-    .mov-row.tipo-ingreso td { color: #166534; }
-    .mov-row.tipo-gasto td { color: #b91c1c; }
-    .mov-row.tipo-transferencia td { color: #0ea5e9; }
-
-    .mov-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: #f3f4f6;
-      color: #374151;
-      text-transform: capitalize;
-    }
-
-    .mov-chip.ingreso { background: #dcfce7; color: #166534; }
-    .mov-chip.gasto { background: #fee2e2; color: #b91c1c; }
-    .mov-chip.transferencia { background: #e0f2fe; color: #075985; }
-
-    .mov-empty {
-      text-align: center;
-      padding: 12px 4px;
-      color: #6b7280;
-    }
-
-    .hist-resumen {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .hist-item {
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
-    }
-
-    .hist-label {
-      font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 4px;
-    }
-
-    .hist-value {
-      font-weight: 700;
-      color: #111827;
-    }
-
     .btn-small {
       font-size: 11px;
       padding: 3px 6px;
@@ -758,21 +480,6 @@
     .quick-btn:hover {
       background-color: #f3f4f6;
       border-color: #9ca3af;
-    }
-
-    @media (max-width: 720px) {
-      table thead { display: none; }
-      table, tbody, tr, td { display: block; width: 100%; }
-      tr { margin-bottom: 12px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; background: #fff; }
-      td { border: none; padding: 6px 0; }
-      td::before {
-        content: attr(data-label);
-        display: block;
-        font-size: 11px;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
     }
 
     /* ============= CUENTAS – TARJETAS ESTILO WALLET ============= */
@@ -1065,10 +772,6 @@
   opacity: 0;
   transform: translateY(-8px);
   transition: all 0.25s ease;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
 }
 
 .toast.visible { opacity: 1; transform: translateY(0); }
@@ -1076,16 +779,6 @@
 .toast-success { border-left: 4px solid #22c55e; }
 .toast-warning { border-left: 4px solid #f59e0b; }
 .toast-error { border-left: 4px solid #ef4444; }
-.toast-close {
-  background: transparent;
-  color: #cbd5e1;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 0 4px;
-  line-height: 1;
-}
-.toast-close:hover { color: #fff; }
 
 /* Tarjetas de cuentas y prestamos simplificadas */
 .cuenta-card {
@@ -1111,35 +804,3 @@
 }
 
 .presupuesto-item button { margin-left: 12px; }
-
-/* Acciones rápidas y ayudas del formulario */
-.quick-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 6px 0 10px;
-}
-
-.quick-actions button {
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.quick-actions button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
-}
-
-.quick-label {
-  font-size: 0.9rem;
-  color: #475569;
-  margin-right: 6px;
-}
