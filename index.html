@@ -45,7 +45,7 @@
       <h3>Resumen del mes</h3>
 
       <div class="month-row">
-        <div id="dashboard-mes" class="month-badge"></div>
+        <div id="dashboard-mes" class="month-badge calendar-style"></div>
         <button type="button" id="btn-resumen-anterior" class="btn-link-small">
           Ver resumen del mes anterior
         </button>
@@ -62,6 +62,7 @@
           <div class="kpi-label">Gastos</div>
           <div class="kpi-value" id="kpi-gastos">RD$ 0</div>
           <span class="kpi-tag" id="kpi-gastos-alerta">Dinero que sale</span>
+          <div class="kpi-extra" id="kpi-gastos-variacion">Sin datos del mes anterior</div>
         </div>
 
         <div class="kpi-box">
@@ -82,25 +83,26 @@
           <div class="kpi-value" id="kpi-prestamos">RD$ 0</div>
           <span class="kpi-tag">Capital en préstamos</span>
         </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Total en cuentas</div>
-          <div class="kpi-value" id="kpi-total-cuentas">RD$ 0</div>
-          <span class="kpi-tag">Saldo combinado</span>
-        </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Deudas del mes</div>
-          <div class="kpi-value" id="kpi-deuda-mes">RD$ 0</div>
-          <span class="kpi-tag" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</span>
-        </div>
-
-        <div class="kpi-box">
-          <div class="kpi-label">Liquidez disponible</div>
-          <div class="kpi-value" id="kpi-liquidez">RD$ 0</div>
-          <span class="kpi-tag">Ingresos – gastos – deudas</span>
-        </div>
       </div>
+    </div>
+
+    <div class="card kpi-duo-card">
+      <div class="duo-item">
+        <div class="duo-label">Total en cuentas bancarias</div>
+        <div class="duo-value" id="kpi-total-cuentas">RD$ 0</div>
+        <div class="duo-hint">Saldo combinado de todas las cuentas.</div>
+      </div>
+      <div class="duo-item">
+        <div class="duo-label">Liquidez disponible</div>
+        <div class="duo-value" id="kpi-liquidez">RD$ 0</div>
+        <div class="duo-hint">Cuentas bancarias menos deudas del mes.</div>
+      </div>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
     <div class="charts-grid">
