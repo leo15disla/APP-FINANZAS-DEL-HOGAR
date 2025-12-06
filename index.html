@@ -151,12 +151,19 @@
 
         <div class="form-row">
           <label for="monto">Monto</label>
-          <input type="text" id="monto" placeholder="Ej: 30,000">
+          <input type="text" id="monto" placeholder="Ej: RD$ 30,000" data-prefijo="RD$ ">
         </div>
 
         <div class="form-row">
           <label for="categoria">Categoría</label>
           <select id="categoria"></select>
+        </div>
+
+        <div class="quick-actions" id="acciones-rapidas">
+          <span class="quick-label">Rápido:</span>
+          <button type="button" data-accion="Comida" data-icon="💸">💸 Comida</button>
+          <button type="button" data-accion="Transporte" data-icon="🚗">🚗 Transporte</button>
+          <button type="button" data-accion="Supermercado" data-icon="🛒">🛒 Supermercado</button>
         </div>
 
         <!-- NUEVO: seleccionar cuenta asociada -->
@@ -176,7 +183,8 @@
 
         <div class="form-row">
           <label for="nota">Nota (opcional)</label>
-          <textarea id="nota" placeholder="Ej: Supermercado, luz, salida, etc."></textarea>
+          <textarea id="nota" placeholder="Ej: Supermercado, luz, salida, etc." list="sugerencias-nota"></textarea>
+          <datalist id="sugerencias-nota"></datalist>
         </div>
 
         <div class="form-row">
