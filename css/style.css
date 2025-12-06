@@ -172,63 +172,6 @@
       transition: transform 0.4s ease;
     }
 
-    .month-badge.calendar-style {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      background: linear-gradient(135deg, rgba(224,106,123,0.12), #fff);
-      border: 1px dashed #f0b6c3;
-      border-radius: 12px;
-      font-weight: 600;
-      color: #9f1239;
-    }
-
-    .kpi-duo-card {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      align-items: center;
-    }
-
-    .duo-item {
-      background: linear-gradient(135deg, #eef2ff, #ffffff);
-      border-radius: 12px;
-      padding: 12px;
-      border: 1px solid #e5e7eb;
-      box-shadow: var(--shadow);
-    }
-
-    .duo-label {
-      font-size: 13px;
-      color: #4b5563;
-      margin-bottom: 4px;
-    }
-
-    .duo-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1f2937;
-    }
-
-    .duo-hint {
-      font-size: 12px;
-      color: #6b7280;
-      margin-top: 4px;
-    }
-
-    .deuda-widget {
-      background: linear-gradient(135deg, #fff7ed, #ffffff);
-      border: 1px solid #fed7aa;
-    }
-
-    .deuda-value {
-      font-size: 22px;
-      font-weight: 800;
-      margin: 8px 0;
-      color: #b45309;
-    }
-
     /* Semáforo del estado */
     .estado-badge {
       display: inline-flex;

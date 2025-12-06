@@ -41,9 +41,8 @@ function eliminarMovimiento(id) {
   onDataChange();
 }
 
-function movimientosDelMesActual(offset = 0) {
+function movimientosDelMesActual() {
   const hoy = new Date();
-  hoy.setMonth(hoy.getMonth() + offset);
   const mes = hoy.getMonth();
   const year = hoy.getFullYear();
   return state.movimientos.filter((m) => {
@@ -141,6 +140,6 @@ export function renderMovimientos() {
   renderHistorial(historialSelect, tablaHistorial);
 }
 
-export function obtenerMovimientosDelMes(offset = 0) {
-  return movimientosDelMesActual(offset);
+export function obtenerMovimientosDelMes() {
+  return movimientosDelMesActual();
 }
