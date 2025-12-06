@@ -40,6 +40,17 @@
 
 <main>
 
+  <div id="onboarding-banner" class="card onboarding hidden">
+    <div>
+      <div class="section-title">Bienvenido a Finanzas del Hogar</div>
+      <p class="section-subtitle">Configura tu primer mes o prueba con datos de ejemplo.</p>
+    </div>
+    <div class="row" style="gap:8px; flex-wrap:wrap;">
+      <button type="button" class="btn-primary" id="btn-onboarding-demo">Probar con datos de ejemplo</button>
+      <button type="button" class="btn-secondary" id="btn-onboarding-start">Empezar en blanco</button>
+    </div>
+  </div>
+
   <!-- DASHBOARD -->
   <section id="seccion-dashboard">
     <div class="card">
@@ -104,6 +115,15 @@
     <div class="card deuda-widget">
       <div class="section-title">Total de deudas del mes</div>
       <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
+      </div>
       <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
