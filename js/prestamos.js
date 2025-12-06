@@ -66,12 +66,3 @@ export function initPrestamos({ notify }) {
 export function obtenerTotalPrestamos() {
   return state.prestamos.reduce((acc, p) => acc + (Number(p.monto) || 0), 0);
 }
-
-export function obtenerDeudaMensual() {
-  return state.prestamos.reduce((acc, p) => {
-    const plazo = Number(p.plazo) || 0;
-    if (plazo <= 0) return acc;
-    const cuota = (Number(p.monto) || 0) / plazo;
-    return acc + cuota;
-  }, 0);
-}

@@ -3,67 +3,6 @@ import { renderCuentas } from './cuentas.js';
 import { actualizarCalendario } from './prestamos.js';
 
 let onDataChange = () => {};
-let notifier = () => {};
-let chipTipo = 'Todos';
-let chipTiempo = 'mes';
-let clickAudio;
-
-const categoriaIconos = {
-  Comida: '🍽️',
-  Transporte: '🚗',
-  Supermercado: '🛒',
-  Servicios: '💡',
-  Vivienda: '🏠',
-  Entretenimiento: '🎉',
-  Salud: '🩺',
-  Educación: '📚',
-  Otros: '✨'
-};
-
-const sugerenciasPorCategoria = {
-  Comida: ['Almuerzo', 'Cena', 'Delivery', 'Snacks'],
-  Transporte: ['Combustible', 'Taxi', 'Metro', 'Peaje'],
-  Supermercado: ['Verduras', 'Carnes', 'Limpieza del hogar', 'Despensa'],
-  Servicios: ['Luz', 'Agua', 'Internet', 'Teléfono'],
-  Vivienda: ['Alquiler', 'Mantenimiento', 'Arreglo'],
-  Entretenimiento: ['Cine', 'Streaming', 'Salida'],
-  Salud: ['Farmacia', 'Consulta', 'Seguro'],
-  Educación: ['Libros', 'Curso', 'Colegio'],
-  Otros: ['Compra puntual', 'Regalo', 'Imprevisto']
-};
-
-function normalizarTexto(texto) {
-  return (texto || '')
-    .toString()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-}
-
-function iconoCategoria(nombre) {
-  return `${categoriaIconos[nombre] || '🏷️'} ${nombre}`;
-}
-
-function sugerirTipo503(nota, categoria) {
-  const texto = normalizarTexto(`${nota} ${categoria}`);
-  if (/ahorro|inversion|inversi/.test(texto)) return 'Ahorro';
-  if (/ocio|salida|cine|entreten|stream/.test(texto)) return 'Deseo';
-  if (/regalo|ropa|viaje/.test(texto)) return 'Deseo';
-  return 'Necesidad';
-}
-
-function poblarSugerencias(categoriaSeleccionada) {
-  const data = document.getElementById('sugerencias-nota');
-  if (!data) return;
-  const lista = sugerenciasPorCategoria[categoriaSeleccionada] || [];
-  data.innerHTML = lista.map((item) => `<option value="${item}"></option>`).join('');
-}
-
-function nombreCuenta(id) {
-  if (!id) return '-';
-  const cuenta = state.cuentas.find((c) => String(c.id) === String(id));
-  return cuenta?.nombre || id;
-}
 
 function aplicarMovimientoEnCuenta(mov, factor = 1) {
   if (!mov.cuentaId) return;
@@ -76,27 +15,12 @@ function aplicarMovimientoEnCuenta(mov, factor = 1) {
   actualizarCalendario();
 }
 
-function validarMovimiento(inputs) {
-  const errores = [];
-  if (!inputs.fecha.value) errores.push('La fecha es obligatoria.');
-  const monto = parseAmount(inputs.monto.value);
-  if (monto <= 0) errores.push('Ingresa un monto válido mayor a cero.');
-  if (!inputs.categoria.value) errores.push('Selecciona una categoría.');
-  return { esValido: errores.length === 0, monto, errores };
-}
-
 function agregarMovimiento(inputs) {
-  inputs.tipo503020.value = sugerirTipo503(inputs.nota.value, inputs.categoria.value);
-  const { esValido, monto, errores } = validarMovimiento(inputs);
-  if (!esValido) {
-    errores.forEach((msg) => notifier(msg, 'warning'));
-    return false;
-  }
   const mov = {
     id: Date.now(),
     tipo: inputs.tipo.value,
     fecha: inputs.fecha.value,
-    monto,
+    monto: parseAmount(inputs.monto.value),
     categoria: inputs.categoria.value,
     tipo503020: inputs.tipo503020.value,
     nota: inputs.nota.value,
@@ -106,7 +30,6 @@ function agregarMovimiento(inputs) {
   aplicarMovimientoEnCuenta(mov, 1);
   refreshStorage();
   onDataChange();
-  return true;
 }
 
 function eliminarMovimiento(id) {
@@ -118,9 +41,8 @@ function eliminarMovimiento(id) {
   onDataChange();
 }
 
-function movimientosDelMesActual(offset = 0) {
+function movimientosDelMesActual() {
   const hoy = new Date();
-  hoy.setMonth(hoy.getMonth() + offset);
   const mes = hoy.getMonth();
   const year = hoy.getFullYear();
   return state.movimientos.filter((m) => {
@@ -129,140 +51,49 @@ function movimientosDelMesActual(offset = 0) {
   });
 }
 
-function filtrarMovimientos(movimientosMes) {
-  const buscar = normalizarTexto(document.getElementById('buscar').value);
-  const filtro503020 = document.getElementById('filtro503020').value;
-
-  return movimientosMes.filter((m) => {
-    if (chipTipo !== 'Todos' && m.tipo !== chipTipo) return false;
-    if (chipTiempo === 'hoy') {
-      const hoy = new Date();
-      const fecha = new Date(m.fecha);
-      if (
-        fecha.getFullYear() !== hoy.getFullYear() ||
-        fecha.getMonth() !== hoy.getMonth() ||
-        fecha.getDate() !== hoy.getDate()
-      )
-        return false;
-    }
-    if (chipTiempo === 'semana') {
-      const hoy = new Date();
-      const fecha = new Date(m.fecha);
-      const diff = (hoy - fecha) / (1000 * 60 * 60 * 24);
-      if (diff < 0 || diff > 7) return false;
-    }
-    if (chipTiempo === 'mes') {
-      const hoy = new Date();
-      const fecha = new Date(m.fecha);
-      if (fecha.getMonth() !== hoy.getMonth() || fecha.getFullYear() !== hoy.getFullYear()) return false;
-    }
-    if (filtro503020 !== 'Todos' && m.tipo503020 !== filtro503020) return false;
-    if (!buscar) return true;
-    const texto = normalizarTexto(`${m.categoria} ${m.nota} ${m.monto} ${nombreCuenta(m.cuentaId)}`);
-    const tokens = buscar.split(/\s+/).filter(Boolean);
-    return tokens.every((token) => texto.includes(token));
-  });
-}
-
-function renderResumenMovimientos(movs) {
-  const resumen = document.getElementById('resumen-mov');
-  if (!resumen) return;
-  if (!movs.length) {
-    resumen.textContent = 'Sin resultados para los filtros seleccionados.';
-    return;
-  }
-  const ingresos = movs
-    .filter((m) => m.tipo === 'Ingreso')
-    .reduce((acc, m) => acc + Number(m.monto || 0), 0);
-  const gastos = movs
-    .filter((m) => m.tipo === 'Gasto')
-    .reduce((acc, m) => acc + Number(m.monto || 0), 0);
-  resumen.textContent = `Ingresos: ${formatCurrency(ingresos)} | Gastos: ${formatCurrency(gastos)} | Balance: ${formatCurrency(
-    ingresos - gastos
-  )}`;
-}
-
 function renderTablaActual(container) {
-  const movimientosMes = filtrarMovimientos(movimientosDelMesActual());
-  renderResumenMovimientos(movimientosMes);
-  if (!movimientosMes.length) {
-    container.innerHTML = '<tr><td colspan="9" class="mov-empty">Aún no tienes movimientos este mes ✨</td></tr>';
-    return;
-  }
-
+  const movimientosMes = movimientosDelMesActual();
   container.innerHTML = movimientosMes
-    .map((m) => {
-      const tipoClass = m.tipo?.toLowerCase() || '';
-      return `
-        <tr class="mov-row tipo-${tipoClass}">
-          <td data-label="Fecha">${formatDate(m.fecha)}</td>
-          <td data-label="Tipo"><span class="mov-chip ${tipoClass}">${m.tipo}</span></td>
-          <td data-label="Monto">${formatCurrency(m.monto)}</td>
-          <td data-label="Categoría">${m.categoria ? iconoCategoria(m.categoria) : ''}</td>
-          <td data-label="Cuenta">${nombreCuenta(m.cuentaId)}</td>
-          <td data-label="50/30/20">${m.tipo503020}</td>
-          <td data-label="Nota">${m.nota || ''}</td>
-          <td data-label="Editar"><button class="btn-link-small" data-edit="${m.id}">Editar</button></td>
-          <td data-label="Eliminar"><button class="btn-danger" data-delete="${m.id}">Eliminar</button></td>
-        </tr>`;
-    })
+    .map(
+      (m) => `
+        <tr>
+          <td>${formatDate(m.fecha)}</td>
+          <td>${m.tipo}</td>
+          <td>${formatCurrency(m.monto)}</td>
+          <td>${m.categoria || ''}</td>
+          <td>${m.cuentaId || '-'}</td>
+          <td>${m.tipo503020}</td>
+          <td>${m.nota || ''}</td>
+          <td><button class="btn-link-small" data-edit="${m.id}">Editar</button></td>
+          <td><button class="btn-danger" data-delete="${m.id}">Eliminar</button></td>
+        </tr>
+      `
+    )
     .join('');
 }
 
 function renderHistorial(select, container) {
   const meses = Object.keys(state.historial).sort().reverse();
   select.innerHTML = meses.map((m) => `<option value="${m}">${m}</option>`).join('');
-  if (!meses.length) {
-    container.innerHTML = '<tr><td colspan="6" class="mov-empty">Sin historial registrado.</td></tr>';
-    renderResumenHistorial();
-    return;
-  }
   const mesSeleccionado = select.value;
   const lista = state.historial[mesSeleccionado] || [];
   container.innerHTML = lista
-    .map((m) => {
-      const tipoClass = m.tipo?.toLowerCase() || '';
-      return `
-        <tr class="mov-row tipo-${tipoClass}">
-          <td data-label="Fecha">${formatDate(m.fecha)}</td>
-          <td data-label="Tipo"><span class="mov-chip ${tipoClass}">${m.tipo}</span></td>
-          <td data-label="Monto">${formatCurrency(m.monto)}</td>
-          <td data-label="Categoría">${m.categoria ? iconoCategoria(m.categoria) : ''}</td>
-          <td data-label="50/30/20">${m.tipo503020}</td>
-          <td data-label="Nota">${m.nota || ''}</td>
+    .map(
+      (m) => `
+        <tr>
+          <td>${formatDate(m.fecha)}</td>
+          <td>${m.tipo}</td>
+          <td>${formatCurrency(m.monto)}</td>
+          <td>${m.categoria || ''}</td>
+          <td>${m.tipo503020}</td>
+          <td>${m.nota || ''}</td>
         </tr>
-      `;
-    })
+      `
+    )
     .join('');
-
-  renderResumenHistorial();
-}
-
-function renderResumenHistorial() {
-  const items = Object.entries(state.historial || {}).map(([mes, lista]) => {
-    const gasto = lista
-      .filter((m) => m.tipo === 'Gasto')
-      .reduce((acc, m) => acc + (Number(m.monto) || 0), 0);
-    return { mes, gasto };
-  });
-
-  const caro = items.reduce((max, item) => (item.gasto > (max?.gasto ?? -Infinity) ? item : max), null);
-  const barato = items.reduce((min, item) => (item.gasto < (min?.gasto ?? Infinity) ? item : min), null);
-  const promedio = items.length
-    ? items.reduce((acc, item) => acc + item.gasto, 0) / items.length
-    : 0;
-
-  document.getElementById('hist-mes-caro').textContent = caro ? `${caro.mes} · ${formatCurrency(caro.gasto)}` : 'Sin datos';
-  document.getElementById('hist-mes-barato').textContent = barato
-    ? `${barato.mes} · ${formatCurrency(barato.gasto)}`
-    : 'Sin datos';
-  document.getElementById('hist-mes-promedio').textContent = items.length
-    ? formatCurrency(promedio)
-    : 'Sin datos';
 }
 
 export function initMovimientos({ notify, onChange }) {
-  notifier = notify;
   onDataChange = onChange;
   const form = document.getElementById('form-mov');
   const inputs = {
@@ -277,81 +108,14 @@ export function initMovimientos({ notify, onChange }) {
   const tablaActual = document.getElementById('tabla-actual');
   const tablaHistorial = document.getElementById('tabla-historial');
   const historialSelect = document.getElementById('historial-meses');
-  const chips = Array.from(document.querySelectorAll('.chip'));
-  const quickActions = document.getElementById('acciones-rapidas');
-  const datalist = document.getElementById('sugerencias-nota');
-
-  clickAudio = new Audio(
-    'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQAAAAA='
-  );
 
   inputs.fecha.value = new Date().toISOString().slice(0, 10);
 
-  if (inputs.monto.dataset.prefijo) {
-    inputs.monto.addEventListener('focus', () => {
-      if (!inputs.monto.value.startsWith(inputs.monto.dataset.prefijo)) {
-        inputs.monto.value = inputs.monto.dataset.prefijo;
-      }
-    });
-  }
-
-  inputs.categoria.addEventListener('change', () => {
-    poblarSugerencias(inputs.categoria.value);
-    inputs.tipo503020.value = sugerirTipo503(inputs.nota.value, inputs.categoria.value);
-  });
-
-  inputs.nota.addEventListener('input', () => {
-    inputs.tipo503020.value = sugerirTipo503(inputs.nota.value, inputs.categoria.value);
-  });
-
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const guardado = agregarMovimiento(inputs);
-    if (guardado) {
-      notify('Movimiento guardado');
-      clickAudio?.play?.();
-      form.reset();
-      inputs.fecha.value = new Date().toISOString().slice(0, 10);
-    }
-  });
-
-  inputs.monto.addEventListener('blur', () => {
-    const monto = parseAmount(inputs.monto.value);
-    if (monto) inputs.monto.value = formatCurrency(monto);
-  });
-
-  quickActions?.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-accion]');
-    if (!btn) return;
-    const categoria = btn.dataset.accion;
-    const icon = btn.dataset.icon;
-    inputs.tipo.value = 'Gasto';
-    inputs.categoria.value = categoria;
-    inputs.nota.value = `${icon} ${categoria}`;
-    poblarSugerencias(categoria);
-    inputs.tipo503020.value = sugerirTipo503(inputs.nota.value, categoria);
-  });
-
-  if (datalist && inputs.categoria.value) {
-    poblarSugerencias(inputs.categoria.value);
-  }
-
-  ['buscar', 'filtro503020'].forEach((id) => {
-    const control = document.getElementById(id);
-    control.addEventListener('input', () => renderMovimientos());
-  });
-
-  chips.forEach((chip) => {
-    chip.addEventListener('click', () => {
-      const group = chip.dataset.chip;
-      const value = chip.dataset.value;
-      if (group === 'tipo') chipTipo = value;
-      if (group === 'tiempo') chipTiempo = value;
-      chips
-        .filter((c) => c.dataset.chip === group)
-        .forEach((c) => c.classList.toggle('active', c === chip));
-      renderMovimientos();
-    });
+    agregarMovimiento(inputs);
+    notify('Movimiento guardado');
+    form.reset();
   });
 
   tablaActual.addEventListener('click', (e) => {
@@ -376,6 +140,6 @@ export function renderMovimientos() {
   renderHistorial(historialSelect, tablaHistorial);
 }
 
-export function obtenerMovimientosDelMes(offset = 0) {
-  return movimientosDelMesActual(offset);
+export function obtenerMovimientosDelMes() {
+  return movimientosDelMesActual();
 }
