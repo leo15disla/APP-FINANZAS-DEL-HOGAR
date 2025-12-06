@@ -1,0 +1,753 @@
+:root {
+      --color-principal: #e06a7b;
+      --color-fondo: #f8f8f8;
+      --color-texto: #333;
+      --color-tarjeta: #ffffff;
+      --shadow: 0px 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--color-fondo);
+      color: var(--color-texto);
+    }
+
+    /* Navegación */
+    header {
+      display: flex;
+      gap: 10px;
+      justify-content: space-around;
+      align-items: center;
+      background: white;
+      padding: 12px 0;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    header button {
+      background: none;
+      border: none;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--color-texto);
+      cursor: pointer;
+    }
+
+    header button.active {
+      background: var(--color-principal);
+      color: white;
+      font-weight: bold;
+    }
+
+    /* Icono de casita SVG */
+    .icon-casa {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: var(--color-principal);
+      stroke-width: 2.2;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Tarjetas generales */
+    .card {
+      background: var(--color-tarjeta);
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--color-principal);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 14px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .kpi-box {
+      background: linear-gradient(135deg, #ffe4ea, #ffffff);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+      border: 1px solid #f5c9d5;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #222;
+      transition: color 0.2s ease;
+    }
+
+    .kpi-tag {
+      font-size: 11px;
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(224,106,123,0.08);
+      color: #b13c50;
+      white-space: normal;
+    }
+
+    .kpi-extra {
+      font-size: 11px;
+      margin-top: 4px;
+      color: #6b7280;
+    }
+
+    .kpi-extra-up {
+      color: #16a34a;
+    }
+
+    .kpi-extra-down {
+      color: #b91c1c;
+    }
+
+    /* Animaciones KPI */
+    @keyframes kpiUp {
+      from { transform: translateY(4px); opacity: 0.7; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes kpiDown {
+      from { transform: translateY(-4px); opacity: 0.7; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .kpi-value.anim-up {
+      animation: kpiUp 0.6s ease-out;
+    }
+
+    .kpi-value.anim-down {
+      animation: kpiDown 0.6s ease-out;
+    }
+
+    .kpi-anim {
+      transform: scale(1.08);
+      transition: transform 0.4s ease;
+    }
+
+    /* Semáforo del estado */
+    .estado-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    .estado-verde {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .estado-amarillo {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .estado-rojo {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    /* Alertas gastos */
+    .kpi-tag-alert-verde {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .kpi-tag-alert-amarillo {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .kpi-tag-alert-rojo {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    @media (min-width: 720px) {
+      .charts-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .chart-container {
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-container h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .chart-footnote {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    /* Encabezado de gráfico con toggle */
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .chart-header h4 {
+      margin: 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .chart-toggle {
+      display: flex;
+      gap: 4px;
+    }
+
+    .chart-toggle-btn {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 3px 8px;
+      font-size: 11px;
+      background: #f9fafb;
+      cursor: pointer;
+    }
+
+    .chart-toggle-btn.active {
+      background: var(--color-principal);
+      color: #fff;
+      border-color: var(--color-principal);
+    }
+
+    /* Fila de mes y botón de resumen anterior */
+    .month-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+
+    .month-badge {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3f4ff;
+      color: #4338ca;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .btn-link-small {
+      border: none;
+      background: none;
+      color: var(--color-principal);
+      font-size: 11px;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+
+    /* Formularios y campos */
+    label {
+      display: block;
+      font-size: 13px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      background: #fafafa;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid rgba(224,106,123,0.4);
+      background: #fff;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > div {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .btn-primary {
+      margin-top: 16px;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: var(--color-principal);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0px 4px 10px rgba(224,106,123,0.35);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0px 2px 6px rgba(224,106,123,0.3);
+    }
+
+    .subtabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .subtab-btn {
+      flex: 1;
+      min-width: 120px;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      background: #f5f5f5;
+      padding: 6px 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .subtab-btn.active {
+      background: var(--color-principal);
+      color: #fff;
+      border-color: var(--color-principal);
+    }
+
+    .subtab-content {
+      display: none;
+    }
+
+    .subtab-content.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    th {
+      background: #fafafa;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .btn-small {
+      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-edit {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      background: #f3f4f6;
+      color: #4b5563;
+      margin-left: 4px;
+    }
+
+    .tag-tipo {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+    }
+    
+    .quick-buttons-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quick-label {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .quick-btn {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background-color: #f9fafb;
+      cursor: pointer;
+    }
+
+    .quick-btn:hover {
+      background-color: #f3f4f6;
+      border-color: #9ca3af;
+    }
+
+    /* ============= CUENTAS – TARJETAS ESTILO WALLET ============= */
+
+    .cuentas-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .cuenta-card {
+      position: relative;
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: #f9fafb;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.35);
+      transform: translateY(0px) scale(1);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .cuenta-card::before {
+      content: "";
+      position: absolute;
+      width: 160%;
+      height: 160%;
+      top: -40%;
+      right: -40%;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.25), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .cuenta-card:hover,
+    .cuenta-card:active {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.55);
+    }
+
+    .cuenta-superior {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cuenta-nombre {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .cuenta-tipo-pill {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(248, 250, 252, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .cuenta-saldo {
+      margin-top: 12px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cuenta-numero {
+      margin-top: 6px;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      opacity: 0.85;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cuenta-acciones {
+      margin-top: 10px;
+      display: flex;
+      gap: 6px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+    }
+
+    .cuenta-acciones .btn-small {
+      background: rgba(15, 23, 42, 0.65);
+      color: #f9fafb;
+      border: 1px solid rgba(248, 250, 252, 0.25);
+    }
+
+    .cuenta-acciones .btn-small.btn-delete {
+      background: rgba(239, 68, 68, 0.85);
+      border-color: rgba(254, 202, 202, 0.7);
+      color: #fef2f2;
+    }
+
+    .cuenta-color-preview {
+      width: 32px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      margin-top: 6px;
+    }
+
+    /* ============= CALENDARIO ============= */
+
+    .cal-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .cal-tab-btn {
+      flex: 1;
+      min-width: 120px;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      background: #f5f5f5;
+      padding: 6px 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .cal-tab-btn.active {
+      background: var(--color-principal);
+      color: #fff;
+      border-color: var(--color-principal);
+    }
+
+    .cal-tab-content {
+      display: none;
+    }
+
+    .cal-tab-content.active {
+      display: block;
+    }
+
+    .cal-grid-header,
+    .cal-grid-dias {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-grid-header div {
+      text-align: center;
+      font-size: 11px;
+      color: #6b7280;
+      font-weight: 600;
+      padding-bottom: 4px;
+    }
+
+    .cal-dia {
+      min-height: 54px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 4px 5px;
+      font-size: 11px;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.08);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .cal-dia-vacio {
+      background: transparent;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .cal-dia-hoy {
+      border: 1px solid var(--color-principal);
+    }
+
+    .cal-dia-num {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .cal-dia-dots {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .event-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+    }
+
+    .event-prestamo {
+      background: #e11d48;
+    }
+
+    .event-tarjeta-corte {
+      background: #f59e0b;
+    }
+
+    .event-tarjeta-pago {
+      background: #22c55e;
+    }
+
+    .cal-detalle-lista {
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .cal-detalle-item {
+      padding: 4px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .event-tag {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      margin-right: 4px;
+    }
+
+    .event-tag-prestamo {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .event-tag-tarjeta-corte {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .event-tag-tarjeta-pago {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .cal-agenda-item {
+      padding: 6px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 12px;
+    }
+
+    .cal-agenda-fecha {
+      font-weight: 600;
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .cal-agenda-titulo {
+      margin-top: 2px;
+    }
+
+    .cal-agenda-monto {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .cal-nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }

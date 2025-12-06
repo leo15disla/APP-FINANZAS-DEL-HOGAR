@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finanzas del Hogar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ICONO iOS -->
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+<header>
+  <!-- Casita sin texto -->
+  <button id="btnDashboard" class="active">
+    <svg class="icon-casa" viewBox="0 0 24 24">
+      <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z"/>
+    </svg>
+  </button>
+
+  <button id="btnRegistrar">Registrar</button>
+  <button id="btnMovimientos">Movimientos</button>
+  <button id="btnCuentas">Cuentas</button>
+  <button id="btnPrestamos">Préstamos</button>
+  <button id="btnCalendario">Calendario</button>
+  <button id="btnPresupuesto">Presupuesto</button>
+  <button id="btnExportar">Exportar</button>
+</header>
+
+<div id="notificacion" style="position: fixed; top: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 1000; display: none; white-space: pre-wrap;"></div>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section id="seccion-dashboard">
+    <div class="card">
+      <h3>Resumen del mes</h3>
+
+      <div class="month-row">
+        <div id="dashboard-mes" class="month-badge"></div>
+        <button type="button" id="btn-resumen-anterior" class="btn-link-small">
+          Ver resumen del mes anterior
+        </button>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="kpi-box">
+          <div class="kpi-label">Ingresos</div>
+          <div class="kpi-value" id="kpi-ingresos">RD$ 0</div>
+          <div class="kpi-extra" id="kpi-ingresos-variacion">Sin datos del mes anterior</div>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-label">Gastos</div>
+          <div class="kpi-value" id="kpi-gastos">RD$ 0</div>
+          <span class="kpi-tag" id="kpi-gastos-alerta">Dinero que sale</span>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-label">Balance</div>
+          <div class="kpi-value" id="kpi-balance">RD$ 0</div>
+          <div class="kpi-extra" id="kpi-balance-tendencia">
+            Sin datos suficientes para comparar la semana.
+          </div>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-label">Estado</div>
+          <span class="kpi-tag estado-badge" id="kpi-estado">En equilibrio</span>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-label">Préstamos activos</div>
+          <div class="kpi-value" id="kpi-prestamos">RD$ 0</div>
+          <span class="kpi-tag">Capital en préstamos</span>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-label">Total en cuentas</div>
+          <div class="kpi-value" id="kpi-total-cuentas">RD$ 0</div>
+          <span class="kpi-tag">Saldo combinado</span>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-label">Deudas del mes</div>
+          <div class="kpi-value" id="kpi-deuda-mes">RD$ 0</div>
+          <span class="kpi-tag" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</span>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-label">Liquidez disponible</div>
+          <div class="kpi-value" id="kpi-liquidez">RD$ 0</div>
+          <span class="kpi-tag">Ingresos – gastos – deudas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-container">
+        <h4>Distribución 50 / 30 / 20</h4>
+        <canvas id="chart-503020"></canvas>
+        <p id="texto-503020" class="chart-footnote"></p>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h4>Ingresos vs Gastos</h4>
+          <div class="chart-toggle">
+            <button class="chart-toggle-btn active" data-modo="mes">Mes</button>
+            <button class="chart-toggle-btn" data-modo="semana">Semanas</button>
+          </div>
+        </div>
+        <canvas id="chart-ing-gastos"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTRAR -->
+  <section id="seccion-registrar" class="hidden">
+    <div class="card">
+      <div class="section-title" data-role="titulo-form">Registrar movimiento</div>
+      <p class="section-subtitle">Agrega ingresos o gastos del hogar.</p>
+
+      <form id="form-mov" data-form="movimiento">
+        <div class="row form-row">
+          <div>
+            <label for="tipo">Tipo</label>
+            <select id="tipo">
+              <option value="Ingreso">Ingreso</option>
+              <option value="Gasto">Gasto</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="monto">Monto</label>
+          <input type="text" id="monto" placeholder="Ej: 30,000">
+        </div>
+
+        <div class="form-row">
+          <label for="categoria">Categoría</label>
+          <select id="categoria"></select>
+        </div>
+
+        <!-- NUEVO: seleccionar cuenta asociada -->
+        <div class="form-row">
+          <label for="mov-cuenta">Cuenta asociada</label>
+          <select id="mov-cuenta"></select>
+        </div>
+
+        <div class="form-row">
+          <label for="tipo503020">50 / 30 / 20</label>
+          <select id="tipo503020">
+            <option value="Necesidad">Necesidad (50%)</option>
+            <option value="Deseo">Deseo (30%)</option>
+            <option value="Ahorro">Ahorro (20%)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="nota">Nota (opcional)</label>
+          <textarea id="nota" placeholder="Ej: Supermercado, luz, salida, etc."></textarea>
+        </div>
+
+        <div class="form-row">
+          <button type="submit" class="btn-primary" id="btn-guardar">
+            Guardar movimiento
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- MOVIMIENTOS + HISTORIAL -->
+  <section id="seccion-movimientos" class="hidden">
+    <div class="card">
+      <div class="section-title">Movimientos</div>
+      <p class="section-subtitle">Revisa los movimientos del mes o consulta el historial mensual.</p>
+
+      <div class="subtabs">
+        <button class="subtab-btn active" data-subtab="actual">Del mes actual</button>
+        <button class="subtab-btn" data-subtab="historial">Historial mensual</button>
+      </div>
+
+      <!-- SUBTAB: MOVIMIENTOS ACTUALES -->
+      <div id="subtab-actual" class="subtab-content active">
+        <div class="row">
+          <div>
+            <label>Buscar</label>
+            <input type="text" id="buscar" placeholder="Filtrar por categoría, nota, monto...">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Tipo</label>
+            <select id="filtro-tipo">
+              <option value="Todos">Todos</option>
+              <option value="Ingreso">Ingresos</option>
+              <option value="Gasto">Gastos</option>
+            </select>
+          </div>
+          <div>
+            <label>50 / 30 / 20</label>
+            <select id="filtro503020">
+              <option value="Todos">Todos</option>
+              <option value="Necesidad">Necesidad</option>
+              <option value="Deseo">Deseo</option>
+              <option value="Ahorro">Ahorro</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Resumen de movimientos filtrados -->
+        <p id="resumen-mov" class="section-subtitle" style="margin-top:4px;"></p>
+
+        <div style="margin-top:10px; overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Monto</th>
+                <th>Categoría</th>
+                <th>Cuenta</th>
+                <th>50/30/20</th>
+                <th>Nota</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-actual"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUBTAB: HISTORIAL -->
+      <div id="subtab-historial" class="subtab-content">
+        <div class="row">
+          <div>
+            <label>Mes</label>
+            <select id="historial-meses"></select>
+          </div>
+        </div>
+
+        <div style="margin-top:10px; overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Monto</th>
+                <th>Categoría</th>
+                <th>50/30/20</th>
+                <th>Nota</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-historial"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CUENTAS & TARJETAS -->
+  <section id="seccion-cuentas" class="hidden">
+    <div class="card">
+      <div class="section-title">Cuentas y tarjetas</div>
+      <p class="section-subtitle">
+        Visualiza tus cuentas bancarias y tarjetas al estilo Apple Wallet.
+      </p>
+
+      <div id="lista-cuentas" class="cuentas-stack"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Agregar / editar cuenta</div>
+      <p class="section-subtitle">Registra cuentas bancarias, tarjetas o efectivo.</p>
+
+      <form id="form-cuenta">
+        <input type="hidden" id="cuenta-id">
+
+        <label for="cuenta-nombre">Nombre de la cuenta</label>
+        <input type="text" id="cuenta-nombre" placeholder="Ej: Banco Popular nómina" required>
+
+        <div class="row">
+          <div>
+            <label for="cuenta-tipo">Tipo</label>
+            <select id="cuenta-tipo">
+              <option value="Cuenta de ahorro">Cuenta de ahorro</option>
+              <option value="Cuenta corriente">Cuenta corriente</option>
+              <option value="Tarjeta de crédito">Tarjeta de crédito</option>
+              <option value="Efectivo">Efectivo</option>
+              <option value="Otra">Otra</option>
+            </select>
+          </div>
+          <div>
+            <label for="cuenta-numero">Últimos 4 dígitos</label>
+            <input type="text" id="cuenta-numero" maxlength="4" placeholder="Ej: 1234">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="cuenta-saldo">Saldo actual</label>
+            <input type="number" id="cuenta-saldo" placeholder="Ej: 25000">
+          </div>
+          <div>
+            <label for="cuenta-color">Color de tarjeta</label>
+            <input type="color" id="cuenta-color" value="#0f172a">
+            <div id="cuenta-color-preview" class="cuenta-color-preview"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="cuenta-dia-corte">Día de corte (tarjeta)</label>
+            <input type="number" id="cuenta-dia-corte" min="1" max="31" placeholder="Ej: 15">
+          </div>
+          <div>
+            <label for="cuenta-dia-pago">Día de pago (tarjeta)</label>
+            <input type="number" id="cuenta-dia-pago" min="1" max="31" placeholder="Ej: 25">
+          </div>
+        </div>
+
+        <label for="cuenta-nota">Nota (opcional)</label>
+        <textarea id="cuenta-nota" placeholder="Ej: Cuenta principal de sueldo, uso diario, etc."></textarea>
+
+        <button type="submit" class="btn-primary">Guardar cuenta</button>
+      </form>
+    </div>
+
+    <div class="card" id="card-detalle-cuenta" style="display:none;">
+      <div class="section-title" id="detalle-cuenta-titulo">Detalle de la cuenta</div>
+      <p class="section-subtitle" id="detalle-cuenta-subtitulo"></p>
+      <p id="detalle-cuenta-nota"></p>
+    </div>
+  </section>
+
+  <!-- PRÉSTAMOS -->
+  <section id="seccion-prestamos" class="hidden">
+    <div class="card">
+      <div class="section-title">Registrar préstamo</div>
+      <p class="section-subtitle">
+        Crea préstamos con diferentes tipos de amortización (francesa, interés compuesto diario, americana).
+      </p>
+
+      <form id="form-prestamo">
+        <label for="prestamo-nombre">Nombre del préstamo</label>
+        <input type="text" id="prestamo-nombre" placeholder="Ej: Préstamo carro, Banco X" required>
+
+        <div class="row">
+          <div>
+            <label for="prestamo-tipo">Tipo de amortización</label>
+            <select id="prestamo-tipo">
+              <option value="francesa">Francesa (cuota fija)</option>
+              <option value="compuesto-diario">Interés compuesto diario</option>
+              <option value="americana">Americana (solo interés + capital al final)</option>
+            </select>
+          </div>
+          <div>
+            <label for="prestamo-monto">Monto</label>
+            <input type="number" id="prestamo-monto" placeholder="Ej: 150000" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="prestamo-tasa">Tasa anual (%)</label>
+            <input type="number" id="prestamo-tasa" placeholder="Ej: 24" step="0.01" required>
+          </div>
+          <div>
+            <label for="prestamo-plazo">Plazo (meses)</label>
+            <input type="number" id="prestamo-plazo" placeholder="Ej: 12" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="prestamo-fecha-inicio">Fecha de inicio</label>
+            <input type="date" id="prestamo-fecha-inicio">
+          </div>
+          <div>
+            <label for="prestamo-fecha-primer-pago">Fecha primer pago</label>
+            <input type="date" id="prestamo-fecha-primer-pago">
+          </div>
+        </div>
+
+        <label for="prestamo-nota">Nota (opcional)</label>
+        <textarea id="prestamo-nota" placeholder="Ej: Préstamo personal, cliente, banco, etc."></textarea>
+
+        <button type="submit" class="btn-primary">Calcular y guardar préstamo</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Préstamos activos</div>
+      <p class="section-subtitle">Lista de préstamos guardados con su resumen principal.</p>
+
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Monto</th>
+              <th>Cuota aprox.</th>
+              <th>Plazo</th>
+              <th>Detalle</th>
+              <th>Eliminar</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-prestamos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="card-detalle-prestamo" style="display:none;">
+      <div class="section-title" id="detalle-prestamo-titulo">Detalle del préstamo</div>
+      <p class="section-subtitle" id="detalle-prestamo-subtitulo"></p>
+
+      <div style="max-height:300px; overflow:auto; margin-top:10px;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha</th>
+              <th>Cuota</th>
+              <th>Capital</th>
+              <th>Interés</th>
+              <th>Saldo</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-detalle-prestamo"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDARIO -->
+  <section id="seccion-calendario" class="hidden">
+    <div class="card">
+      <div class="section-title">Calendario de pagos</div>
+      <p class="section-subtitle">
+        Visualiza cuotas de préstamos y fechas clave de tarjetas en un calendario mensual o vista de agenda.
+      </p>
+
+      <div class="cal-tabs">
+        <button class="cal-tab-btn active" data-calvista="mes">Calendario</button>
+        <button class="cal-tab-btn" data-calvista="agenda">Agenda</button>
+      </div>
+
+      <!-- Vista Calendario -->
+      <div id="vista-cal-mes" class="cal-tab-content active">
+        <div class="row" style="align-items:center; margin-bottom:8px;">
+          <div class="cal-nav-btns">
+            <button class="btn-small" id="cal-prev">&lt;</button>
+            <button class="btn-small" id="cal-next">&gt;</button>
+          </div>
+          <div style="font-size:14px;font-weight:600;" id="calendario-mes-actual"></div>
+        </div>
+
+        <div class="cal-grid-header">
+          <div>Lun</div>
+          <div>Mar</div>
+          <div>Mié</div>
+          <div>Jue</div>
+          <div>Vie</div>
+          <div>Sáb</div>
+          <div>Dom</div>
+        </div>
+        <div id="cal-grid" class="cal-grid-dias"></div>
+
+        <div id="cal-detalle-dia" style="margin-top:10px; font-size:12px;">
+          <span style="color:#6b7280;">Toca un día del calendario para ver sus pagos.</span>
+        </div>
+      </div>
+
+      <!-- Vista Agenda -->
+      <div id="vista-cal-agenda" class="cal-tab-content">
+        <div id="cal-agenda-lista"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESUPUESTO -->
+  <section id="seccion-presupuesto" class="hidden">
+    <div class="card">
+      <div class="section-title">Presupuesto mensual</div>
+      <p class="section-subtitle">Define cuánto quieres destinar a cada parte del 50 / 30 / 20.</p>
+
+      <div class="row">
+        <div>
+          <label>Necesidades (50%)</label>
+          <input type="number" id="presu-nec" placeholder="Ej: 20000">
+        </div>
+        <div>
+          <label>Deseos (30%)</label>
+          <input type="number" id="presu-des" placeholder="Ej: 12000">
+        </div>
+        <div>
+          <label>Ahorros (20%)</label>
+          <input type="number" id="presu-aho" placeholder="Ej: 8000">
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-presu">Guardar presupuesto</button>
+    </div>
+  </section>
+
+  <!-- EXPORTAR -->
+  <section id="seccion-exportar" class="hidden">
+    <div class="card">
+      <div class="section-title">Exportar datos</div>
+      <p class="section-subtitle">Descarga tus movimientos en un archivo CSV para abrir en Excel o Numbers.</p>
+
+      <button class="btn-primary" id="btn-exportar">Descargar CSV del mes actual</button>
+    </div>
+  </section>
+
+<script src="js/script.js"></script>
+</main>
+</body>
+</html>
