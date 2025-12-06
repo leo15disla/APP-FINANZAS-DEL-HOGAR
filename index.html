@@ -66,11 +66,11 @@
         </div>
 
         <div class="kpi-box">
-          <div class="kpi-label">Balance</div>
-          <div class="kpi-value" id="kpi-balance">RD$ 0</div>
-          <div class="kpi-extra" id="kpi-balance-tendencia">
-            Sin datos suficientes para comparar la semana.
-          </div>
+        <div class="kpi-label">Balance</div>
+        <div class="kpi-value" id="kpi-balance">RD$ 0</div>
+        <div class="kpi-extra" id="kpi-balance-tendencia">
+          Sin datos suficientes para comparar la semana.
+        </div>
         </div>
 
         <div class="kpi-box">
@@ -97,6 +97,7 @@
         <div class="duo-value" id="kpi-liquidez">RD$ 0</div>
         <div class="duo-hint">Cuentas bancarias menos deudas del mes.</div>
       </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
     <div class="card deuda-widget">
@@ -110,6 +111,7 @@
         <h4>Distribución 50 / 30 / 20</h4>
         <canvas id="chart-503020"></canvas>
         <p id="texto-503020" class="chart-footnote"></p>
+        <p id="limite-503020" class="chart-footnote"></p>
       </div>
 
       <div class="chart-container">
@@ -117,7 +119,7 @@
           <h4>Ingresos vs Gastos</h4>
           <div class="chart-toggle">
             <button class="chart-toggle-btn active" data-modo="mes">Mes</button>
-            <button class="chart-toggle-btn" data-modo="semana">Semanas</button>
+            <button class="chart-toggle-btn" data-modo="semana">Semana</button>
           </div>
         </div>
         <canvas id="chart-ing-gastos"></canvas>
@@ -206,15 +208,22 @@
           </div>
         </div>
 
+        <div class="chip-row" id="chips-tipo">
+          <span class="chip-label">Tipo:</span>
+          <button class="chip active" data-chip="tipo" data-value="Todos">Todos</button>
+          <button class="chip" data-chip="tipo" data-value="Ingreso">Ingresos</button>
+          <button class="chip" data-chip="tipo" data-value="Gasto">Gastos</button>
+          <button class="chip" data-chip="tipo" data-value="Transferencia">Transferencias</button>
+        </div>
+
+        <div class="chip-row" id="chips-tiempo">
+          <span class="chip-label">Rango:</span>
+          <button class="chip active" data-chip="tiempo" data-value="mes">Mes</button>
+          <button class="chip" data-chip="tiempo" data-value="semana">Semana</button>
+          <button class="chip" data-chip="tiempo" data-value="hoy">Hoy</button>
+        </div>
+
         <div class="row">
-          <div>
-            <label>Tipo</label>
-            <select id="filtro-tipo">
-              <option value="Todos">Todos</option>
-              <option value="Ingreso">Ingresos</option>
-              <option value="Gasto">Gastos</option>
-            </select>
-          </div>
           <div>
             <label>50 / 30 / 20</label>
             <select id="filtro503020">
@@ -272,6 +281,21 @@
             </thead>
             <tbody id="tabla-historial"></tbody>
           </table>
+        </div>
+
+        <div class="hist-resumen">
+          <div class="hist-item">
+            <div class="hist-label">Mes más caro</div>
+            <div class="hist-value" id="hist-mes-caro">—</div>
+          </div>
+          <div class="hist-item">
+            <div class="hist-label">Mes más barato</div>
+            <div class="hist-value" id="hist-mes-barato">—</div>
+          </div>
+          <div class="hist-item">
+            <div class="hist-label">Gasto promedio</div>
+            <div class="hist-value" id="hist-mes-promedio">—</div>
+          </div>
         </div>
       </div>
     </div>
@@ -556,6 +580,7 @@
       <p class="section-subtitle">Descarga tus movimientos en un archivo CSV para abrir en Excel o Numbers.</p>
 
       <button class="btn-primary" id="btn-exportar">Descargar CSV del mes actual</button>
+      <button class="btn-primary" id="btn-exportar-json">Descargar JSON del mes actual</button>
     </div>
   </section>
 
