@@ -455,6 +455,24 @@
 
         <div class="row">
           <div>
+            <label for="cuenta-limite">Límite (tarjeta)</label>
+            <input type="number" id="cuenta-limite" placeholder="Ej: 50000">
+          </div>
+          <div>
+            <label for="cuenta-minimo">Pago mínimo (%)</label>
+            <input type="number" id="cuenta-minimo" placeholder="Ej: 5" step="0.1">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="cuenta-interes">Interés mensual estimado (%)</label>
+            <input type="number" id="cuenta-interes" placeholder="Ej: 2.5" step="0.01">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
             <label for="cuenta-dia-corte">Día de corte (tarjeta)</label>
             <input type="number" id="cuenta-dia-corte" min="1" max="31" placeholder="Ej: 15">
           </div>
@@ -560,6 +578,8 @@
       <div class="section-title" id="detalle-prestamo-titulo">Detalle del préstamo</div>
       <p class="section-subtitle" id="detalle-prestamo-subtitulo"></p>
 
+      <div class="resumen-prestamo" id="detalle-prestamo-resumen"></div>
+
       <div style="max-height:300px; overflow:auto; margin-top:10px;">
         <table>
           <thead>
@@ -574,6 +594,10 @@
           </thead>
           <tbody id="tabla-detalle-prestamo"></tbody>
         </table>
+      </div>
+
+      <div class="chart-container" style="margin-top:12px;">
+        <canvas id="chart-prestamo" height="180"></canvas>
       </div>
     </div>
   </section>
@@ -679,7 +703,26 @@
   <section id="seccion-exportar" class="hidden">
     <div class="card">
       <div class="section-title">Exportar datos</div>
-      <p class="section-subtitle">Descarga tus movimientos en un archivo CSV para abrir en Excel o Numbers.</p>
+      <p class="section-subtitle">Descarga tus movimientos y reportes en PDF, Excel o JSON.</p>
+
+      <div class="export-grid">
+        <div>
+          <h4>Exportación rápida</h4>
+          <button class="btn-primary" id="btn-exportar">CSV del mes actual</button>
+          <button class="btn-primary" id="btn-exportar-json">JSON del mes actual</button>
+        </div>
+        <div>
+          <h4>PDF</h4>
+          <button class="btn-primary" id="btn-exportar-pdf-mes">Movimientos del mes</button>
+          <button class="btn-primary" id="btn-exportar-pdf-historial">Historial mensual seleccionado</button>
+          <button class="btn-primary" id="btn-exportar-pdf-dashboard">Resumen del dashboard</button>
+        </div>
+        <div>
+          <h4>Excel</h4>
+          <button class="btn-primary" id="btn-exportar-xlsx">finanzas_mes.xlsx</button>
+          <p class="section-subtitle" style="margin-top:6px;">Incluye fecha, categoría, tipo, nota, monto y totales.</p>
+        </div>
+      </div>
 
       <button class="btn-primary" id="btn-exportar">Descargar CSV del mes actual</button>
       <button class="btn-primary" id="btn-exportar-json">Descargar JSON del mes actual</button>
