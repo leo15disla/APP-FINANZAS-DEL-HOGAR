@@ -75,7 +75,6 @@
           <div class="kpi-value" id="kpi-gastos">RD$ 0</div>
           <span class="kpi-tag" id="kpi-gastos-alerta">Dinero que sale</span>
           <div class="kpi-extra" id="kpi-gastos-variacion">Sin datos del mes anterior</div>
-          <div class="kpi-extra" id="kpi-gastos-restante">Define tu presupuesto mensual.</div>
         </div>
 
         <div class="kpi-box">
@@ -110,33 +109,31 @@
         <div class="duo-value" id="kpi-liquidez">RD$ 0</div>
         <div class="duo-hint">Cuentas bancarias menos deudas del mes.</div>
       </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
-    <div class="card card-mes-anterior">
-      <div class="card-header-row">
-        <div>
-          <div class="section-title">Mes anterior</div>
-          <p class="section-subtitle">Resumen rápido para comparar avances.</p>
-        </div>
-        <button type="button" class="btn-link-small" id="btn-mes-anterior-detalle">Mes anterior</button>
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
       </div>
-      <div class="mes-anterior-detalle hidden" id="mes-anterior-detalle">
-        <div class="mes-anterior-grid">
-          <div>
-            <div class="duo-label">Ingresos previos</div>
-            <div class="duo-value" id="kpi-mes-anterior-ing">RD$ 0</div>
-          </div>
-          <div>
-            <div class="duo-label">Gastos previos</div>
-            <div class="duo-value" id="kpi-mes-anterior-gas">RD$ 0</div>
-          </div>
-          <div>
-            <div class="duo-label">Balance previo</div>
-            <div class="duo-value" id="kpi-mes-anterior-bal">RD$ 0</div>
-          </div>
-        </div>
-        <div class="mes-anterior-comparacion" id="kpi-mes-anterior-comparacion"></div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
       </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
     <div class="card deuda-widget">
@@ -154,7 +151,6 @@
         <canvas id="chart-503020"></canvas>
         <p id="texto-503020" class="chart-footnote"></p>
         <p id="limite-503020" class="chart-footnote"></p>
-        <div id="estado-503020" class="estado-503020"></div>
       </div>
 
       <div class="chart-container">
@@ -243,14 +239,6 @@
           <datalist id="sugerencias-nota"></datalist>
         </div>
 
-        <div class="form-row toggle-row">
-          <label for="toggle-sonido">Sonido al guardar</label>
-          <label class="switch">
-            <input type="checkbox" id="toggle-sonido" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-
         <div class="form-row">
           <button type="submit" class="btn-primary" id="btn-guardar">
             Guardar movimiento
@@ -283,6 +271,21 @@
             <button type="button" class="view-btn active" data-view="lista">Lista</button>
             <button type="button" class="view-btn" data-view="tarjetas">Tarjetas</button>
           </div>
+        </div>
+
+        <div class="chip-row" id="chips-tipo">
+          <span class="chip-label">Tipo:</span>
+          <button class="chip active" data-chip="tipo" data-value="Todos">Todos</button>
+          <button class="chip" data-chip="tipo" data-value="Ingreso">Ingresos</button>
+          <button class="chip" data-chip="tipo" data-value="Gasto">Gastos</button>
+          <button class="chip" data-chip="tipo" data-value="Transferencia">Transferencias</button>
+        </div>
+
+        <div class="chip-row" id="chips-tiempo">
+          <span class="chip-label">Rango:</span>
+          <button class="chip active" data-chip="tiempo" data-value="mes">Mes</button>
+          <button class="chip" data-chip="tiempo" data-value="semana">Semana</button>
+          <button class="chip" data-chip="tiempo" data-value="hoy">Hoy</button>
         </div>
 
         <div class="chip-row" id="chips-tipo">
@@ -710,45 +713,10 @@
             <label for="categoria-limite">Límite</label>
             <input type="number" id="categoria-limite" name="categoria-limite" placeholder="Ej: 5000">
           </div>
-          <div>
-            <label for="categoria-icono">Icono</label>
-            <select id="categoria-icono" name="categoria-icono"></select>
-          </div>
-          <div>
-            <label for="categoria-color">Color</label>
-            <input type="color" id="categoria-color" name="categoria-color" value="#0ea5e9">
-          </div>
         </div>
-        <label class="checkbox-inline">
-          <input type="checkbox" id="categoria-recurrente" name="categoria-recurrente"> Gasto recurrente
-        </label>
         <button class="btn-primary" type="submit">Crear categoría</button>
       </form>
       <div id="lista-presupuesto-personalizado"></div>
-    </div>
-  </section>
-
-  <section id="seccion-ajustes" class="hidden">
-    <div class="card">
-      <div class="section-title">Ajustes y backup</div>
-      <p class="section-subtitle">Respalda tu información o restáurala cuando la necesites.</p>
-      <div class="row" style="gap:8px; flex-wrap:wrap;">
-        <button class="btn-primary" id="btn-backup-export">Exportar backup (.json)</button>
-        <label class="btn-secondary file-label">
-          Importar backup
-          <input type="file" id="input-backup" accept="application/json">
-        </label>
-      </div>
-      <p class="section-subtitle" id="backup-estado"></p>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Modo prueba y reinicio</div>
-      <p class="section-subtitle">Carga datos de ejemplo o borra todo con confirmación.</p>
-      <div class="row" style="gap:10px; flex-wrap:wrap;">
-        <button class="btn-primary" id="btn-demo-data">Modo prueba</button>
-        <button class="btn-danger" id="btn-reset-total">Reset total</button>
-      </div>
     </div>
   </section>
 
@@ -777,10 +745,8 @@
         </div>
       </div>
 
-      <div class="share-row">
-        <button class="btn-secondary" id="btn-share-whatsapp" disabled>Compartir por WhatsApp</button>
-        <span class="section-subtitle" id="share-hint">Genera un PDF o Excel para habilitar compartir.</span>
-      </div>
+      <button class="btn-primary" id="btn-exportar">Descargar CSV del mes actual</button>
+      <button class="btn-primary" id="btn-exportar-json">Descargar JSON del mes actual</button>
     </div>
   </section>
 
