@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Finanzas del Hogar icon">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7A4DFF"/>
+      <stop offset="100%" stop-color="#5A30E0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="120" fill="url(#grad)"/>
+  <circle cx="160" cy="200" r="54" fill="#FFFFFF" opacity="0.12"/>
+  <circle cx="352" cy="328" r="54" fill="#FFFFFF" opacity="0.12"/>
+  <path d="M128 204c0-47.6 38.4-86 86-86h84c47.6 0 86 38.4 86 86v104c0 47.6-38.4 86-86 86h-84c-47.6 0-86-38.4-86-86V204Z" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+  <path d="M176 224h160c22.1 0 40 17.9 40 40v36c0 22.1-17.9 40-40 40H176c-22.1 0-40-17.9-40-40v-36c0-22.1 17.9-40 40-40Z" fill="#FFFFFF" opacity="0.9"/>
+  <text x="50%" y="54%" text-anchor="middle" fill="#5A30E0" font-family="'Inter',-apple-system,BlinkMacSystemFont,sans-serif" font-size="120" font-weight="700" dy="18">FH</text>
+</svg>
