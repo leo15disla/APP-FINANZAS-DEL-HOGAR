@@ -1,0 +1,346 @@
+/* =======================
+   PALETA DE COLORES iOS PURPLE
+   ======================= */
+:root {
+    --primary: #7A3EFF;
+    --primary-light: #A87CFF;
+    --primary-dark: #5B20D3;
+    --background: #F8F8FF;
+    --card: #FFFFFF;
+    --shadow: rgba(0,0,0,0.08);
+    --text-dark: #1A1A1A;
+    --text-light: #555;
+    --success: #3ECF8E;
+    --danger: #FF5A5F;
+    --warning: #FFC048;
+
+    /* Compatibilidad con variables existentes */
+    --color-primary: var(--primary);
+    --color-primary-light: var(--primary-light);
+    --color-primary-soft: #F4EEFF;
+    --color-primary-gradient: linear-gradient(135deg, var(--primary), var(--primary-light));
+    --color-accent: #FF6AD5;
+    --color-bg: var(--background);
+    --color-bg-soft: #F2EDFF;
+    --color-card: var(--card);
+    --color-card-soft: #F8F5FF;
+    --color-text: var(--text-dark);
+    --color-text-soft: var(--text-light);
+    --shadow-soft: 0 10px 30px var(--shadow);
+    --color-border: rgba(0, 0, 0, 0.05);
+}
+
+/* =======================
+   GLOBAL
+   ======================= */
+body {
+    background: var(--background);
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    color: var(--text-dark);
+}
+
+/* Compatibilidad con layout existente */
+body {
+    background: linear-gradient(180deg, #fff 0%, #f8f7ff 35%, #f3edff 100%);
+    color: var(--text-dark);
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+}
+
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+}
+
+/* =======================
+   NAVBAR SUPERIOR
+   ======================= */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 18px 10px;
+    background: #fff;
+    border-bottom: 1px solid #eaeaea;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav a {
+    color: var(--text-light);
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 12px;
+    transition: 0.25s;
+}
+
+nav a:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+nav .active {
+    background: var(--primary);
+    color: white !important;
+}
+
+/* =======================
+   TOPBAR / NAVIGATION OVERRIDES
+   ======================= */
+.topbar {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 12px 30px rgba(90, 48, 224, 0.16);
+}
+
+.nav-pills {
+    justify-content: center;
+    gap: 12px;
+}
+
+.nav-pill {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fdf8ff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.nav-pill.active {
+    background: #ffffff;
+    color: var(--primary);
+    border-color: #ffffff;
+    box-shadow: 0 12px 26px rgba(122, 62, 255, 0.18);
+}
+
+.pill-ghost {
+    background: rgba(255, 255, 255, 0.24);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #fff;
+}
+
+.brand-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* =======================
+   CARD + LAYOUT POLISH
+   ======================= */
+.card,
+.chart-container {
+    border-radius: 18px;
+    box-shadow: 0 10px 30px var(--shadow);
+    background: var(--card);
+}
+
+.card-header,
+.card-header-row,
+.card-body {
+    color: var(--text-dark);
+}
+
+.kpi-box {
+    border-radius: 16px;
+    background: var(--color-card-soft);
+    box-shadow: 0 10px 24px rgba(122, 62, 255, 0.08);
+}
+
+.hero-card {
+    border-radius: 24px;
+    box-shadow: 0 18px 36px rgba(90, 48, 224, 0.12);
+}
+
+.chart-card {
+    background: var(--color-card-soft);
+}
+
+/* =======================
+   FORM + BUTTON TWEAKS
+   ======================= */
+input,
+select,
+textarea {
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary);
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.pill-action,
+.pill-btn {
+    border-radius: 999px;
+    box-shadow: 0 12px 20px rgba(122, 62, 255, 0.16);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.btn-secondary {
+    background: var(--primary-light);
+    color: #fff;
+}
+
+.btn-danger {
+    background: var(--danger);
+}
+
+/* =======================
+   UTILIDADES PARA REMOVER INLINE STYLES
+   ======================= */
+.hidden-svg { position: absolute; width: 0; height: 0; overflow: hidden; }
+.wrap { flex-wrap: wrap; }
+.gap-8 { gap: 8px; }
+.mt-4 { margin-top: 4px; }
+.mt-6 { margin-top: 6px; }
+.mt-10 { margin-top: 10px; }
+.mt-12 { margin-top: 12px; }
+.mb-8 { margin-bottom: 8px; }
+.overflow-x-auto { overflow-x: auto; }
+.scroll-box { max-height: 300px; overflow: auto; }
+.align-center { align-items: center; }
+.calendar-month { font-size: 14px; font-weight: 600; }
+.cal-detalle-dia { font-size: 12px; }
+.text-muted { color: #6b7280; }
+.hidden-block { display: none; }
+
+/* =======================
+   TARJETAS / CARDS
+   ======================= */
+.card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 20px;
+    margin: 18px 0;
+    box-shadow: 0px 3px 10px var(--shadow);
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+/* =======================
+   BOTONES
+   ======================= */
+button {
+    background: var(--primary);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+button:hover {
+    background: var(--primary-dark);
+}
+
+/* Botones secundarios */
+.btn-secondary {
+    background: var(--primary-light);
+}
+
+.btn-danger {
+    background: var(--danger);
+}
+
+/* =======================
+   INPUTS
+   ======================= */
+input, select, textarea {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 6px;
+    font-size: 15px;
+    transition: 0.25s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(122,62,255,0.2);
+    outline: none;
+}
+
+/* =======================
+   TITULARES DE SECCIÓN
+   ======================= */
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* =======================
+   DASHBOARD CARDS EXTENDIDO
+   ======================= */
+.dashboard-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.dashboard-summary .card {
+    flex: 1 1 calc(50% - 16px);
+    min-width: 280px;
+}
+
+/* =======================
+   GRAFICOS
+   ======================= */
+.chart-container {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0px 3px 10px var(--shadow);
+}
+
+/* =======================
+   TAGS / CHIPS
+   ======================= */
+.tag {
+    background: var(--primary-light);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: white;
+    margin-right: 6px;
+}
+
+/* =======================
+   ANIMACIONES
+   ======================= */
+.fade-in {
+    animation: fade 0.45s ease-in-out;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =======================
+   FOOTER
+   ======================= */
+footer {
+    padding: 30px;
+    text-align: center;
+    color: var(--text-light);
+}
