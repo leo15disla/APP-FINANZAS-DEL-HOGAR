@@ -423,7 +423,7 @@
         </div>
 
         <!-- Resumen de movimientos filtrados -->
-        <p id="resumen-mov" class="section-subtitle" style="margin-top:4px;"></p>
+        <p id="resumen-mov" class="section-subtitle mt-4"></p>
 
         <div id="tabla-wrap" style="margin-top:10px; overflow-x:auto;">
           <table>
@@ -461,7 +461,7 @@
           </div>
         </div>
 
-        <div style="margin-top:10px; overflow-x:auto;">
+        <div class="mt-10 overflow-x-auto">
           <table>
             <thead>
               <tr>
@@ -612,7 +612,7 @@
       </form>
     </div>
 
-    <div class="card" id="card-detalle-cuenta" style="display:none;">
+    <div class="card hidden-block" id="card-detalle-cuenta">
       <div class="section-title" id="detalle-cuenta-titulo">Detalle de la cuenta</div>
       <p class="section-subtitle" id="detalle-cuenta-subtitulo"></p>
       <p id="detalle-cuenta-nota"></p>
@@ -679,7 +679,7 @@
       <div class="section-title">Préstamos activos</div>
       <p class="section-subtitle">Lista de préstamos guardados con su resumen principal.</p>
 
-      <div style="overflow-x:auto;">
+      <div class="overflow-x-auto">
         <table>
           <thead>
             <tr>
@@ -697,7 +697,7 @@
       </div>
     </div>
 
-    <div class="card" id="card-detalle-prestamo" style="display:none;">
+    <div class="card hidden-block" id="card-detalle-prestamo">
       <div class="section-title" id="detalle-prestamo-titulo">Detalle del préstamo</div>
       <p class="section-subtitle" id="detalle-prestamo-subtitulo"></p>
 
@@ -740,12 +740,12 @@
 
       <!-- Vista Calendario -->
       <div id="vista-cal-mes" class="cal-tab-content active">
-        <div class="row" style="align-items:center; margin-bottom:8px;">
+        <div class="row align-center mb-8">
           <div class="cal-nav-btns">
             <button class="btn-small" id="cal-prev">&lt;</button>
             <button class="btn-small" id="cal-next">&gt;</button>
           </div>
-          <div style="font-size:14px;font-weight:600;" id="calendario-mes-actual"></div>
+          <div class="calendar-month" id="calendario-mes-actual"></div>
         </div>
 
         <div class="cal-grid-header">
@@ -759,8 +759,8 @@
         </div>
         <div id="cal-grid" class="cal-grid-dias"></div>
 
-        <div id="cal-detalle-dia" style="margin-top:10px; font-size:12px;">
-          <span style="color:#6b7280;">Toca un día del calendario para ver sus pagos.</span>
+        <div id="cal-detalle-dia" class="cal-detalle-dia mt-10">
+          <span class="text-muted">Toca un día del calendario para ver sus pagos.</span>
         </div>
       </div>
 
@@ -820,6 +820,15 @@
       </form>
       <div id="lista-presupuesto-personalizado"></div>
     </div>
+
+      <div class="card">
+        <div class="section-title">Modo prueba y reinicio</div>
+        <p class="section-subtitle">Carga datos de ejemplo o borra todo con confirmación.</p>
+        <div class="row">
+          <button class="btn-primary" id="btn-demo-data">Modo prueba</button>
+          <button class="btn-danger" id="btn-reset-total">Reset total</button>
+        </div>
+      </div>
   </section>
 
   <!-- EXPORTAR -->
