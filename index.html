@@ -843,6 +843,25 @@
           <button class="btn-primary" id="btn-demo-data">Modo prueba</button>
           <button class="btn-danger" id="btn-reset-total">Reset total</button>
         </div>
+        <label class="checkbox-inline">
+          <input type="checkbox" id="categoria-recurrente" name="categoria-recurrente"> Gasto recurrente
+        </label>
+        <button class="btn-primary" type="submit">Crear categoría</button>
+      </form>
+      <div id="lista-presupuesto-personalizado"></div>
+    </div>
+  </section>
+
+  <section id="seccion-ajustes" class="hidden">
+    <div class="card">
+      <div class="section-title">Ajustes y backup</div>
+      <p class="section-subtitle">Respalda tu información o restáurala cuando la necesites.</p>
+      <div class="row gap-8 wrap">
+        <button class="btn-primary" id="btn-backup-export">Exportar backup (.json)</button>
+        <label class="btn-secondary file-label">
+          Importar backup
+          <input type="file" id="input-backup" accept="application/json">
+        </label>
       </div>
   </section>
 
