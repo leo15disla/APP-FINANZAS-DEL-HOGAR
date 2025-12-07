@@ -1,13 +1,6 @@
 import { state, formatCurrency, parseAmount, refreshStorage } from './utils.js';
 
 let notifyCb = () => {};
-const iconosDisponibles = ['🍽️','🚗','🛒','💡','🏠','🎉','🩺','📚','💳','🏦','✨'];
-
-function poblarIconos() {
-  const select = document.getElementById('categoria-icono');
-  if (!select) return;
-  select.innerHTML = iconosDisponibles.map((i) => `<option value="${i}">${i}</option>`).join('');
-}
 
 function guardarPresupuestoBase(form) {
   state.presupuesto.necesidad = parseAmount(form['presupuesto-necesidad'].value) || 0;
@@ -31,10 +24,10 @@ function renderCategorias() {
       (c, index) => `
       <div class="presupuesto-item">
         <div>
-          <strong>${c.icono || '🏷️'} ${c.nombre}</strong>
-          <p>${c.tipo}${c.recurrente ? ' · Recurrente' : ''}</p>
+          <strong>${c.nombre}</strong>
+          <p>${c.tipo}</p>
         </div>
-        <div class="presupuesto-etiqueta" style="--badge-color:${c.color || '#0ea5e9'}">${formatCurrency(c.limite || 0)}</div>
+        <div>${formatCurrency(c.limite || 0)}</div>
         <button class="btn-danger" data-remove="${index}">Eliminar</button>
       </div>
     `
@@ -47,15 +40,11 @@ function agregarCategoria(form) {
   state.presupuesto.categorias.push({
     nombre: form['categoria-nombre'].value,
     tipo: form['categoria-tipo'].value,
-    limite: parseAmount(form['categoria-limite'].value),
-    icono: form['categoria-icono'].value || '✨',
-    color: form['categoria-color'].value || '#0ea5e9',
-    recurrente: form['categoria-recurrente'].checked
+    limite: parseAmount(form['categoria-limite'].value)
   });
   refreshStorage();
   renderCategorias();
   notifyCb('Categoría creada');
-  window.dispatchEvent(new CustomEvent('categorias-actualizadas'));
   form.reset();
 }
 
@@ -63,7 +52,6 @@ export function initPresupuesto({ notify }) {
   notifyCb = notify;
   const formBase = document.getElementById('form-presupuesto');
   const formCat = document.getElementById('form-presupuesto-personalizado');
-  poblarIconos();
   renderPresupuestoBase();
   renderCategorias();
 
@@ -84,7 +72,6 @@ export function initPresupuesto({ notify }) {
       refreshStorage();
       renderCategorias();
       notifyCb('Categoría eliminada', 'warning');
-      window.dispatchEvent(new CustomEvent('categorias-actualizadas'));
     }
   });
 }
