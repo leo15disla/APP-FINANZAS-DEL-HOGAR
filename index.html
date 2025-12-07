@@ -18,10 +18,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Tipografía premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body class="light-theme">
@@ -82,47 +87,23 @@
   </div>
 </div>
 
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-icon">FH</div>
-    <div class="brand-text">
-      <span class="brand-title">Finanzas del Hogar</span>
-      <span class="brand-sub">Tu panel personal</span>
-    </div>
-  </div>
-  <nav class="nav-pills" aria-label="Navegación principal">
-    <button id="btnDashboard" class="nav-pill active">
-      <span class="nav-label">Dashboard</span>
-    </button>
-    <button id="btnRegistrar" class="nav-pill">
-      <span class="nav-label">Registrar</span>
-    </button>
-    <button id="btnMovimientos" class="nav-pill">
-      <span class="nav-label">Movimientos</span>
-    </button>
-    <button id="btnCuentas" class="nav-pill">
-      <span class="nav-label">Cuentas</span>
-    </button>
-    <button id="btnPrestamos" class="nav-pill">
-      <span class="nav-label">Préstamos</span>
-    </button>
-    <button id="btnCalendario" class="nav-pill">
-      <span class="nav-label">Calendario</span>
-    </button>
-    <button id="btnPresupuesto" class="nav-pill">
-      <span class="nav-label">Presupuesto</span>
-    </button>
-    <button id="btnExportar" class="nav-pill">
-      <span class="nav-label">Exportar</span>
-    </button>
-    <button id="btnAjustes" class="nav-pill">
-      <span class="nav-label">Ajustes</span>
-    </button>
-  </nav>
-  <button type="button" class="pill-ghost">Hoy</button>
+<header>
+  <button id="btnDashboard" class="active">
+    <svg class="nav-icon"><use href="#icon-dashboard"></use></svg>
+    <span class="nav-label">Dashboard</span>
+  </button>
+
+  <button id="btnRegistrar">Registrar</button>
+  <button id="btnMovimientos">Movimientos</button>
+  <button id="btnCuentas">Cuentas</button>
+  <button id="btnPrestamos">Préstamos</button>
+  <button id="btnCalendario">Calendario</button>
+  <button id="btnPresupuesto">Presupuesto</button>
+  <button id="btnExportar">Exportar</button>
+  <button id="btnAjustes">Ajustes</button>
 </header>
 
-<main class="page-container">
+<main>
 
   <div id="onboarding-banner" class="card onboarding hidden">
     <div>
@@ -137,20 +118,14 @@
 
   <!-- DASHBOARD -->
   <section id="seccion-dashboard">
-    <div class="card hero-card hero-wide">
-      <div class="hero-left">
-        <p class="eyebrow">Resumen del mes</p>
-        <div class="month-row">
-          <div id="dashboard-mes" class="month-badge calendar-style"></div>
-          <button type="button" id="btn-resumen-anterior" class="btn-link-small">
-            Ver resumen del mes anterior
-          </button>
-        </div>
-        <div class="hero-balance-block">
-          <p class="hero-label">Saldo del mes</p>
-          <div class="hero-balance" id="kpi-balance">RD$ 0</div>
-          <div class="kpi-extra" id="kpi-balance-tendencia">Sin datos suficientes para comparar la semana.</div>
-        </div>
+    <div class="card">
+      <h3>Resumen del mes</h3>
+
+      <div class="month-row">
+        <div id="dashboard-mes" class="month-badge calendar-style"></div>
+        <button type="button" id="btn-resumen-anterior" class="btn-link-small">
+          Ver resumen del mes anterior
+        </button>
       </div>
       <div class="hero-actions">
         <p class="hero-actions-title">Atajos rápidos</p>
@@ -178,14 +153,25 @@
           <div class="kpi-value" id="kpi-gastos">RD$ 0</div>
           <span class="kpi-tag" id="kpi-gastos-alerta">Dinero que sale</span>
           <div class="kpi-extra" id="kpi-gastos-variacion">Sin datos del mes anterior</div>
-          <div class="kpi-extra" id="kpi-gastos-restante">Define tu presupuesto mensual.</div>
         </div>
 
-        <div class="kpi-box kpi-estado">
-          <div class="kpi-icon">⚖️</div>
-          <div class="kpi-label">Estado</div>
-          <span class="kpi-tag estado-badge" id="kpi-estado">En equilibrio</span>
+        <div class="kpi-box">
+        <div class="kpi-label">Balance</div>
+        <div class="kpi-value" id="kpi-balance">RD$ 0</div>
+        <div class="kpi-extra" id="kpi-balance-tendencia">
+          Sin datos suficientes para comparar la semana.
         </div>
+        </div>
+      </div>
+
+      <div class="kpi-carousel">
+        <div class="dashboard-grid">
+          <div class="kpi-box">
+            <div class="kpi-icon">💰</div>
+            <div class="kpi-label">Ingresos</div>
+            <div class="kpi-value" id="kpi-ingresos">RD$ 0</div>
+            <div class="kpi-extra" id="kpi-ingresos-variacion">Sin datos del mes anterior</div>
+          </div>
 
         <div class="kpi-box kpi-prestamos">
           <div class="kpi-icon">📈</div>
@@ -195,89 +181,86 @@
         </div>
       </div>
     </div>
-        </div>
+
+    <div class="card kpi-duo-card">
+      <div class="duo-item">
+        <div class="duo-label">Total en cuentas bancarias</div>
+        <div class="duo-value" id="kpi-total-cuentas">RD$ 0</div>
+        <div class="duo-hint">Saldo combinado de todas las cuentas.</div>
       </div>
+      <div class="duo-item">
+        <div class="duo-label">Liquidez disponible</div>
+        <div class="duo-value" id="kpi-liquidez">RD$ 0</div>
+        <div class="duo-hint">Cuentas bancarias menos deudas del mes.</div>
+      </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
     </div>
 
-    <div class="dashboard-columns">
-      <div class="dashboard-col">
-        <div class="card kpi-duo-card">
-          <div class="duo-item">
-            <div class="pill-label">Cuentas</div>
-            <div class="duo-label">Total en cuentas bancarias</div>
-            <div class="duo-value" id="kpi-total-cuentas">RD$ 0</div>
-            <div class="duo-hint">Saldo combinado de todas las cuentas.</div>
-          </div>
-          <div class="duo-item">
-            <div class="pill-label">Liquidez</div>
-            <div class="duo-label">Liquidez disponible</div>
-            <div class="duo-value" id="kpi-liquidez">RD$ 0</div>
-            <div class="duo-hint">Cuentas bancarias menos deudas del mes.</div>
-          </div>
-        </div>
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
 
-        <div class="card card-mes-anterior">
-          <div class="card-header-row">
-            <div>
-              <div class="section-title">Mes anterior</div>
-              <p class="section-subtitle">Resumen rápido para comparar avances.</p>
-            </div>
-            <button type="button" class="btn-link-small" id="btn-mes-anterior-detalle">Mes anterior</button>
-          </div>
-          <div class="mes-anterior-detalle hidden" id="mes-anterior-detalle">
-            <div class="mes-anterior-grid">
-              <div>
-                <div class="duo-label">Ingresos previos</div>
-                <div class="duo-value" id="kpi-mes-anterior-ing">RD$ 0</div>
-              </div>
-              <div>
-                <div class="duo-label">Gastos previos</div>
-                <div class="duo-value" id="kpi-mes-anterior-gas">RD$ 0</div>
-              </div>
-              <div>
-                <div class="duo-label">Balance previo</div>
-                <div class="duo-value" id="kpi-mes-anterior-bal">RD$ 0</div>
-              </div>
-            </div>
-            <div class="mes-anterior-comparacion" id="kpi-mes-anterior-comparacion"></div>
-          </div>
-        </div>
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
+      </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
 
-        <div class="card deuda-widget">
-          <div class="pill-label">Deudas</div>
-          <div class="section-title">Total de deudas del mes</div>
-          <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
-          <div class="progress">
-            <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
-          </div>
-          <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
-        </div>
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
+      </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
+      </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
+      </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="card deuda-widget">
+      <div class="section-title">Total de deudas del mes</div>
+      <div class="deuda-value" id="kpi-deuda-mes">RD$ 0</div>
+      <div class="progress">
+        <div id="deuda-progress" class="progress-bar" style="width:0%"></div>
+      </div>
+      <p class="section-subtitle" id="kpi-deuda-texto">Tienes RD$ 0 que pagar este mes.</p>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-container">
+        <h4>Distribución 50 / 30 / 20</h4>
+        <canvas id="chart-503020"></canvas>
+        <p id="texto-503020" class="chart-footnote"></p>
+        <p id="limite-503020" class="chart-footnote"></p>
       </div>
 
-      <div class="dashboard-col">
-        <div class="card chart-container chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="pill-label">Gráfico</div>
-              <h4>Distribución 50 / 30 / 20</h4>
-            </div>
-          </div>
-          <canvas id="chart-503020"></canvas>
-          <p id="texto-503020" class="chart-footnote"></p>
-          <p id="limite-503020" class="chart-footnote"></p>
-          <div id="estado-503020" class="estado-503020"></div>
-        </div>
-
-        <div class="card chart-container chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="pill-label">Gráfico</div>
-              <h4>Ingresos vs Gastos</h4>
-            </div>
-            <div class="chart-toggle">
-              <button class="chart-toggle-btn active" data-modo="mes">Mes</button>
-              <button class="chart-toggle-btn" data-modo="semana">Semana</button>
-            </div>
+      <div class="chart-container">
+        <div class="chart-header">
+          <h4>Ingresos vs Gastos</h4>
+          <div class="chart-toggle">
+            <button class="chart-toggle-btn active" data-modo="mes">Mes</button>
+            <button class="chart-toggle-btn" data-modo="semana">Semana</button>
           </div>
           <canvas id="chart-ing-gastos"></canvas>
         </div>
@@ -358,14 +341,6 @@
           <datalist id="sugerencias-nota"></datalist>
         </div>
 
-        <div class="form-row toggle-row">
-          <label for="toggle-sonido">Sonido al guardar</label>
-          <label class="switch">
-            <input type="checkbox" id="toggle-sonido" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-
         <div class="form-row">
           <button type="submit" class="btn-primary" id="btn-guardar">
             Guardar movimiento
@@ -398,6 +373,21 @@
             <button type="button" class="view-btn active" data-view="lista">Lista</button>
             <button type="button" class="view-btn" data-view="tarjetas">Tarjetas</button>
           </div>
+        </div>
+
+        <div class="chip-row" id="chips-tipo">
+          <span class="chip-label">Tipo:</span>
+          <button class="chip active" data-chip="tipo" data-value="Todos">Todos</button>
+          <button class="chip" data-chip="tipo" data-value="Ingreso">Ingresos</button>
+          <button class="chip" data-chip="tipo" data-value="Gasto">Gastos</button>
+          <button class="chip" data-chip="tipo" data-value="Transferencia">Transferencias</button>
+        </div>
+
+        <div class="chip-row" id="chips-tiempo">
+          <span class="chip-label">Rango:</span>
+          <button class="chip active" data-chip="tiempo" data-value="mes">Mes</button>
+          <button class="chip" data-chip="tiempo" data-value="semana">Semana</button>
+          <button class="chip" data-chip="tiempo" data-value="hoy">Hoy</button>
         </div>
 
         <div class="chip-row" id="chips-tipo">
@@ -825,62 +815,10 @@
             <label for="categoria-limite">Límite</label>
             <input type="number" id="categoria-limite" name="categoria-limite" placeholder="Ej: 5000">
           </div>
-          <div>
-            <label for="categoria-icono">Icono</label>
-            <select id="categoria-icono" name="categoria-icono"></select>
-          </div>
-          <div>
-            <label for="categoria-color">Color</label>
-            <input type="color" id="categoria-color" name="categoria-color" value="#0ea5e9">
-          </div>
         </div>
-        <label class="checkbox-inline">
-          <input type="checkbox" id="categoria-recurrente" name="categoria-recurrente"> Gasto recurrente
-        </label>
         <button class="btn-primary" type="submit">Crear categoría</button>
       </form>
       <div id="lista-presupuesto-personalizado"></div>
-    </div>
-  </section>
-
-  <section id="seccion-ajustes" class="hidden">
-    <div class="card">
-      <div class="section-title">Ajustes y backup</div>
-      <p class="section-subtitle">Respalda tu información o restáurala cuando la necesites.</p>
-      <div class="row" style="gap:8px; flex-wrap:wrap;">
-        <button class="btn-primary" id="btn-backup-export">Exportar backup (.json)</button>
-        <label class="btn-secondary file-label">
-          Importar backup
-          <input type="file" id="input-backup" accept="application/json">
-        </label>
-      </div>
-      <p class="section-subtitle" id="backup-estado"></p>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Apariencia</div>
-      <p class="section-subtitle">Elige entre tema claro, oscuro o automático.</p>
-      <div class="ajuste-row">
-        <div>
-          <div class="section-title" style="margin:0; font-size:16px;">Modo oscuro</div>
-          <p class="section-subtitle">Activa el look Purple iOS en fondos oscuros.</p>
-        </div>
-        <label class="ios-switch">
-          <input type="checkbox" id="toggle-tema">
-          <span class="ios-slider"></span>
-        </label>
-        <button class="btn-secondary pill-btn" id="btn-tema-auto">Auto</button>
-      </div>
-      <p class="section-subtitle" id="tema-estado">Se adapta a la preferencia del sistema.</p>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Modo prueba y reinicio</div>
-      <p class="section-subtitle">Carga datos de ejemplo o borra todo con confirmación.</p>
-      <div class="row" style="gap:10px; flex-wrap:wrap;">
-        <button class="btn-primary" id="btn-demo-data">Modo prueba</button>
-        <button class="btn-danger" id="btn-reset-total">Reset total</button>
-      </div>
     </div>
   </section>
 
@@ -909,10 +847,8 @@
         </div>
       </div>
 
-      <div class="share-row">
-        <button class="btn-secondary" id="btn-share-whatsapp" disabled>Compartir por WhatsApp</button>
-        <span class="section-subtitle" id="share-hint">Genera un PDF o Excel para habilitar compartir.</span>
-      </div>
+      <button class="btn-primary" id="btn-exportar">Descargar CSV del mes actual</button>
+      <button class="btn-primary" id="btn-exportar-json">Descargar JSON del mes actual</button>
     </div>
   </section>
 
