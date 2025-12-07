@@ -398,11 +398,13 @@
           <button type="button" data-accion="Supermercado" data-icon="🛒">🛒 Supermercado</button>
         </div>
 
-        <!-- NUEVO: seleccionar cuenta asociada -->
-        <div class="form-row">
-          <label for="mov-cuenta">Cuenta asociada</label>
-          <select id="mov-cuenta"></select>
-        </div>
+          <div class="chip-row" id="chips-tipo">
+            <span class="chip-label">Tipo:</span>
+            <button class="chip active" data-chip="tipo" data-value="Todos">Todos</button>
+            <button class="chip" data-chip="tipo" data-value="Ingreso">Ingresos</button>
+            <button class="chip" data-chip="tipo" data-value="Gasto">Gastos</button>
+            <button class="chip" data-chip="tipo" data-value="Transferencia">Transferencias</button>
+          </div>
 
           <div class="chip-row" id="chips-tiempo">
             <span class="chip-label">Rango:</span>
@@ -568,7 +570,6 @@
             <button type="button" class="view-btn active" data-view="lista">Lista</button>
             <button type="button" class="view-btn" data-view="tarjetas">Tarjetas</button>
           </div>
-        </div>
 
         <div class="chip-row" id="chips-tipo">
           <span class="chip-label">Tipo:</span>
@@ -775,12 +776,15 @@
             <label for="cuenta-interes">Interés mensual estimado (%)</label>
             <input type="number" id="cuenta-interes" placeholder="Ej: 2.5" step="0.01">
           </div>
-        </div>
 
-        <div class="row">
-          <div>
-            <label for="cuenta-dia-corte">Día de corte (tarjeta)</label>
-            <input type="number" id="cuenta-dia-corte" min="1" max="31" placeholder="Ej: 15">
+          <div class="cal-grid-header">
+            <div>Lun</div>
+            <div>Mar</div>
+            <div>Mié</div>
+            <div>Jue</div>
+            <div>Vie</div>
+            <div>Sáb</div>
+            <div>Dom</div>
           </div>
           <div id="cal-grid-mes" class="cal-grid-dias"></div>
 
