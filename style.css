@@ -30,7 +30,17 @@ html, body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
+  /* Ocultamos el desplazamiento horizontal en general pero permitimos
+     el desplazamiento vertical.  La clase .menu-open se aplicará al
+     <body> para bloquear el scroll únicamente cuando el menú móvil
+     esté abierto. */
   overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Bloquear el desplazamiento global cuando el menú móvil está abierto */
+body.menu-open {
+  overflow: hidden;
 }
 
 /* =====================
@@ -739,20 +749,32 @@ h1, h2, h3 {
 }
 
 /* MENÚ MOBILE */
+/*
+ * Utilizamos transform y pointer-events para que el menú no bloquee los
+ * toques cuando está oculto. Por defecto, el menú está fuera de la
+ * pantalla a la derecha usando translateX(100%). Cuando se agrega la
+ * clase `.visible`, se mueve dentro de la pantalla. pointer-events se
+ * establece en none cuando está oculto para permitir que los clics
+ * pasen a la vista principal. Cuando está visible, pointer-events es
+ * auto para que el usuario pueda interactuar con el menú.
+ */
 #mobile-menu {
   position: fixed;
-  background: var(--surface-color);
   top: 0;
-  right: -260px;
+  right: 0;
   width: 250px;
   height: 100vh;
-  transition: right 0.3s ease;
+  background: var(--surface-color);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 999;
   padding-top: 50px;
   box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
-  z-index: 999;
+  pointer-events: none;
 }
 #mobile-menu.visible {
-  right: 0;
+  transform: translateX(0);
+  pointer-events: auto;
 }
 #mobile-menu ul {
   list-style: none;
@@ -965,85 +987,62 @@ h1, h2, h3 {
   color: var(--primary-dark);
 }
 .sobres-list {
+  /* Contenedor de la lista de sobres en la vista de presupuesto.  */
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 12px;
 }
 .sobre-card {
-  background-color: var(--surface-color);
-  border-radius: 16px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-.sobre-card:hover {
-  transform: translateY(-3px);
-}
-.sobre-header {
+  /* Card para cada sobre en la lista. Simplificada para mostrar icono, nombre y saldo. */
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
-}
-.sobre-name {
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--primary-dark);
-}
-.sobre-type {
-  font-size: 0.75rem;
-  color: var(--text-light);
-}
-.sobre-status {
-  font-size: 0.7rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 8px;
-  background-color: #e0e0e0;
-  color: var(--primary-dark);
-  margin-left: 0.5rem;
-}
-.sobre-progress {
-  height: 10px;
-  border-radius: 5px;
-  background-color: #e0e0e0;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
-}
-.sobre-progress.green span,
-.sobre-progress.yellow span,
-.sobre-progress.red span {
-  display: block;
-  height: 100%;
-}
-.sobre-progress.green span {
-  background-color: var(--success-color);
-}
-.sobre-progress.yellow span {
-  background-color: #fbc02d;
-}
-.sobre-progress.red span {
-  background-color: var(--danger-color);
-}
-.sobre-metrics {
-  font-size: 0.8rem;
-  color: var(--text-light);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f6f0ff;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-/* Información adicional de cada sobre: prioridad, categoría de distribución y día de pago */
-.sobre-info {
-  font-size: 0.75rem;
-  color: var(--text-light);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
+/* Hover sobre el sobre */
+.sobre-card:hover {
+  background: #e8d8ff;
 }
-.sobre-info span {
-  margin-right: 0.5rem;
+
+/* Icono grande a la izquierda */
+.sobre-icono {
+  font-size: 1.8rem;
+  margin-right: 10px;
+}
+
+/* Contenedor de información */
+.sobre-info {
+  flex: 1;
+}
+
+.sobre-nombre {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.sobre-saldo {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* Contenedor de badges */
+.sobre-tags {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  display: flex;
+  gap: 6px;
+}
+
+.sobre-tag {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+  font-size: 0.7rem;
 }
 .sobres-form-card {
   background-color: var(--surface-color);
@@ -1148,6 +1147,23 @@ h1, h2, h3 {
   100% {
     opacity: 0;
     transform: translateY(-12px);
+  }
+}
+
+/* ================== Vista de Detalle de Sobre =================== */
+.detalle-sobre {
+  padding: 16px;
+}
+.detalle-sobre h2 {
+  margin-bottom: 8px;
+}
+.detalle-sobre .saldo {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+}
+@media (max-width: 768px) {
+  .detalle-sobre {
+    padding: 12px;
   }
 }
 .sobres-form input,

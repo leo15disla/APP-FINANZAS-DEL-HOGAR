@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ranking = { alta: 1, media: 2, baja: 3 };
     return sobresArr
       .slice()
-      .sort((a, b) => (ranking[a.prioridadNivel] || 3) - (ranking[b.prioridadNivel] || 3));
+      .sort((a, b) => (ranking[a.prioridad] || 3) - (ranking[b.prioridad] || 3));
   }
 
   /**
@@ -57,25 +57,96 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   function cargarSobres() {
     sobres = JSON.parse(localStorage.getItem('sobres')) || [];
-    // Garantizar que cada sobre tenga un código único; si falta, asignar en base a su posición
+    let changed = false;
     sobres.forEach((s, idx) => {
+      // Garantizar que cada sobre tenga un código único; si falta, asignar en base a su posición
       if (!s.codigo) {
         s.codigo = generarCodigoSobre(idx);
+        changed = true;
       }
-      // Asignar valores por defecto para nuevas propiedades
-      if (!s.prioridadNivel) {
-        s.prioridadNivel = 'alta';
+      // Migrar antigua prioridadNivel a prioridad
+      if (s.prioridadNivel && !s.prioridad) {
+        s.prioridad = s.prioridadNivel;
+        delete s.prioridadNivel;
+        changed = true;
       }
+      if (!s.prioridad) {
+        s.prioridad = 'alta';
+        changed = true;
+      }
+      // Categoría de distribución por defecto
       if (!s.categoriaDistribucion) {
         s.categoriaDistribucion = 'necesidad';
+        changed = true;
       }
-      // diaPago debe ser null si no existe
+      // Día de pago: mantener null si no existe
       if (s.diaPago === undefined) {
         s.diaPago = null;
+        changed = true;
+      }
+      // Nuevos campos según estructura extendida
+      if (!('icono' in s)) {
+        s.icono = '';
+        changed = true;
+      }
+      if (!('color' in s)) {
+        s.color = '';
+        changed = true;
+      }
+      if (!('metaTotal' in s)) {
+        s.metaTotal = null;
+        changed = true;
+      }
+      if (!('metaProgreso' in s)) {
+        s.metaProgreso = 0;
+        changed = true;
+      }
+      if (!('metaFecha' in s)) {
+        s.metaFecha = null;
+        changed = true;
+      }
+      // limiteMensual sustituye a limite
+      if (s.limite !== undefined && s.limiteMensual === undefined) {
+        s.limiteMensual = s.limite;
+        delete s.limite;
+        changed = true;
+      }
+      if (!('limiteMensual' in s)) {
+        s.limiteMensual = null;
+        changed = true;
+      }
+      if (!('esTemporal' in s)) {
+        s.esTemporal = false;
+        changed = true;
+      }
+      if (!('mesesActivos' in s)) {
+        s.mesesActivos = [];
+        changed = true;
+      }
+      if (!('esProtegido' in s)) {
+        s.esProtegido = false;
+        changed = true;
+      }
+      if (!('mesesInactividadParaCongelar' in s)) {
+        s.mesesInactividadParaCongelar = null;
+        changed = true;
+      }
+      if (!('congelado' in s)) {
+        s.congelado = false;
+        changed = true;
+      }
+      if (!('ultimoMovimiento' in s)) {
+        s.ultimoMovimiento = null;
+        changed = true;
+      }
+      if (!('historial' in s)) {
+        s.historial = [];
+        changed = true;
       }
     });
-    // Guardar nuevamente si algún código fue asignado
-    localStorage.setItem('sobres', JSON.stringify(sobres));
+    if (changed) {
+      localStorage.setItem('sobres', JSON.stringify(sobres));
+    }
   }
 
   /**
@@ -92,22 +163,40 @@ document.addEventListener('DOMContentLoaded', () => {
   function crearSobre(data) {
     const nuevo = {
       id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+      codigo: data.codigo || generarCodigoSobre(sobres.length),
       nombre: data.nombre,
       tipo: data.tipo,
-      limite: data.tipo === 'fijo' ? parseFloat(data.limite || 0) : 0,
+      // Icono y color opcionales
+      icono: data.icono || '',
+      color: data.color || '',
+      // Saldo inicial
       saldo: parseFloat(data.saldo || 0) || 0,
+      // Prioridad simple
+      prioridad: data.prioridad || 'alta',
+      // Metas: aplican a sobres tipo 'meta'
+      metaTotal: data.metaTotal !== undefined ? parseFloat(data.metaTotal) : null,
+      metaProgreso: data.metaProgreso !== undefined ? parseFloat(data.metaProgreso) : 0,
+      metaFecha: data.metaFecha || null,
+      // Límite mensual para fijos y deudas
+      limiteMensual: data.tipo === 'fijo' || data.tipo === 'deuda' ? (data.limiteMensual ? parseFloat(data.limiteMensual) : null) : null,
+      // Día de pago
+      diaPago: (data.tipo === 'fijo' || data.tipo === 'deuda') && data.diaPago ? parseInt(data.diaPago) : null,
+      // Temporales
+      esTemporal: data.esTemporal || false,
+      mesesActivos: Array.isArray(data.mesesActivos) ? data.mesesActivos : [],
+      // Protección
+      esProtegido: data.esProtegido || false,
+      // Auto freeze
+      mesesInactividadParaCongelar: data.mesesInactividadParaCongelar !== undefined ? parseInt(data.mesesInactividadParaCongelar) : null,
+      congelado: data.congelado || false,
+      ultimoMovimiento: data.ultimoMovimiento || null,
+      // Reportes
+      historial: Array.isArray(data.historial) ? data.historial : [],
+      // Resto de propiedades existentes
       gastado: 0,
-      // Sistema de prioridad simple: alta | media | baja
-      prioridadNivel: data.prioridadNivel || 'alta',
-      // Categoría de distribución para el Dashboard: necesidad | deseo | ahorro
       categoriaDistribucion: data.categoriaDistribucion || 'necesidad',
-      // Día de pago para sobres fijos (1–31) o null
-      diaPago: data.tipo === 'fijo' ? (data.diaPago ? parseInt(data.diaPago) : null) : null,
-      // Categoría vinculada para restar gastos (si corresponde)
       categoriaVinculada: data.categoriaVinculada || ''
     };
-    // Generar código si no se proporciona
-    nuevo.codigo = data.codigo || generarCodigoSobre(sobres.length);
     sobres.push(nuevo);
     guardarSobres();
     return nuevo;
@@ -121,19 +210,43 @@ document.addEventListener('DOMContentLoaded', () => {
   function actualizarSobre(id, data) {
     const idx = sobres.findIndex((s) => s.id === id);
     if (idx !== -1) {
+      // Conservar el sobre actual y reemplazar campos según nueva estructura
+      const current = sobres[idx];
+      // Construir objeto actualizado
       sobres[idx] = {
-        ...sobres[idx],
+        ...current,
         ...data,
-        limite: sobres[idx].tipo === 'fijo' ? parseFloat(data.limite || sobres[idx].limite) : 0,
-        // Actualizar prioridad de nivel si se proporciona
-        prioridadNivel: data.prioridadNivel || sobres[idx].prioridadNivel || 'alta',
-        categoriaDistribucion: data.categoriaDistribucion || sobres[idx].categoriaDistribucion || 'necesidad',
+        prioridad: data.prioridad || current.prioridad || 'alta',
+        categoriaDistribucion: data.categoriaDistribucion || current.categoriaDistribucion || 'necesidad',
+        // Actualizar icono y color si se proporciona
+        icono: data.icono !== undefined ? data.icono : current.icono,
+        color: data.color !== undefined ? data.color : current.color,
+        // Meta: total y fecha
+        metaTotal: data.metaTotal !== undefined ? parseFloat(data.metaTotal) : current.metaTotal,
+        metaProgreso: data.metaProgreso !== undefined ? parseFloat(data.metaProgreso) : current.metaProgreso,
+        metaFecha: data.metaFecha !== undefined ? data.metaFecha : current.metaFecha,
+        // Límite mensual (aplica solo a fijos y deudas)
+        limiteMensual:
+          current.tipo === 'fijo' || current.tipo === 'deuda'
+            ? data.limiteMensual !== undefined
+              ? parseFloat(data.limiteMensual)
+              : current.limiteMensual
+            : null,
+        // Día de pago
         diaPago:
-          sobres[idx].tipo === 'fijo'
-            ? data.diaPago
-              ? parseInt(data.diaPago)
-              : sobres[idx].diaPago || null
-            : null
+          (current.tipo === 'fijo' || current.tipo === 'deuda') && data.diaPago !== undefined
+            ? parseInt(data.diaPago)
+            : current.diaPago,
+        esTemporal: data.esTemporal !== undefined ? data.esTemporal : current.esTemporal,
+        mesesActivos: data.mesesActivos !== undefined ? data.mesesActivos : current.mesesActivos,
+        esProtegido: data.esProtegido !== undefined ? data.esProtegido : current.esProtegido,
+        mesesInactividadParaCongelar:
+          data.mesesInactividadParaCongelar !== undefined
+            ? parseInt(data.mesesInactividadParaCongelar)
+            : current.mesesInactividadParaCongelar,
+        congelado: data.congelado !== undefined ? data.congelado : current.congelado,
+        ultimoMovimiento: data.ultimoMovimiento !== undefined ? data.ultimoMovimiento : current.ultimoMovimiento,
+        categoriaVinculada: data.categoriaVinculada !== undefined ? data.categoriaVinculada : current.categoriaVinculada
       };
       guardarSobres();
     }
@@ -202,104 +315,140 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Ordenar por nivel de prioridad (alta -> media -> baja)
     const ranking = { alta: 1, media: 2, baja: 3 };
-    const sorted = [...sobres].sort((a, b) => (ranking[a.prioridadNivel] || 0) - (ranking[b.prioridadNivel] || 0));
+    const sorted = [...sobres].sort((a, b) => (ranking[a.prioridad] || 0) - (ranking[b.prioridad] || 0));
     sorted.forEach((s) => {
+      // Crear tarjeta principal
       const card = document.createElement('div');
       card.classList.add('sobre-card');
-      card.classList.add(s.tipo);
       card.setAttribute('data-sobre-id', s.id);
-      const header = document.createElement('div');
-      header.classList.add('sobre-header');
-      // Código corto
-      const codeEl = document.createElement('span');
-      codeEl.classList.add('sobre-codigo');
-      codeEl.textContent = s.codigo || generarCodigoSobre(0);
-      // Nombre
-      const nameEl = document.createElement('span');
-      nameEl.classList.add('sobre-nombre');
-      nameEl.textContent = s.nombre;
-      // Tipo
-      const typeEl = document.createElement('span');
-      typeEl.classList.add('sobre-tipo');
-      typeEl.textContent = s.tipo.charAt(0).toUpperCase() + s.tipo.slice(1);
-      header.appendChild(codeEl);
-      header.appendChild(nameEl);
-      header.appendChild(typeEl);
-      const badge = document.createElement('span');
-      badge.classList.add('sobre-status');
-      let estado = '';
-      if (s.tipo === 'fijo') {
-        estado = s.saldo >= s.limite ? 'LLENO' : 'ACTIVO';
-      } else {
-        estado = s.saldo <= 0 ? 'AGOTADO' : 'ACTIVO';
+      // Aplicar color personalizado como borde izquierdo si se proporcionó
+      if (s.color) {
+        card.style.borderLeft = `6px solid ${s.color}`;
       }
-      badge.textContent = estado;
-      header.appendChild(badge);
-      card.appendChild(header);
-      const progress = document.createElement('div');
-      progress.classList.add('sobre-progress');
-      const bar = document.createElement('span');
-      let porcentaje = 0;
-      if (s.tipo === 'fijo' && s.limite > 0) {
-        porcentaje = s.saldo / s.limite;
-      } else {
-        const total = s.saldo + s.gastado;
-        porcentaje = total > 0 ? s.gastado / total : 0;
+      // Icono
+      const iconDiv = document.createElement('div');
+      iconDiv.className = 'sobre-icono';
+      iconDiv.textContent = s.icono || '';
+      // Información contenedora
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'sobre-info';
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'sobre-nombre';
+      nameDiv.textContent = s.nombre;
+      const saldoDiv = document.createElement('div');
+      saldoDiv.className = 'sobre-saldo';
+      // Mostrar saldo formateado
+      saldoDiv.textContent = formatearMoneda ? formatearMoneda(s.saldo) : formatCurrency(s.saldo);
+      // Contenedor de tags
+      const tagsDiv = document.createElement('div');
+      tagsDiv.className = 'sobre-tags';
+      // Protegido
+      if (s.esProtegido) {
+        const span = document.createElement('span');
+        span.className = 'sobre-tag';
+        span.textContent = '🔒';
+        tagsDiv.appendChild(span);
       }
-      bar.style.width = `${Math.min(100, porcentaje * 100)}%`;
-      if (porcentaje < 0.7) progress.classList.add('green');
-      else if (porcentaje <= 1) progress.classList.add('yellow');
-      else progress.classList.add('red');
-      progress.appendChild(bar);
-      card.appendChild(progress);
-      const metrics = document.createElement('div');
-      metrics.classList.add('sobre-metrics');
-      const saldoEl = document.createElement('span');
-      saldoEl.textContent = 'Saldo: ' + formatCurrency(s.saldo);
-      const gastadoEl = document.createElement('span');
-      gastadoEl.textContent = 'Gastado: ' + formatCurrency(s.gastado);
-      metrics.appendChild(saldoEl);
-      metrics.appendChild(gastadoEl);
-      if (s.tipo === 'fijo') {
-        const limiteEl = document.createElement('span');
-        limiteEl.textContent = 'Límite: ' + formatCurrency(s.limite);
-        metrics.appendChild(limiteEl);
+      // Congelado
+      if (s.congelado) {
+        const span = document.createElement('span');
+        span.className = 'sobre-tag';
+        span.textContent = '❄';
+        tagsDiv.appendChild(span);
       }
-      card.appendChild(metrics);
-      // Información adicional: prioridad, distribución y día de pago
-      const info = document.createElement('div');
-      info.classList.add('sobre-info');
-      const prioritySpan = document.createElement('span');
-      prioritySpan.classList.add('sobre-prioridad-info');
-      // Capitalizar primera letra
-      const priorityText = s.prioridadNivel
-        ? s.prioridadNivel.charAt(0).toUpperCase() + s.prioridadNivel.slice(1)
-        : '';
-      prioritySpan.textContent = `Prioridad: ${priorityText}`;
-      const distSpan = document.createElement('span');
-      distSpan.classList.add('sobre-distribucion-info');
-      const distText = s.categoriaDistribucion
-        ? s.categoriaDistribucion.charAt(0).toUpperCase() + s.categoriaDistribucion.slice(1)
-        : '';
-      distSpan.textContent = distText;
-      info.appendChild(prioritySpan);
-      info.appendChild(distSpan);
-      if (s.tipo === 'fijo' && s.diaPago) {
-        const pagoSpan = document.createElement('span');
-        pagoSpan.classList.add('sobre-dia-pago-info');
-        pagoSpan.textContent = `Paga el día ${s.diaPago}`;
-        info.appendChild(pagoSpan);
+      // Meta
+      if (s.tipo === 'meta') {
+        const span = document.createElement('span');
+        span.className = 'sobre-tag';
+        span.textContent = '🎯';
+        tagsDiv.appendChild(span);
       }
-      card.appendChild(info);
-      // Capa para chips de animación
+      // Día de pago
+      if ((s.tipo === 'fijo' || s.tipo === 'deuda') && s.diaPago) {
+        const span = document.createElement('span');
+        span.className = 'sobre-tag';
+        span.textContent = '📅';
+        tagsDiv.appendChild(span);
+      }
+      // Agregar elementos al infoDiv
+      infoDiv.appendChild(nameDiv);
+      infoDiv.appendChild(saldoDiv);
+      infoDiv.appendChild(tagsDiv);
+      // Ensamblar tarjeta
+      card.appendChild(iconDiv);
+      card.appendChild(infoDiv);
+      // Capa para chips de animación (para ingresos/gastos)
       const animLayer = document.createElement('div');
       animLayer.classList.add('sobre-anim-layer');
       card.appendChild(animLayer);
-      card.addEventListener('click', () => {
-        editarSobre(s.id);
-      });
+      // Añadir tarjeta al contenedor
       listEl.appendChild(card);
     });
+  }
+
+  /**
+   * Abre la vista de detalle para un sobre específico.
+   * @param {string} id Identificador del sobre a mostrar
+   */
+  function abrirFichaSobre(id) {
+    cargarSobres();
+    const sobre = sobres.find((s) => s.id === id);
+    if (!sobre) return;
+    const detailSection = document.getElementById('vista-sobre-detalle');
+    if (!detailSection) return;
+    detailSection.innerHTML = generarHTMLDetalleSobre(sobre);
+    // Mostrar la vista
+    if (typeof showView === 'function') {
+      showView('vista-sobre-detalle');
+    } else if (typeof cambiarVista === 'function') {
+      cambiarVista('vista-sobre-detalle');
+    }
+  }
+
+  /**
+   * Genera el HTML para la ficha detallada de un sobre.
+   * @param {object} sobre
+   * @returns {string} HTML a inyectar
+   */
+  function generarHTMLDetalleSobre(sobre) {
+    const format = (val) => formatCurrency(val);
+    return `
+      <div class="detalle-sobre">
+        <!-- Botón para volver a la lista de sobres -->
+        <button id="btn-volver-sobres" class="btn btn-secondary" style="margin-bottom: 1rem;">Volver a sobres</button>
+        <h2>${sobre.icono || ''} ${sobre.nombre}</h2>
+        <p class="saldo">Saldo actual: <strong>${format(sobre.saldo)}</strong></p>
+        <h3>Configuración</h3>
+        <ul>
+          <li>Tipo: ${sobre.tipo}</li>
+          <li>Prioridad: ${sobre.prioridad}</li>
+          <li>Protegido: ${sobre.esProtegido ? 'Sí' : 'No'}</li>
+        </ul>
+        ${sobre.tipo === 'meta' ? `
+        <h3>Meta</h3>
+        <p>Meta total: ${format(sobre.metaTotal)}</p>
+        <p>Progreso: ${format(sobre.metaProgreso)}</p>
+        ` : ''}
+        ${(sobre.tipo === 'fijo' || sobre.tipo === 'deuda') ? `
+        <h3>Pago mensual</h3>
+        <p>Límite mensual: ${format(sobre.limiteMensual)}</p>
+        <p>Día de pago: ${sobre.diaPago || ''}</p>
+        ` : ''}
+        ${sobre.esTemporal ? `
+        <h3>Temporada Activa</h3>
+        <p>Meses: ${Array.isArray(sobre.mesesActivos) ? sobre.mesesActivos.join(', ') : ''}</p>
+        ` : ''}
+        <h3>Historial</h3>
+        <div class="historial-sobre">
+          ${Array.isArray(sobre.historial) && sobre.historial.length > 0 ? sobre.historial.map(h => `
+            <div class="mov">
+              <span>${h.fecha}</span>
+              <span>${h.tipo === 'ingreso' ? '+' : (h.tipo === 'ajuste' ? '' : '-') } ${format(h.monto)}</span>
+            </div>
+          `).join('') : '<p>No hay movimientos.</p>'}
+        </div>
+      </div>
+    `;
   }
 
   /**
@@ -308,16 +457,21 @@ document.addEventListener('DOMContentLoaded', () => {
   function distribuirIngresoEnSobres(montoTotal, fecha, fuente) {
     cargarSobres();
     let restante = parseFloat(montoTotal) || 0;
-    // Ordenar sobres fijos que aún no han alcanzado su límite por prioridad (alta -> media -> baja)
+    // Ordenar sobres fijos/deudas que aún no han alcanzado su límite mensual por prioridad (alta -> media -> baja)
     const fijos = ordenarPorPrioridad(
-      sobres.filter((s) => s.tipo === 'fijo' && s.saldo < s.limite)
+      sobres.filter(
+        (s) => (s.tipo === 'fijo' || s.tipo === 'deuda') && s.limiteMensual && s.saldo < s.limiteMensual
+      )
     );
     fijos.forEach((s) => {
       if (restante <= 0) return;
-      const necesario = s.limite - s.saldo;
+      const necesario = (s.limiteMensual || 0) - s.saldo;
       const asignar = Math.min(necesario, restante);
       if (asignar > 0) {
         s.saldo += asignar;
+        // Registrar último movimiento y desactivar congelado
+        s.ultimoMovimiento = fecha;
+        s.congelado = false;
         // animación de ingreso
         animarIngresoSobre(s.id, asignar);
       }
@@ -331,22 +485,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const parte = restante / variables.length;
         variables.forEach((s) => {
           s.saldo += parte;
+          // Registrar último movimiento y desactivar congelado
+          s.ultimoMovimiento = fecha;
+          s.congelado = false;
           animarIngresoSobre(s.id, parte);
         });
         restante = 0;
       } else if (metodo === 'proporcional') {
-        let totalRef = variables.reduce((sum, s) => sum + (s.limite || 1), 0);
+        let totalRef = variables.reduce((sum, s) => sum + (s.limiteMensual || 1), 0);
         variables.forEach((s) => {
-          const ref = s.limite || 1;
-          const asignar = (ref / totalRef) * restante;
-          s.saldo += asignar;
-          animarIngresoSobre(s.id, asignar);
+          const ref = s.limiteMensual || 1;
+          const asignarVar = (ref / totalRef) * restante;
+          s.saldo += asignarVar;
+          s.ultimoMovimiento = fecha;
+          s.congelado = false;
+          animarIngresoSobre(s.id, asignarVar);
         });
         restante = 0;
       } else {
         const parte = restante / variables.length;
         variables.forEach((s) => {
           s.saldo += parte;
+          s.ultimoMovimiento = fecha;
+          s.congelado = false;
           animarIngresoSobre(s.id, parte);
         });
         restante = 0;
@@ -366,6 +527,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sobre) {
       sobre.saldo = (parseFloat(sobre.saldo) || 0) - (parseFloat(monto) || 0);
       sobre.gastado = (parseFloat(sobre.gastado) || 0) + (parseFloat(monto) || 0);
+      // Registrar último movimiento y desactivar congelado
+      const ahora = new Date().toISOString().split('T')[0];
+      sobre.ultimoMovimiento = ahora;
+      sobre.congelado = false;
       guardarSobres();
       // Animación de gasto
       animarGastoSobre(sobre.id, monto);
@@ -383,6 +548,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sobre) {
       sobre.saldo = (parseFloat(sobre.saldo) || 0) - (parseFloat(monto) || 0);
       sobre.gastado = (parseFloat(sobre.gastado) || 0) + (parseFloat(monto) || 0);
+      // Registrar último movimiento y desactivar congelado
+      const ahora = new Date().toISOString().split('T')[0];
+      sobre.ultimoMovimiento = ahora;
+      sobre.congelado = false;
       guardarSobres();
       animarGastoSobre(sobre.id, monto);
     }
@@ -759,7 +928,8 @@ document.addEventListener('DOMContentLoaded', () => {
           fecha: fechaStr,
           titulo: `Pagar ${sobre.nombre}`,
           sobreId: sobre.id,
-          montoEstimado: sobre.limite || sobre.saldo || 0
+          // Usar limiteMensual como referencia de pago o el saldo si no está definido
+          montoEstimado: sobre.limiteMensual != null ? sobre.limiteMensual : (sobre.saldo || 0)
         });
       });
     return eventos;
@@ -792,7 +962,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .forEach((s) => {
         const dia = Math.min(s.diaPago, diasDelMes(mes, anio));
         const fecha = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-        const monto = s.limite || s.saldo || 0;
+        const monto = (s.limiteMensual != null ? s.limiteMensual : s.saldo) || 0;
         agenda.push({
           tipo: 'sobreFijo',
           nombre: `Pagar ${s.nombre}`,
@@ -1909,17 +2079,29 @@ document.addEventListener('DOMContentLoaded', () => {
   // =================== Menú hamburguesa móvil ===================
   const btnMenuMobile = document.getElementById('btn-menu-mobile');
   const mobileMenu = document.getElementById('mobile-menu');
+  // Abrir o cerrar el menú móvil.  Se utiliza la clase 'visible'
+  // para controlar la animación CSS y la clase 'menu-open' en body
+  // para bloquear el scroll solo cuando el menú está abierto.
   if (btnMenuMobile && mobileMenu) {
     btnMenuMobile.addEventListener('click', () => {
       mobileMenu.classList.toggle('visible');
+      // alternar bloqueo de scroll al cuerpo
+      document.body.classList.toggle('menu-open', mobileMenu.classList.contains('visible'));
     });
-    // Cerrar menú al seleccionar una vista
-    document.querySelectorAll('#mobile-menu li').forEach((item) => {
+    // Asociar clics en las opciones del menú móvil con la navegación SPA
+    document.querySelectorAll('#mobile-menu [data-view]').forEach((item) => {
       item.addEventListener('click', () => {
-        mobileMenu.classList.remove('visible');
         const view = item.dataset.view;
-        if (view) {
+        // Ocultar menú y permitir scroll
+        mobileMenu.classList.remove('visible');
+        document.body.classList.remove('menu-open');
+        // Cambiar de vista utilizando la misma función que el menú de escritorio
+        if (typeof showView === 'function') {
           showView(view);
+        } else if (typeof cambiarVista === 'function') {
+          cambiarVista(view);
+        } else {
+          console.warn('Función de cambio de vista no encontrada');
         }
       });
     });
@@ -2248,8 +2430,8 @@ document.addEventListener('DOMContentLoaded', () => {
           y += 20;
         } else {
           sobres.forEach((s) => {
-            if (s.tipo === 'fijo') {
-              doc.text(`${s.nombre}: saldo ${formatCurrency(s.saldo)} de ${formatCurrency(s.limite)}`, 40, y);
+            if (s.tipo === 'fijo' || s.tipo === 'deuda') {
+              doc.text(`${s.nombre}: saldo ${formatCurrency(s.saldo)} de ${formatCurrency(s.limiteMensual || 0)}`, 40, y);
             } else {
               doc.text(`${s.nombre}: saldo ${formatCurrency(s.saldo)}, gastado ${formatCurrency(s.gastado)}`, 40, y);
             }
@@ -2620,6 +2802,30 @@ document.addEventListener('DOMContentLoaded', () => {
       categoryChips.forEach((c) => c.classList.remove('selected'));
       chip.classList.add('selected');
     });
+  });
+
+  // Delegar los clics en las tarjetas de sobres para abrir su ficha de detalle.
+  document.addEventListener('click', (ev) => {
+    const card = ev.target.closest('.sobre-card');
+    if (!card) return;
+    const id = card.dataset.sobreId;
+    if (!id) return;
+    // Si existe la función de abrir ficha, llamarla
+    if (typeof abrirFichaSobre === 'function') {
+      abrirFichaSobre(id);
+    }
+  });
+
+  // Escuchar clic en el botón de volver dentro de la ficha de sobre.
+  document.addEventListener('click', (ev) => {
+    if (ev.target && ev.target.id === 'btn-volver-sobres') {
+      // Regresar a la vista de sobres/presupuesto
+      if (typeof showView === 'function') {
+        showView('presupuesto');
+      } else if (typeof cambiarVista === 'function') {
+        cambiarVista('presupuesto');
+      }
+    }
   });
 
   // Cargar valores iniciales al arrancar
