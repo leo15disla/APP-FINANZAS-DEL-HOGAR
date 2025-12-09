@@ -2053,6 +2053,48 @@ body.dark-mode {
   margin-top: 1rem;
 }
 
+/* Animaciones de distribución de sobres */
+#animacion-sobres {
+  position: fixed;
+  top: calc(56px + env(safe-area-inset-top));
+  left: 0;
+  width: 100%;
+  height: calc(100% - 56px - env(safe-area-inset-top));
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.animacion-sobres-oculta {
+  display: none;
+}
+
+.animacion-burbuja {
+  position: absolute;
+  background: rgba(125, 90, 166, 0.18);
+  color: #7d5ba6;
+  border-radius: 30px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  animation: moverBurbuja 0.9s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes moverBurbuja {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(20px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1) translateY(-8px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-40px);
+  }
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
   .nav-links {
