@@ -38,6 +38,18 @@ html, body {
   overflow-y: auto;
 }
 
+/* Ajustes de entrada para evitar zoom en iOS */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+button, .btn, .sobre-card, .menu-item, .nav-item, #mobile-menu li {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
 /* Bloquear el desplazamiento global cuando el menú móvil está abierto */
 body.menu-open {
   overflow: hidden;
@@ -82,6 +94,11 @@ body.menu-open {
   background-color: var(--surface-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  padding-top: env(safe-area-inset-top);
+}
+
+header, .mobile-header, #mobile-header {
+  padding-top: env(safe-area-inset-top);
 }
 
 .nav-container {
@@ -140,6 +157,11 @@ body.menu-open {
 
 .view.active {
   display: block;
+}
+
+.view, .vista {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Animaciones y transiciones sutiles al estilo iOS */
@@ -771,10 +793,12 @@ h1, h2, h3 {
   padding-top: 50px;
   box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
   pointer-events: none;
+  visibility: hidden;
 }
 #mobile-menu.visible {
   transform: translateX(0);
   pointer-events: auto;
+  visibility: visible;
 }
 #mobile-menu ul {
   list-style: none;
@@ -1001,6 +1025,8 @@ h1, h2, h3 {
   background: #f6f0ff;
   cursor: pointer;
   transition: background 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
 
 /* Hover sobre el sobre */

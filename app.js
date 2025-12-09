@@ -403,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (typeof cambiarVista === 'function') {
       cambiarVista('vista-sobre-detalle');
     }
+    resetScrollForIOS();
   }
 
   /**
@@ -689,6 +690,11 @@ document.addEventListener('DOMContentLoaded', () => {
     contrast: false  // modo visión amigable
   };
 
+  function resetScrollForIOS() {
+    window.scrollTo(0, 0);
+    setTimeout(() => window.scrollTo(0, 0), 10);
+  }
+
   // Función para cambiar de vista
   function showView(viewId) {
     views.forEach((view) => {
@@ -730,6 +736,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarAjustes();
         break;
     }
+
+    resetScrollForIOS();
   }
 
   // Event listeners para navegación
@@ -2085,8 +2093,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnMenuMobile && mobileMenu) {
     btnMenuMobile.addEventListener('click', () => {
       mobileMenu.classList.toggle('visible');
+      const isMenuVisible = mobileMenu.classList.contains('visible');
+      mobileMenu.classList.toggle('hidden', !isMenuVisible);
       // alternar bloqueo de scroll al cuerpo
-      document.body.classList.toggle('menu-open', mobileMenu.classList.contains('visible'));
+      document.body.classList.toggle('menu-open', isMenuVisible);
     });
     // Asociar clics en las opciones del menú móvil con la navegación SPA
     document.querySelectorAll('#mobile-menu [data-view]').forEach((item) => {
@@ -2094,6 +2104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const view = item.dataset.view;
         // Ocultar menú y permitir scroll
         mobileMenu.classList.remove('visible');
+        mobileMenu.classList.add('hidden');
         document.body.classList.remove('menu-open');
         // Cambiar de vista utilizando la misma función que el menú de escritorio
         if (typeof showView === 'function') {
@@ -2103,6 +2114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           console.warn('Función de cambio de vista no encontrada');
         }
+        resetScrollForIOS();
       });
     });
   }
@@ -2825,6 +2837,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (typeof cambiarVista === 'function') {
         cambiarVista('presupuesto');
       }
+      resetScrollForIOS();
     }
   });
 
