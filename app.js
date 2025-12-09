@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (m.tipo === 'ingreso') totalIngresos += parseFloat(m.monto);
       else totalGastos += parseFloat(m.monto);
     });
-    const saldoLibre = totalIngresos - totalGastos - totalAsignado;
+    const saldoLibre = calcularSaldoLibreDisponible();
     resumenEl.innerHTML = '';
     const summaryGrid = document.createElement('div');
     summaryGrid.classList.add('sobres-summary-grid');
@@ -2716,6 +2716,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // =================== Eventos para sobres ===================
   const btnNuevoSobre = document.getElementById('btn-nuevo-sobre');
+  const btnDistribuirSobres = document.getElementById('btn-distribuir-sobres');
   const sobreFormContainer = document.getElementById('sobre-form-container');
   const sobreForm = document.getElementById('sobre-form');
   const sobreTipoSelect = document.getElementById('sobre-tipo');
@@ -2733,6 +2734,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         sobreFormContainer.classList.toggle('hidden');
       }
+    });
+  }
+  if (btnDistribuirSobres) {
+    btnDistribuirSobres.addEventListener('click', () => {
+      cargarSobres();
+      const saldoLibre = calcularSaldoLibreDisponible();
+      const ingresoPrompt = prompt(
+        '¿Cuánto dinero disponible deseas distribuir automáticamente?',
+        saldoLibre > 0 ? saldoLibre.toFixed(2) : ''
+      );
+      if (ingresoPrompt === null) return;
+      const monto = numeroSeguro(ingresoPrompt, 0);
+      if (!monto || monto <= 0) {
+        showToast('Introduce un monto válido para distribuir.');
+        return;
+      }
+      const resultado = distribuirAutomaticamente(monto);
+      mostrarResumenDistribucion(resultado);
+      showToast(resultado.asignaciones.length ? 'Distribución completada' : 'Sin asignaciones automáticas');
     });
   }
   // Mostrar u ocultar campo de límite según tipo
