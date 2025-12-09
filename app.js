@@ -724,16 +724,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Aplica un movimiento de gasto a los sobres.
-   */
-  function aplicarMovimientoAGastosYSobres(mov) {
-    if (!mov || !mov.tipo) return;
-    if (mov.tipo === 'gasto') {
-      descontarDeSobrePorCategoria(mov.categoria, parseFloat(mov.monto));
-    }
-  }
-
-  /**
    * Aplica animación de ingreso a un sobre, mostrando un chip flotante y un pulso.
    * @param {string} sobreId
    * @param {number} monto

@@ -189,7 +189,7 @@ header, .mobile-header, #mobile-header {
   }
 }
 /* Animación de fade‑in para tarjetas */
-.card, .mov-card, .loan-card, .account-card, .budget-card, .summary-card-new, .form-card, .prestamo-form-card, .presupuesto-form-card {
+.card, .mov-card, .loan-card, .account-card, .budget-card, .summary-card-new, .form-card, .prestamo-form-card {
   animation: fadeIn 0.4s ease both;
 }
 /* Transición para botones */
@@ -236,6 +236,7 @@ h1, h2, h3 {
   margin-bottom: 2rem;
 }
 
+/* Tarjetas resumen en dashboard */
 .card {
   background-color: var(--surface-color);
   border-radius: 12px;
@@ -1077,8 +1078,41 @@ h1, h2, h3 {
     font-size: 1.05rem;
   }
 }
-.event-evento {
-  background-color: #42a5f5; /* azul */
+
+@media (max-width: 430px) {
+  .card,
+  .summary-card-new,
+  .form-card,
+  .sobres-form-card,
+  .export-section,
+  .export-pdf-section,
+  .summary-card-sobres,
+  .sobres-empty-card {
+    max-width: 96%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #mobile-header #btn-menu-mobile {
+    width: 40px;
+  }
+  #mobile-title {
+    font-size: 1.1rem;
+  }
+  #mobile-menu {
+    width: 80vw;
+  }
+  #mobile-menu li {
+    font-size: 1rem;
+  }
+  .sobres-list {
+    gap: 8px;
+  }
+  .agenda-mensual-resumen {
+    grid-template-columns: 1fr;
+  }
+  .agenda-event-card {
+    padding: 12px;
+  }
 }
 .calendar-details {
   margin-top: 1rem;
@@ -1107,32 +1141,6 @@ h1, h2, h3 {
   font-weight: bold;
 }
 
-/* ====== Módulo Presupuesto ====== */
-.presupuesto-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-.presupuesto-form-card {
-  background-color: var(--surface-color);
-  border-radius: 16px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-}
-.budget-form .form-group {
-  margin-bottom: 1rem;
-}
-.budget-form input,
-.budget-form select {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d9c7ff;
-  border-radius: 10px;
-  background-color: #faf9ff;
-  font-size: 0.9rem;
-}
 .presupuesto-list {
   display: flex;
   flex-direction: column;
@@ -1629,6 +1637,12 @@ h1, h2, h3 {
   .conciliacion-digital {
     text-align: left;
   }
+  .conciliacion-header {
+    flex-direction: column;
+  }
+  .conciliacion-digital {
+    text-align: left;
+  }
 }
 .sobres-form input,
 .sobres-form select {
@@ -1919,14 +1933,6 @@ body.dark-mode {
 #balance-card {
   background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   color: #fff;
-}
-
-/* Chart container */
-.chart-container {
-  background-color: var(--surface-color);
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
 }
 
 .bar-chart {
@@ -2234,9 +2240,6 @@ body.dark-mode {
   }
   .nav-item {
     padding: 0.5rem 0;
-  }
-  .card-container {
-    flex-direction: column;
   }
   .filters {
     flex-direction: column;
