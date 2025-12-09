@@ -796,8 +796,6 @@ h1, h2, h3 {
   box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
   pointer-events: none;
   visibility: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 #mobile-menu.visible {
   transform: translateX(0);
