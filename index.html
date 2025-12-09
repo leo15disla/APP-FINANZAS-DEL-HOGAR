@@ -8,10 +8,8 @@
     <title>Finanzas del Hogar</title>
     <!-- Manifest for PWA installation -->
     <link rel="manifest" href="./manifest.json" />
-    <!-- Application styles: cargamos primero la versión minificada y luego la versión completa
-         para que las nuevas clases de sobres se apliquen correctamente. -->
+    <!-- Application styles -->
     <link rel="stylesheet" href="./style.min.css" />
-    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <!-- Fixed navigation bar -->
@@ -34,7 +32,9 @@
           <a href="#" class="nav-item" data-view="cuentas">Cuentas</a>
           <a href="#" class="nav-item" data-view="prestamos">Préstamos</a>
           <a href="#" class="nav-item" data-view="calendario">Calendario</a>
+          <a href="#" class="nav-item" data-view="agenda-mensual">Agenda mensual</a>
           <a href="#" class="nav-item" data-view="presupuesto">Presupuesto</a>
+          <a href="#" class="nav-item" data-view="cierre-mensual">Cierre mensual</a>
           <a href="#" class="nav-item" data-view="exportar">Exportar</a>
           <a href="#" class="nav-item" data-view="ajustes">Ajustes</a>
         </nav>
@@ -48,7 +48,9 @@
           <li data-view="cuentas">Cuentas</li>
           <li data-view="prestamos">Préstamos</li>
           <li data-view="calendario">Calendario</li>
+          <li data-view="agenda-mensual">Agenda mensual</li>
           <li data-view="presupuesto">Presupuesto</li>
+          <li data-view="cierre-mensual">Cierre mensual</li>
           <li data-view="exportar">Exportar</li>
           <li data-view="ajustes">Ajustes</li>
         </ul>
@@ -70,7 +72,7 @@
             </svg>
           </div>
           <div class="hero-text">
-            <h2>Finanzas del Hogar</h2>
+            <h2 class="mobile-hide-title">Finanzas del Hogar</h2>
             <p>Tu resumen financiero</p>
           </div>
         </div>
@@ -383,17 +385,55 @@
         </div>
       </section>
 
+      <!-- =================== Agenda Financiera del Mes =================== -->
+      <section id="agenda-mensual" class="view vista">
+        <h2>Agenda Financiera del Mes</h2>
+        <div id="agenda-resumen" class="agenda-mensual-resumen"></div>
+        <div id="agenda-listado" class="agenda-mensual-listado"></div>
+      </section>
+
+      <!-- =================== Cierre Mensual =================== -->
+      <section id="cierre-mensual" class="view vista">
+        <h2>Cierre Mensual</h2>
+        <p class="descripcion">Revisa tus sobres físicos y concilia con el sistema.</p>
+        <div id="lista-conciliacion" class="lista-conciliacion"></div>
+        <button id="btn-confirmar-cierre" class="btn btn-principal">Confirmar Cierre del Mes</button>
+      </section>
+
       <!-- =================== Módulo Presupuesto =================== -->
       <section id="presupuesto" class="view">
         <!-- Nueva vista de presupuesto basada en sobres -->
         <div class="sobres-header">
           <h2>Presupuesto / Sobres</h2>
-          <button id="btn-nuevo-sobre" class="btn btn-primary">Nuevo sobre</button>
+          <div class="sobres-actions">
+            <button id="btn-ir-agenda" class="btn btn-secondary">Agenda mensual</button>
+            <button id="btn-nuevo-sobre" class="btn btn-primary">Nuevo sobre</button>
+          </div>
+        </div>
+        <div class="sobres-distribucion-panel card">
+          <div class="sobres-distribucion-head">
+            <h3>Distribución automática</h3>
+            <button id="btn-distribuir-sobres" class="btn btn-primary btn-distribuir-auto">
+              Distribuir automáticamente
+            </button>
+          </div>
+          <div id="sobres-distribucion-resumen" class="sobres-distribucion-resumen" aria-live="polite"></div>
         </div>
         <!-- Resumen general de sobres -->
         <div id="sobres-resumen" class="sobres-resumen"></div>
         <!-- Lista de sobres -->
         <div id="sobres-list" class="sobres-list"></div>
+        <!-- Mensaje cuando no hay sobres disponibles -->
+        <div id="sobres-empty-card" class="sobres-empty-card" aria-live="polite">
+          <p>Todavía no tienes sobres. Toca "Agregar sobre" para empezar a organizar tu dinero.</p>
+        </div>
+        <!-- Contenedores de fases futuras del módulo de sobres -->
+        <div class="sobres-futuras-fases" aria-hidden="true">
+          <div id="sobres-distribucion-auto" class="sobres-fase-placeholder"></div>
+          <div id="sobres-animaciones-flujo" class="sobres-fase-placeholder"></div>
+          <div id="sobres-agenda-financiera" class="sobres-fase-placeholder"></div>
+          <div id="sobres-reglas-avanzadas" class="sobres-fase-placeholder"></div>
+        </div>
         <!-- Formulario para crear o editar sobres -->
         <div id="sobre-form-container" class="sobres-form-card hidden">
           <h3 id="sobre-form-title">Nuevo sobre</h3>
@@ -532,6 +572,9 @@
             <button id="btn-optimize-app" type="button" class="btn btn-secondary">Optimizar App</button>
           </div>
           <div class="form-group">
+            <button id="btn-ir-cierre" type="button" class="btn btn-primary">Cierre mensual</button>
+          </div>
+          <div class="form-group">
             <button id="btn-reset-data" type="button" class="btn btn-danger">Restaurar todos los datos</button>
           </div>
           <p class="version-info">Versión: 1.0.0</p>
@@ -544,12 +587,10 @@
         <!-- El contenido se generará dinámicamente mediante JS -->
       </section>
 
-      <!-- =================== Vista de Cierre Mensual =================== -->
-      <!-- Permite conciliar saldos digitales con saldos físicos al final de cada mes. -->
-      <section id="vista-cierre-mensual" class="view">
-        <!-- El contenido y formulario se generarán dinámicamente -->
-      </section>
     </main>
+
+    <!-- Overlay para animaciones de distribución de sobres -->
+    <div id="animacion-sobres" class="animacion-sobres-oculta"></div>
 
     <!-- Librerías externas para generación de PDF (html2canvas y jsPDF) -->
     <!-- Cargamos primero las librerías de terceros para que estén disponibles cuando se ejecute app.js -->
