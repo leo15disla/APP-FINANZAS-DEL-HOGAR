@@ -113,20 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
-  function calcularSaldoLibreDisponible() {
-    let totalAsignado = 0;
-    let totalGastadoMov = 0;
-    let totalIngresos = 0;
-    sobres.forEach((s) => {
-      totalAsignado += numeroSeguro(s.montoAsignado ?? s.saldo, 0);
-    });
-    movimientos.forEach((m) => {
-      if (m.tipo === 'ingreso') totalIngresos += parseFloat(m.monto);
-      else totalGastadoMov += parseFloat(m.monto);
-    });
-    return numeroSeguro(totalIngresos - totalGastadoMov - totalAsignado, 0);
-  }
-
   /**
    * Ordena un arreglo de sobres por su nivel de prioridad (alta, media, baja).
    * Si una prioridad no está definida se asume como 'baja'.
@@ -351,6 +337,12 @@ document.addEventListener('DOMContentLoaded', () => {
       totalAsignado += numeroSeguro(s.montoAsignado ?? s.saldo, 0);
       totalGastado += numeroSeguro(s.montoGastado ?? s.gastado, 0);
     });
+    let totalIngresos = 0;
+    let totalGastos = 0;
+    movimientos.forEach((m) => {
+      if (m.tipo === 'ingreso') totalIngresos += parseFloat(m.monto);
+      else totalGastos += parseFloat(m.monto);
+    });
     const saldoLibre = calcularSaldoLibreDisponible();
     resumenEl.innerHTML = '';
     const summaryGrid = document.createElement('div');
@@ -453,168 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function cubrirSobresFijos(sobresArr, montoDisponible, resumen, fechaRef) {
-    let restante = numeroSeguro(montoDisponible, 0);
-    const fijos = ordenarPorPrioridad(sobresArr.filter((s) => s.tipo === 'fijo'));
-    fijos.forEach((s) => {
-      if (restante <= 0) return;
-      const limite = numeroSeguro(s.limite ?? s.limiteMensual ?? s.montoAsignado, 0);
-      const yaAsignado = numeroSeguro(s.montoAsignado ?? s.saldo, 0);
-      const faltante = Math.max(limite - yaAsignado, 0);
-      const asignar = Math.min(faltante, restante);
-      if (asignar > 0) {
-        sincronizarMontosSobre(s, asignar, 0);
-        s.montoAsignado = numeroSeguro(yaAsignado + asignar, yaAsignado + asignar);
-        s.ultimoMovimiento = fechaRef;
-        s.congelado = false;
-        resumen.push({ nombre: s.nombre, monto: asignar });
-        restante -= asignar;
-      }
-    });
-    return restante;
-  }
-
-  function cubrirSobresVariables(sobresArr, montoDisponible, resumen, fechaRef) {
-    let restante = numeroSeguro(montoDisponible, 0);
-    const variables = ordenarPorPrioridad(sobresArr.filter((s) => s.tipo === 'variable'));
-    variables.forEach((s) => {
-      if (restante <= 0) return;
-      const limiteVar = numeroSeguro(s.limite ?? s.limiteMensual ?? s.meta ?? s.montoAsignado, 0);
-      const asignadoActual = numeroSeguro(s.montoAsignado ?? s.saldo, 0);
-      const faltante = limiteVar ? Math.max(limiteVar - asignadoActual, 0) : restante;
-      const asignar = Math.min(faltante, restante);
-      if (asignar > 0) {
-        sincronizarMontosSobre(s, asignar, 0);
-        s.montoAsignado = numeroSeguro(asignadoActual + asignar, asignadoActual + asignar);
-        s.ultimoMovimiento = fechaRef;
-        s.congelado = false;
-        resumen.push({ nombre: s.nombre, monto: asignar });
-        restante -= asignar;
-      }
-    });
-    return restante;
-  }
-
-  function cubrirMetas(sobresArr, montoDisponible, resumen, fechaRef) {
-    const porcentajeMeta = 0.25; // porcentaje del excedente dedicado a metas
-    let restante = numeroSeguro(montoDisponible, 0);
-    if (restante <= 0) return restante;
-    const metas = ordenarPorPrioridad(sobresArr.filter((s) => s.tipo === 'meta'));
-    if (metas.length === 0) return restante;
-    const fondoParaMetas = restante * porcentajeMeta;
-    let asignadoMetas = 0;
-    metas.forEach((s) => {
-      if (asignadoMetas >= fondoParaMetas) return;
-      const metaTotal = numeroSeguro(s.meta ?? s.metaTotal, 0);
-      const actual = numeroSeguro(s.montoAsignado ?? s.saldo, 0);
-      const faltante = metaTotal ? Math.max(metaTotal - actual, 0) : fondoParaMetas - asignadoMetas;
-      const asignar = Math.min(faltante, fondoParaMetas - asignadoMetas);
-      if (asignar > 0) {
-        sincronizarMontosSobre(s, asignar, 0);
-        s.montoAsignado = numeroSeguro(actual + asignar, actual + asignar);
-        s.ultimoMovimiento = fechaRef;
-        s.congelado = false;
-        resumen.push({ nombre: s.nombre, monto: asignar });
-        asignadoMetas += asignar;
-      }
-    });
-    restante -= asignadoMetas;
-    return restante;
-  }
-
-  function enviarRestanteALibre(sobresArr, montoDisponible, resumen, fechaRef) {
-    let restante = numeroSeguro(montoDisponible, 0);
-    if (restante <= 0) return restante;
-    const libre = sobresArr.find((s) => s.tipo === 'libre');
-    if (libre) {
-      sincronizarMontosSobre(libre, restante, 0);
-      const asignadoActual = numeroSeguro(libre.montoAsignado ?? libre.saldo, libre.saldo || 0);
-      libre.montoAsignado = numeroSeguro(asignadoActual + restante, asignadoActual + restante);
-      libre.ultimoMovimiento = fechaRef;
-      libre.congelado = false;
-      resumen.push({ nombre: libre.nombre || 'Libre', monto: restante });
-      restante = 0;
-    }
-    return restante;
-  }
-
-  function construirResumenAsignaciones(asignaciones, restante) {
-    if (!asignaciones || asignaciones.length === 0) return '';
-    const listItems = asignaciones
-      .map((a) => `<li>${a.nombre}: +${formatCurrency(numeroSeguro(a.monto, 0))}</li>`)
-      .join('');
-    const restanteTexto = restante > 0 ? `<p>Restante sin asignar: ${formatCurrency(restante)}</p>` : '';
-    return `<p>Asignaciones:</p><ul>${listItems}</ul>${restanteTexto}`;
-  }
-
-  function mostrarResumenDistribucion({ asignaciones, restante }) {
-    const contenedor = document.getElementById('sobres-distribucion-resumen');
-    if (!contenedor) return;
-    if (!asignaciones || asignaciones.length === 0) {
-      contenedor.textContent = 'No se realizaron asignaciones automáticas.';
-      return;
-    }
-    contenedor.innerHTML = construirResumenAsignaciones(asignaciones, restante);
-  }
-
-  function construirMapaAnimacionDistribucion(asignaciones) {
-    const mapa = {};
-    if (!Array.isArray(asignaciones)) return mapa;
-    asignaciones.forEach((a) => {
-      const nombre = a?.nombre || 'Sobre';
-      const montoSeguro = numeroSeguro(a?.monto, 0);
-      if (montoSeguro > 0) {
-        mapa[nombre] = (mapa[nombre] || 0) + Number(montoSeguro.toFixed(2));
-      }
-    });
-    return mapa;
-  }
-
-  function animarDistribucionResumen(resumen) {
-    const contenedor = document.getElementById('animacion-sobres');
-    if (!contenedor || !resumen || Object.keys(resumen).length === 0) return;
-    contenedor.classList.remove('animacion-sobres-oculta');
-    contenedor.innerHTML = '';
-
-    Object.entries(resumen).forEach(([sobre, cantidad], i) => {
-      const burbuja = document.createElement('div');
-      burbuja.classList.add('animacion-burbuja');
-      burbuja.style.top = `${30 + i * 50}px`;
-      burbuja.style.left = `${20 + (i % 3) * 110}px`;
-      burbuja.textContent = `${sobre}: +$${cantidad}`;
-
-      contenedor.appendChild(burbuja);
-
-      setTimeout(() => {
-        burbuja.remove();
-        if (i === Object.entries(resumen).length - 1) {
-          contenedor.classList.add('animacion-sobres-oculta');
-        }
-      }, 900);
-    });
-  }
-
-  function distribuirAutomaticamente(montoDisponible) {
-    cargarSobres();
-    const asignaciones = [];
-    let restante = numeroSeguro(montoDisponible, 0);
-    if (!restante || restante <= 0 || !sobres.length) {
-      return { asignaciones, restante };
-    }
-    const fechaRef = new Date().toISOString().split('T')[0];
-    restante = cubrirSobresFijos(sobres, restante, asignaciones, fechaRef);
-    restante = cubrirSobresVariables(sobres, restante, asignaciones, fechaRef);
-    restante = cubrirMetas(sobres, restante, asignaciones, fechaRef);
-    restante = enviarRestanteALibre(sobres, restante, asignaciones, fechaRef);
-    guardarSobres();
-    actualizarVistaSobres();
-    updateDashboard();
-    return { asignaciones, restante };
-  }
-
   // Contenedores de funciones preparados para fases posteriores del módulo de sobres
-  function distribuirEntreSobres(montoDisponible) {
-    return distribuirAutomaticamente(montoDisponible);
+  function distribuirEntreSobres() {
+    /* pendiente Fase 2: distribución automática */
   }
 
   function animarMovimientoSobre() {
@@ -2919,10 +2752,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const resultado = distribuirAutomaticamente(monto);
       mostrarResumenDistribucion(resultado);
-      const resumenAnimacion = construirMapaAnimacionDistribucion(resultado.asignaciones);
-      if (Object.keys(resumenAnimacion).length) {
-        animarDistribucionResumen(resumenAnimacion);
-      }
       showToast(resultado.asignaciones.length ? 'Distribución completada' : 'Sin asignaciones automáticas');
     });
   }
