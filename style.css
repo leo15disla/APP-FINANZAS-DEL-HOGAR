@@ -768,6 +768,130 @@ h1, h2, h3 {
   border-left: 5px solid #5cb85c; /* verde */
 }
 
+/* ====== Agenda financiera mensual (sobres y préstamos) ====== */
+#agenda-mensual h2 {
+  margin-bottom: 0.75rem;
+}
+
+.agenda-mensual-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.agenda-resumen-card {
+  background: var(--surface-color);
+  padding: 12px 14px;
+  border-radius: 14px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.agenda-resumen-card span {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.agenda-resumen-card strong {
+  font-size: 1.1rem;
+}
+
+.agenda-mensual-listado {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.agenda-event-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  border: 1px solid #f1eef9;
+}
+
+.agenda-event-card.pagado {
+  opacity: 0.9;
+}
+
+.agenda-event-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.agenda-event-title {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.agenda-event-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.agenda-event-amount {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--primary-dark);
+}
+
+.agenda-event-tag {
+  background: #ede7f6;
+  color: var(--primary-dark);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.agenda-pago-btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.agenda-pago-btn:hover {
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.agenda-pago-btn:active {
+  transform: scale(0.98);
+}
+
+.agenda-event-card.pagado .agenda-pago-btn {
+  background: #eceaf4;
+  color: var(--text-light);
+  box-shadow: none;
+  cursor: default;
+}
+
+.agenda-empty-card {
+  background: var(--surface-color);
+  border-radius: 14px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+  padding: 16px;
+  text-align: center;
+  color: var(--text-light);
+}
+
 /* ===================== Estilos para menú móvil y responsive ===================== */
 /* HEADER MÓVIL */
 #mobile-header {

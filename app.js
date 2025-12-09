@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let prestamos = JSON.parse(localStorage.getItem('prestamos')) || [];
   // Presupuestos (categorías de gasto) almacenados en LocalStorage
   let presupuestos = JSON.parse(localStorage.getItem('presupuestos')) || [];
+  // Estado de pagos de agenda mensual
+  let agendaPagos = JSON.parse(localStorage.getItem('agendaPagos')) || {};
 
   // ======================= MÓDULO SOBRES =====================
   // Sobres almacenados en LocalStorage
@@ -160,6 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   function guardarSobres() {
     localStorage.setItem('sobres', JSON.stringify(sobres));
+  }
+
+  function guardarAgendaPagos() {
+    localStorage.setItem('agendaPagos', JSON.stringify(agendaPagos || {}));
   }
 
   /**
@@ -800,6 +806,9 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'calendario':
         actualizarVistaCalendario();
         break;
+      case 'agenda-mensual':
+        abrirAgendaMensual({ skipShow: true });
+        break;
       case 'presupuesto':
         actualizarVistaSobres();
         break;
@@ -819,6 +828,10 @@ document.addEventListener('DOMContentLoaded', () => {
     item.addEventListener('click', (e) => {
       e.preventDefault();
       const targetView = item.getAttribute('data-view');
+      if (targetView === 'agenda-mensual') {
+        abrirAgendaMensual();
+        return;
+      }
       showView(targetView);
       // Cuando se entra a movimientos, renderizar la tabla
       if (targetView === 'movimientos') {
@@ -1119,6 +1132,186 @@ document.addEventListener('DOMContentLoaded', () => {
     pagadoEl.textContent = typeof formatearMoneda === 'function' ? formatearMoneda(pagadoTotal) : pagadoTotal;
     pendienteEl.textContent = typeof formatearMoneda === 'function' ? formatearMoneda(total - pagadoTotal) : total - pagadoTotal;
   }
+
+  function generarAgendaFinancieraDelMes() {
+    cargarSobres();
+    const prestamosData = JSON.parse(localStorage.getItem('prestamos')) || prestamos || [];
+    const hoy = new Date();
+    const mes = hoy.getMonth();
+    const anio = hoy.getFullYear();
+    const eventos = [];
+    const estadoPagos = { ...(agendaPagos || {}) };
+    const totalDias = diasDelMes(mes, anio);
+
+    sobres
+      .filter((s) => s.tipo === 'fijo' && (s.diaPago || s.fechaPago))
+      .forEach((s) => {
+        const diaPago = Math.min(s.diaPago || s.fechaPago, totalDias);
+        const fecha = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(diaPago).padStart(2, '0')}`;
+        const monto = numeroSeguro(s.limite ?? s.limiteMensual ?? s.montoAsignado ?? s.montoDisponible, 0);
+        const id = `sobre-${s.id}-${anio}-${mes + 1}`;
+        const pagado = !!estadoPagos[id];
+        if (pagado && !estadoPagos[id]) estadoPagos[id] = true;
+        eventos.push({
+          id,
+          nombre: s.nombre,
+          tipo: 'sobre',
+          fecha,
+          monto,
+          pagado,
+          sobreId: s.id
+        });
+      });
+
+    prestamosData.forEach((p) => {
+      if (!p.cronograma || !Array.isArray(p.cronograma)) return;
+      const pagadasList = p.pagadas || [];
+      p.cronograma.forEach((c, idx) => {
+        const fechaCuota = new Date(c.fecha);
+        if (fechaCuota.getFullYear() === anio && fechaCuota.getMonth() === mes) {
+          const id = `prestamo-${p.id}-${idx + 1}-${anio}-${mes + 1}`;
+          const pagado = !!estadoPagos[id] || pagadasList.includes(idx + 1);
+          if (pagado && !estadoPagos[id]) estadoPagos[id] = true;
+          const monto = numeroSeguro(
+            c.cuota_total ?? (c.interes != null && c.capital != null ? c.interes + c.capital : 0),
+            0
+          );
+          eventos.push({
+            id,
+            nombre: p.nombre || 'Préstamo',
+            tipo: 'prestamo',
+            fecha: c.fecha,
+            monto,
+            pagado,
+            prestamoId: p.id,
+            cuotaIndex: idx + 1
+          });
+        }
+      });
+    });
+
+    eventos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    agendaPagos = estadoPagos;
+    guardarAgendaPagos();
+    const totalPagado = eventos.reduce((acc, e) => acc + (e.pagado ? numeroSeguro(e.monto, 0) : 0), 0);
+    const totalPendiente = eventos.reduce((acc, e) => acc + (!e.pagado ? numeroSeguro(e.monto, 0) : 0), 0);
+    return { totalPagado, totalPendiente, eventos };
+  }
+
+  function renderAgendaFinanciera(data) {
+    const resumenEl = document.getElementById('agenda-resumen');
+    const listadoEl = document.getElementById('agenda-listado');
+    if (!resumenEl || !listadoEl) return;
+    const totalPagado = numeroSeguro(data?.totalPagado, 0);
+    const totalPendiente = numeroSeguro(data?.totalPendiente, 0);
+    const totalMes = totalPagado + totalPendiente;
+
+    resumenEl.innerHTML = `
+      <div class="agenda-resumen-card">
+        <span>Total del mes</span>
+        <strong>${formatCurrency(totalMes)}</strong>
+      </div>
+      <div class="agenda-resumen-card">
+        <span>Pagado</span>
+        <strong>${formatCurrency(totalPagado)}</strong>
+      </div>
+      <div class="agenda-resumen-card">
+        <span>Pendiente</span>
+        <strong>${formatCurrency(totalPendiente)}</strong>
+      </div>
+    `;
+
+    listadoEl.innerHTML = '';
+    if (!data || !Array.isArray(data.eventos) || data.eventos.length === 0) {
+      listadoEl.innerHTML = '<div class="agenda-empty-card">No hay pagos programados para este mes.</div>';
+      return;
+    }
+
+    data.eventos.forEach((evento) => {
+      const card = document.createElement('div');
+      card.className = `agenda-event-card ${evento.pagado ? 'pagado' : ''}`;
+      const fechaLabel = new Date(evento.fecha).toLocaleDateString('es-DO', { day: '2-digit', month: '2-digit' });
+      const tagTexto = evento.tipo === 'prestamo' ? 'Préstamo' : 'Fijo';
+      const main = document.createElement('div');
+      main.className = 'agenda-event-main';
+      main.innerHTML = `
+        <div class="agenda-event-title">${evento.nombre}</div>
+        <div class="agenda-event-meta">
+          <span>${fechaLabel}</span>
+          <span class="agenda-event-tag">${tagTexto}</span>
+        </div>
+      `;
+      const montoEl = document.createElement('div');
+      montoEl.className = 'agenda-event-amount';
+      montoEl.textContent = formatCurrency(numeroSeguro(evento.monto, 0));
+      card.appendChild(main);
+      card.appendChild(montoEl);
+
+      if (evento.pagado) {
+        const pagadoTag = document.createElement('span');
+        pagadoTag.className = 'agenda-event-tag';
+        pagadoTag.textContent = 'Pagado';
+        card.appendChild(pagadoTag);
+      } else {
+        const btn = document.createElement('button');
+        btn.className = 'agenda-pago-btn';
+        btn.textContent = 'Marcar como pagado';
+        btn.addEventListener('click', () => marcarPagoAgenda(evento.id));
+        card.appendChild(btn);
+      }
+
+      listadoEl.appendChild(card);
+    });
+  }
+
+  function marcarPagoAgenda(id) {
+    if (!id) return;
+    const data = generarAgendaFinancieraDelMes();
+    const evento = data.eventos.find((e) => e.id === id);
+    if (!evento) return;
+    if (agendaPagos[id]) {
+      renderAgendaFinanciera(data);
+      return;
+    }
+    agendaPagos[id] = true;
+    guardarAgendaPagos();
+
+    if (evento.tipo === 'sobre' && evento.sobreId) {
+      cargarSobres();
+      const sobre = sobres.find((s) => s.id === evento.sobreId);
+      if (sobre) {
+        const montoSeguro = numeroSeguro(evento.monto, 0);
+        sincronizarMontosSobre(sobre, -montoSeguro, montoSeguro);
+        sobre.montoDisponible = Math.max(0, numeroSeguro(sobre.montoDisponible, 0));
+        sobre.saldo = Math.max(0, numeroSeguro(sobre.saldo, 0));
+        guardarSobres();
+      }
+    } else if (evento.tipo === 'prestamo' && evento.prestamoId) {
+      const idx = prestamos.findIndex((p) => p.id === evento.prestamoId);
+      if (idx !== -1) {
+        if (!Array.isArray(prestamos[idx].pagadas)) prestamos[idx].pagadas = [];
+        if (evento.cuotaIndex && !prestamos[idx].pagadas.includes(evento.cuotaIndex)) {
+          prestamos[idx].pagadas.push(evento.cuotaIndex);
+        }
+        guardarPrestamos();
+      }
+    }
+
+    const refreshed = generarAgendaFinancieraDelMes();
+    renderAgendaFinanciera(refreshed);
+    actualizarVistaSobres();
+    updateDashboard();
+    showToast('Pago marcado');
+  }
+
+  function abrirAgendaMensual(options = {}) {
+    const data = generarAgendaFinancieraDelMes();
+    renderAgendaFinanciera(data);
+    if (!options.skipShow) {
+      showView('agenda-mensual');
+    }
+  }
+
 
   /**
    * Actualiza el gráfico de barras del dashboard. Muestra dos barras: ingresos y gastos
@@ -2181,7 +2374,9 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenu.classList.add('hidden');
         document.body.classList.remove('menu-open');
         // Cambiar de vista utilizando la misma función que el menú de escritorio
-        if (typeof showView === 'function') {
+        if (view === 'agenda-mensual') {
+          abrirAgendaMensual();
+        } else if (typeof showView === 'function') {
           showView(view);
         } else if (typeof cambiarVista === 'function') {
           cambiarVista(view);
