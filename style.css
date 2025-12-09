@@ -1070,6 +1070,11 @@ h1, h2, h3 {
   align-items: center;
   margin-bottom: 1rem;
 }
+.sobres-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .sobres-resumen {
   margin-bottom: 1rem;
 }
@@ -1129,9 +1134,11 @@ h1, h2, h3 {
   /* Card para cada sobre en la lista. Simplificada para mostrar icono, nombre y saldo. */
   display: flex;
   align-items: center;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: #f6f0ff;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
   cursor: pointer;
   transition: background 0.2s ease;
   position: relative;
@@ -1140,37 +1147,59 @@ h1, h2, h3 {
 
 /* Hover sobre el sobre */
 .sobre-card:hover {
-  background: #e8d8ff;
+  background: #f8f5ff;
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.sobre-card:active {
+  transform: scale(0.97);
 }
 
 /* Icono grande a la izquierda */
 .sobre-icono {
   font-size: 1.8rem;
   margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(125, 91, 166, 0.12), rgba(125, 91, 166, 0.04));
 }
 
 /* Contenedor de información */
 .sobre-info {
   flex: 1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  align-items: center;
 }
 
 .sobre-nombre {
   font-weight: 600;
   margin-bottom: 4px;
   font-size: 1rem;
+  grid-column: 1 / 2;
 }
 
 .sobre-saldo {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  grid-column: 2 / 3;
+  text-align: right;
 }
 
 /* Contenedor de badges */
 .sobre-tags {
-  margin-top: 4px;
-  font-size: 0.75rem;
+  margin-top: 6px;
+  font-size: 0.78rem;
   display: flex;
   gap: 6px;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
 }
 
 .sobre-tag {
@@ -1178,6 +1207,36 @@ h1, h2, h3 {
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.05);
   font-size: 0.7rem;
+  color: var(--text-color);
+}
+
+.sobre-meta-row,
+.sobre-amount-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.sobre-progress {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 6px;
+  border-radius: 6px;
+  background: #eee;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.sobre-progress .progress-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: var(--primary-color);
+  width: var(--progress, 0%);
+  transition: width 0.3s ease;
 }
 .sobres-form-card {
   background-color: var(--surface-color);
@@ -1288,17 +1347,157 @@ h1, h2, h3 {
 /* ================== Vista de Detalle de Sobre =================== */
 .detalle-sobre {
   padding: 16px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(125, 91, 166, 0.08);
 }
 .detalle-sobre h2 {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+  font-size: 1.6rem;
 }
 .detalle-sobre .saldo {
-  font-size: 1.2rem;
-  margin-bottom: 12px;
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+  color: var(--primary-dark);
+}
+.detalle-sobre .saldo strong {
+  font-size: 1.4rem;
+}
+
+.detalle-sobre .detalle-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detalle-sobre .detalle-icono {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(125, 91, 166, 0.18), rgba(125, 91, 166, 0.08));
+  font-size: 1.8rem;
+}
+
+.detalle-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.detalle-badge {
+  padding: 6px 10px;
+  background: rgba(125, 91, 166, 0.08);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  color: var(--primary-dark);
+}
+
+.detalle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.detalle-card {
+  background: #faf8ff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(125, 91, 166, 0.08);
+}
+
+.detalle-card h4 {
+  margin: 0 0 6px;
+  color: var(--primary-dark);
+}
+
+.detalle-card p,
+.detalle-card li {
+  margin: 0 0 4px;
+  color: var(--text-color);
+}
+
+.historial-sobre {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.historial-sobre .mov {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.historial-sobre .mov:last-child {
+  border-bottom: none;
+}
+
+.detalle-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.detalle-acciones .btn {
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 16px;
+  transition: transform 0.1s ease;
+}
+
+.detalle-acciones .btn:active {
+  transform: scale(0.97);
 }
 @media (max-width: 768px) {
   .detalle-sobre {
-    padding: 12px;
+    padding: 14px;
+    gap: 12px;
+  }
+  .detalle-sobre h2 {
+    font-size: 1.35rem;
+  }
+  .detalle-sobre .saldo strong {
+    font-size: 1.25rem;
+  }
+  .detalle-acciones {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 430px) {
+  .sobre-card {
+    padding: 14px;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .sobre-nombre {
+    font-size: 1rem;
+  }
+  .sobre-saldo {
+    font-size: 1.1rem;
+  }
+  .detalle-sobre {
+    margin: 0 auto;
+  }
+  .detalle-sobre h2 {
+    text-align: center;
+  }
+  .detalle-sobre .saldo {
+    text-align: center;
+  }
+  .detalle-acciones {
+    width: 100%;
   }
 }
 .sobres-form input,
