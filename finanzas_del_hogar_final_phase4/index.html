@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- PWA primary color matching the purple iOS aesthetic -->
+    <meta name="theme-color" content="#7D5BA6" />
+    <title>Finanzas del Hogar</title>
+    <!-- Manifest for PWA installation -->
+    <link rel="manifest" href="./manifest.json" />
+    <!-- Application styles: cargamos primero la versión minificada y luego la versión completa
+         para que las nuevas clases de sobres se apliquen correctamente. -->
+    <link rel="stylesheet" href="./style.min.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Fixed navigation bar -->
+    <header class="navbar">
+      <!-- Encabezado móvil con menú hamburguesa y título -->
+      <div id="mobile-header">
+        <button id="btn-menu-mobile">☰</button>
+        <span id="mobile-title">Finanzas del Hogar</span>
+      </div>
+      <div class="nav-container">
+        <a href="#" class="nav-brand">Finanzas del Hogar</a>
+        <!-- Menú de escritorio -->
+        <nav class="nav-links desktop-menu">
+          <!-- Each link contains a data-view attribute which corresponds
+               to the id of the section it controls.  The SPA router in
+               app.js will toggle visibility on click. -->
+          <a href="#" class="nav-item active" data-view="dashboard">Dashboard</a>
+          <a href="#" class="nav-item" data-view="registrar">Registrar</a>
+          <a href="#" class="nav-item" data-view="movimientos">Movimientos</a>
+          <a href="#" class="nav-item" data-view="cuentas">Cuentas</a>
+          <a href="#" class="nav-item" data-view="prestamos">Préstamos</a>
+          <a href="#" class="nav-item" data-view="calendario">Calendario</a>
+          <a href="#" class="nav-item" data-view="presupuesto">Presupuesto</a>
+          <a href="#" class="nav-item" data-view="exportar">Exportar</a>
+          <a href="#" class="nav-item" data-view="ajustes">Ajustes</a>
+        </nav>
+      </div>
+      <!-- Menú móvil desplegable -->
+      <nav id="mobile-menu" class="hidden">
+        <ul>
+          <li data-view="dashboard">Dashboard</li>
+          <li data-view="registrar">Registrar</li>
+          <li data-view="movimientos">Movimientos</li>
+          <li data-view="cuentas">Cuentas</li>
+          <li data-view="prestamos">Préstamos</li>
+          <li data-view="calendario">Calendario</li>
+          <li data-view="presupuesto">Presupuesto</li>
+          <li data-view="exportar">Exportar</li>
+          <li data-view="ajustes">Ajustes</li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main application container.  Each section represents a view in our
+         single‑page app.  Only the section with the class `active` is
+         displayed at any given time. -->
+    <main id="app" class="app-container">
+      <!-- Dashboard view -->
+      <section id="dashboard" class="view active">
+        <!-- Tarjeta principal del dashboard -->
+        <div class="hero-card">
+          <div class="hero-icon">
+            <!-- Icono de casa blanco como SVG para mejor control de color -->
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="#FFFFFF" />
+            </svg>
+          </div>
+          <div class="hero-text">
+            <h2>Finanzas del Hogar</h2>
+            <p>Tu resumen financiero</p>
+          </div>
+        </div>
+        <!-- Resumen del mes -->
+        <div class="dashboard-grid">
+          <div class="summary-card-new" id="income-summary">
+            <h3>Ingresos</h3>
+            <p class="summary-value" id="income-summary-value">$0.00</p>
+          </div>
+          <div class="summary-card-new" id="expense-summary">
+            <h3>Gastos</h3>
+            <p class="summary-value" id="expense-summary-value">$0.00</p>
+          </div>
+          <div class="summary-card-new" id="balance-summary">
+            <h3>Balance</h3>
+            <p class="summary-value" id="balance-summary-value">$0.00</p>
+          </div>
+          <div class="summary-card-new" id="difference-summary">
+            <h3>Diferencia vs mes anterior</h3>
+            <p class="summary-value" id="difference-summary-value">–</p>
+          </div>
+        </div>
+        <!-- Distribución 50/30/20 -->
+        <div class="distribution-card card">
+          <h3>Distribución 50/30/20</h3>
+          <div class="distribution-bars">
+            <div class="distribution-bar need" style="width: 50%">
+              <span>50% Necesidades</span>
+            </div>
+            <div class="distribution-bar want" style="width: 30%">
+              <span>30% Deseos</span>
+            </div>
+            <div class="distribution-bar saving" style="width: 20%">
+              <span>20% Ahorro</span>
+            </div>
+          </div>
+        </div>
+        <!-- Gráfico simple de Ingresos vs Gastos -->
+        <div class="chart-card card">
+          <h3>Ingresos vs Gastos</h3>
+          <div id="bar-chart" class="bar-chart"></div>
+        </div>
+        <!-- Sección de cuentas bancarias -->
+        <div class="accounts-card card">
+          <h3>Cuentas bancarias</h3>
+          <div class="accounts-summary">
+            <div class="account-metric">
+              <h4>Total en cuentas</h4>
+              <p id="accounts-total">$0.00</p>
+            </div>
+            <div class="account-metric">
+              <h4>Liquidez</h4>
+              <p id="accounts-liquid">$0.00</p>
+            </div>
+            <div class="account-metric">
+              <h4>Deudas del mes</h4>
+              <p id="accounts-debt">$0.00</p>
+            </div>
+          </div>
+          <div class="wallet-placeholder">
+            <div class="wallet-card-placeholder">Tarjeta de crédito<br />Balance: $0.00</div>
+            <div class="wallet-card-placeholder">Cuenta de ahorros<br />Balance: $0.00</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Registrar view: formulario moderno para registrar un movimiento -->
+      <section id="registrar" class="view">
+        <div class="form-card">
+          <h2>Registrar movimiento</h2>
+          <!-- Formulario -->
+          <form id="movimiento-form" class="movement-form">
+            <!-- Tipo de movimiento -->
+            <div class="form-group">
+              <label for="mov-tipo">Tipo de movimiento</label>
+              <select id="mov-tipo" required>
+                <option value="ingreso">Ingreso</option>
+                <option value="gasto">Gasto</option>
+              </select>
+            </div>
+            <!-- Monto -->
+            <div class="form-group">
+              <label for="mov-monto">Monto</label>
+              <input type="number" id="mov-monto" min="0" step="0.01" placeholder="0.00" required />
+            </div>
+            <!-- Sobre (solo visible en gastos) -->
+            <div class="form-group" id="grupo-sobre" style="display:none;">
+              <label for="mov-sobre">Sobre</label>
+              <select id="mov-sobre">
+                <!-- opciones cargadas dinámicamente -->
+              </select>
+            </div>
+            <!-- Fecha oculta: la fecha se asigna automáticamente en JS -->
+            <input type="hidden" id="mov-fecha" />
+            <!-- Nota -->
+            <div class="form-group">
+              <label for="mov-nota">Nota</label>
+              <textarea id="mov-nota" rows="3" placeholder="Añade una nota (opcional)"></textarea>
+            </div>
+            <!-- Botón -->
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Guardar movimiento</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Movimientos view: listado completo con filtros avanzados -->
+      <section id="movimientos" class="view">
+        <div class="movimientos-header">
+          <h2>Movimientos</h2>
+          <div class="movimientos-actions">
+            <div class="search-bar">
+              <input type="text" id="mov-search" placeholder="Buscar..." />
+              <span class="search-icon">🔍</span>
+            </div>
+            <div class="filters-advanced">
+              <div class="filter-group">
+                <label for="mov-filter-type">Tipo</label>
+                <select id="mov-filter-type">
+                  <option value="todos">Todos</option>
+                  <option value="ingreso">Ingresos</option>
+                  <option value="gasto">Gastos</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="mov-filter-range">Rango</label>
+                <select id="mov-filter-range">
+                  <option value="todos">Todos</option>
+                  <option value="hoy">Hoy</option>
+                  <option value="semana">Semana</option>
+                  <option value="mes">Mes</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="mov-filter-category">Categoría</label>
+                <select id="mov-filter-category">
+                  <option value="todas">Todas</option>
+                  <!-- Categorías dinámicas -->
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movimientos-history">
+          <button id="btn-mes-actual" class="btn-secondary">Mes actual</button>
+          <button id="btn-historial" class="btn-secondary">Historial mensual</button>
+        </div>
+        <div class="movimientos-summary">
+          <div class="summary-box ingreso">
+            <span>Ingresos</span>
+            <p id="mov-ingresos-total">US$0.00</p>
+          </div>
+          <div class="summary-box gasto">
+            <span>Gastos</span>
+            <p id="mov-gastos-total">US$0.00</p>
+          </div>
+          <div class="summary-box balance">
+            <span>Balance</span>
+            <p id="mov-balance-total">US$0.00</p>
+          </div>
+        </div>
+        <div class="movimientos-list" id="movimientos-list">
+          <!-- Tarjetas de movimientos -->
+        </div>
+      </section>
+
+      <!-- Cuentas view: estilo Apple Wallet con lista y formulario -->
+      <section id="cuentas" class="view">
+        <div class="cuentas-header">
+          <h2>Cuentas</h2>
+          <div class="cuentas-summary">
+            <div class="summary-box total">
+              <span>Total en cuentas</span>
+              <p id="cuentas-total-saldo">US$0.00</p>
+            </div>
+            <div class="summary-box liquidez">
+              <span>Liquidez</span>
+              <p id="cuentas-liquidez">US$0.00</p>
+            </div>
+            <div class="summary-box deuda">
+              <span>Deudas del mes</span>
+              <p id="cuentas-deuda">US$0.00</p>
+            </div>
+          </div>
+        </div>
+        <div class="cuentas-stack" id="cuentas-list">
+          <!-- Tarjetas de cuentas -->
+        </div>
+        <div class="cuenta-form-card">
+          <h3 id="cuenta-form-title">Agregar cuenta</h3>
+          <form id="cuenta-form">
+            <div class="form-group">
+              <label for="cuenta-nombre">Nombre de cuenta</label>
+              <input type="text" id="cuenta-nombre" required />
+            </div>
+            <div class="form-group">
+              <label for="cuenta-tipo">Tipo de cuenta</label>
+              <select id="cuenta-tipo" required>
+                <option value="">Seleccionar tipo</option>
+                <option value="bancaria">Bancaria</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="efectivo">Efectivo</option>
+                <option value="otras">Otras</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cuenta-saldo">Saldo</label>
+              <input type="number" id="cuenta-saldo" step="0.01" required />
+            </div>
+            <div class="form-group">
+              <label for="cuenta-nota">Nota</label>
+              <textarea id="cuenta-nota" rows="2" placeholder="Opcional"></textarea>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Guardar cuenta</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Préstamos view -->
+      <!-- =================== Módulo Préstamos =================== -->
+      <section id="prestamos" class="view">
+        <div class="prestamos-header">
+          <h2>Préstamos</h2>
+          <button id="btn-nuevo-prestamo" class="btn btn-primary">Nuevo préstamo</button>
+        </div>
+        <!-- Formulario para registrar o editar un préstamo -->
+        <div id="prestamo-form-container" class="prestamo-form-card hidden">
+          <h3 id="prestamo-form-title">Registrar préstamo</h3>
+          <form id="prestamo-form" class="loan-form">
+            <div class="form-group">
+              <label for="prestamo-nombre">Nombre del préstamo</label>
+              <input type="text" id="prestamo-nombre" required />
+            </div>
+            <div class="form-group">
+              <label for="prestamo-tipo">Tipo de préstamo</label>
+              <select id="prestamo-tipo" required>
+                <option value="francesa">Francesa</option>
+                <option value="americana">Americana</option>
+                <option value="compuesto">Interés compuesto diario</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prestamo-monto">Monto</label>
+              <input type="number" id="prestamo-monto" step="0.01" min="0" required />
+            </div>
+            <div class="form-group">
+              <label for="prestamo-tasa">Tasa anual (%)</label>
+              <input type="number" id="prestamo-tasa" step="0.01" min="0" required />
+            </div>
+            <div class="form-group">
+              <label for="prestamo-plazo">Plazo (meses)</label>
+              <input type="number" id="prestamo-plazo" min="1" required />
+            </div>
+            <div class="form-group">
+              <label for="prestamo-fecha-inicio">Fecha de inicio</label>
+              <input type="date" id="prestamo-fecha-inicio" required />
+            </div>
+            <div class="form-group">
+              <label for="prestamo-fecha-primer-pago">Fecha del primer pago</label>
+              <input type="date" id="prestamo-fecha-primer-pago" required />
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Guardar préstamo</button>
+            </div>
+          </form>
+        </div>
+        <!-- Lista de préstamos activos -->
+        <div id="prestamos-list" class="prestamos-list">
+          <!-- Tarjetas de préstamos se insertan con JS -->
+        </div>
+        <!-- Detalle del préstamo seleccionado -->
+        <div id="prestamo-detalle-container" class="prestamo-detalle hidden">
+          <!-- Sección para mostrar detalle y cronograma -->
+        </div>
+      </section>
+
+      <!-- =================== Módulo Calendario =================== -->
+      <section id="calendario" class="view">
+        <!-- Tabs para cambiar entre calendario y agenda -->
+        <div class="calendario-tabs">
+          <button id="btn-vista-calendario" class="tab-activa">Calendario</button>
+          <button id="btn-vista-agenda">Agenda del Mes</button>
+        </div>
+        <!-- Vista del calendario -->
+        <div id="vista-calendario">
+          <div class="calendar-header">
+            <button id="cal-prev" class="btn-nav" aria-label="Mes anterior">&#x276E;</button>
+            <h2 id="calendar-title">Calendario</h2>
+            <button id="cal-next" class="btn-nav" aria-label="Mes siguiente">&#x276F;</button>
+          </div>
+          <div class="calendar-grid" id="calendar-grid">
+            <!-- Celdas del calendario -->
+          </div>
+          <div id="calendar-details" class="calendar-details hidden">
+            <!-- Detalles del día seleccionado -->
+          </div>
+        </div>
+        <!-- Vista de agenda financiera del mes (renombrada) -->
+        <div id="vista-agenda-mes" style="display:none;">
+          <h2>Agenda Financiera del Mes</h2>
+          <div class="agenda-resumen">
+            <p><strong>Total a pagar este mes:</strong> <span id="agenda-total"></span></p>
+            <p><strong>Total pagado:</strong> <span id="agenda-pagado"></span></p>
+            <p><strong>Total pendiente:</strong> <span id="agenda-pendiente"></span></p>
+          </div>
+          <div id="agenda-list" class="agenda-list"></div>
+        </div>
+      </section>
+
+      <!-- =================== Módulo Presupuesto =================== -->
+      <section id="presupuesto" class="view">
+        <!-- Nueva vista de presupuesto basada en sobres -->
+        <div class="sobres-header">
+          <h2>Presupuesto / Sobres</h2>
+          <div class="sobres-header-actions">
+            <button id="btn-nuevo-sobre" class="btn btn-primary">Nuevo sobre</button>
+            <button id="btn-ir-cierre-mensual" class="btn btn-secondary">Cerrar mes (sobres)</button>
+          </div>
+        </div>
+        <!-- Resumen general de sobres -->
+        <div id="sobres-resumen" class="sobres-resumen"></div>
+        <!-- Lista de sobres -->
+        <div id="sobres-list" class="sobres-list"></div>
+
+        <!-- Reporte de distribución de ingresos entre sobres -->
+        <div id="reporte-distribucion"></div>
+        <!-- Formulario para crear o editar sobres -->
+        <div id="sobre-form-container" class="sobres-form-card hidden">
+          <h3 id="sobre-form-title">Nuevo sobre</h3>
+          <form id="sobre-form" class="sobres-form">
+            <div class="form-group">
+              <label for="sobre-nombre">Nombre del sobre</label>
+              <input type="text" id="sobre-nombre" required />
+            </div>
+            <div class="form-group">
+              <label for="sobre-tipo">Tipo</label>
+              <select id="sobre-tipo" required>
+                <option value="fijo">Fijo</option>
+                <option value="variable">Variable</option>
+              </select>
+            </div>
+            <div class="form-group" id="sobre-limite-group">
+              <label for="sobre-limite">Límite (solo fijos)</label>
+              <input type="number" id="sobre-limite" step="0.01" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="sobre-prioridad">Prioridad</label>
+              <select id="sobre-prioridad">
+                <option value="alta">Alta (primero)</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja (último)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="sobre-categoria-distribucion">Tipo de distribución</label>
+              <select id="sobre-categoria-distribucion">
+                <option value="necesidad">Necesidad</option>
+                <option value="deseo">Deseo</option>
+                <option value="ahorro">Ahorro</option>
+              </select>
+            </div>
+            <div class="form-group" id="grupo-dia-pago" style="display:none;">
+              <label for="sobre-dia-pago">Día de pago</label>
+              <input id="sobre-dia-pago" type="number" min="1" max="31" placeholder="Ej: 15" />
+              <small>Es el día del mes en que normalmente pagas este gasto fijo.</small>
+            </div>
+            <div class="form-group">
+              <label for="sobre-categoria">Categoría vinculada</label>
+              <select id="sobre-categoria">
+                <option value="">Sin categoría</option>
+                <option value="Comida">Comida</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Salud">Salud</option>
+                <option value="Entretenimiento">Entretenimiento</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="sobre-metodo">Método de distribución</label>
+              <select id="sobre-metodo">
+                <option value="prioridad">Por prioridad</option>
+                <option value="equitativa">Equitativa</option>
+                <option value="proporcional">Proporcional al límite</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Guardar sobre</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- =================== Módulo Exportar =================== -->
+      <section id="exportar" class="view">
+        <h2>Exportar datos</h2>
+        <div class="export-section">
+          <h3>Selecciona el tipo de datos</h3>
+          <div class="export-options">
+            <label><input type="checkbox" id="export-movimientos" checked /> Movimientos</label>
+            <label><input type="checkbox" id="export-cuentas" checked /> Cuentas</label>
+            <label><input type="checkbox" id="export-prestamos" checked /> Préstamos</label>
+            <label><input type="checkbox" id="export-sobres" checked /> Presupuesto/Sobres</label>
+          </div>
+          <h3>Formato</h3>
+          <div class="export-format">
+            <select id="export-format">
+              <option value="json">JSON</option>
+              <option value="csv">CSV</option>
+              <option value="txt">TXT</option>
+            </select>
+            <button id="btn-exportar" class="btn btn-primary">Exportar</button>
+          </div>
+        </div>
+        <div class="export-pdf-section">
+          <h3>Informe en PDF</h3>
+          <button id="btn-exportar-pdf" class="btn btn-primary">Generar PDF</button>
+        </div>
+      </section>
+
+      <!-- =================== Cierre Mensual de Sobres =================== -->
+      <section id="vista-cierre-mensual" class="view hidden">
+        <h2>Cierre mensual de sobres</h2>
+        <p>Compara el dinero físico con el saldo de la app para cada sobre.</p>
+        <div id="cierre-sobres-list" class="cierre-sobres-list"></div>
+        <div class="cierre-acciones">
+          <button id="btn-cancelar-cierre" type="button">Cancelar</button>
+          <button id="btn-confirmar-cierre" type="button" class="btn btn-primary">Confirmar cierre del mes</button>
+        </div>
+        <div id="cierre-resumen" class="cierre-resumen"></div>
+      </section>
+
+
+      <!-- =================== Módulo Ajustes =================== -->
+      <section id="ajustes" class="view">
+        <h2>Ajustes</h2>
+        <form id="ajustes-form" class="settings-form">
+          <div class="form-group">
+            <label for="user-name">Nombre de usuario</label>
+            <input type="text" id="user-name" />
+          </div>
+          <div class="form-group">
+            <label for="user-currency">Moneda preferida</label>
+            <select id="user-currency">
+              <option value="USD">USD</option>
+              <option value="DOP">DOP</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="font-size-select">Tamaño de fuente</label>
+            <select id="font-size-select">
+              <option value="med">Mediana</option>
+              <option value="small">Pequeña</option>
+              <option value="large">Grande</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" id="dark-mode-toggle" /> Modo oscuro</label>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" id="contrast-toggle" /> Alto contraste</label>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" id="animations-toggle" checked /> Habilitar animaciones</label>
+          </div>
+          <div class="form-group">
+            <button id="btn-guardar-ajustes" type="button" class="btn btn-primary">Guardar ajustes</button>
+          </div>
+          <div class="form-group">
+            <button id="btn-export-backup" type="button" class="btn btn-secondary">Exportar backup</button>
+            <input type="file" id="import-backup-input" accept="application/json" style="display:none;" />
+            <button id="btn-import-backup" type="button" class="btn btn-secondary">Importar backup</button>
+          </div>
+          <div class="form-group">
+            <button id="btn-optimize-app" type="button" class="btn btn-secondary">Optimizar App</button>
+          </div>
+          <div class="form-group">
+            <button id="btn-reset-data" type="button" class="btn btn-danger">Restaurar todos los datos</button>
+          </div>
+          <p class="version-info">Versión: 1.0.0</p>
+        </form>
+      </section>
+
+      <!-- =================== Vista Detalle Sobre =================== -->
+      <!-- Esta vista muestra información detallada de un sobre seleccionado. -->
+      <section id="vista-sobre-detalle" class="view">
+        <!-- El contenido se generará dinámicamente mediante JS -->
+      </section>
+
+      <!-- =================== Vista de Cierre Mensual (placeholder) =================== -->
+      <!-- Esta sección se mantuvo aquí por compatibilidad, pero ya no se usa.
+           El contenido real del cierre mensual se define en la sección anterior
+           con id="vista-cierre-mensual" y se controla via JS.  Esta sección
+           permanece sin funcionalidad para evitar IDs duplicados. -->
+      <section id="vista-cierre-mensual-legacy" class="hidden"></section>
+    </main>
+
+    <!-- Librerías externas para generación de PDF (html2canvas y jsPDF) -->
+    <!-- Cargamos primero las librerías de terceros para que estén disponibles cuando se ejecute app.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaP9aBhgzWrAXjN0W0mdZShSpEafVFsltL38gdnAyL7I7+dUULUNuOiyBA0jR4cE6OFB49SR1GCRXvVhXXhMw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-HIqbaTT5vZcd5pbOmT44y4AivIMuBJOCa/MEGLjm+rXhN8gGs23Qu4pWAzGn9rprAlXa/5qIwmAeGHw8UAXAuw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Application script principal -->
+    <!-- Cargamos la versión no minificada para incluir el sistema de sobres y demás funcionalidades actualizadas -->
+    <script src="./app.js"></script>
+    <!-- Register service worker if available -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('./service-worker.js')
+            .catch((err) => console.warn('Service worker registration failed:', err));
+        });
+      }
+    </script>
+  </body>
+</html>
