@@ -1623,6 +1623,12 @@ h1, h2, h3 {
   .detalle-acciones {
     width: 100%;
   }
+  .conciliacion-header {
+    flex-direction: column;
+  }
+  .conciliacion-digital {
+    text-align: left;
+  }
 }
 .sobres-form input,
 .sobres-form select {
