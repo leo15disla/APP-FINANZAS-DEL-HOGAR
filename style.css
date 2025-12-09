@@ -38,9 +38,22 @@ html, body {
   overflow-y: auto;
 }
 
+/* Ajustes de entrada para evitar zoom en iOS */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+button, .btn, .sobre-card, .menu-item, .nav-item, #mobile-menu li {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
 /* Bloquear el desplazamiento global cuando el menú móvil está abierto */
 body.menu-open {
   overflow: hidden;
+  height: 100vh;
 }
 
 /* =====================
@@ -82,6 +95,11 @@ body.menu-open {
   background-color: var(--surface-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  padding-top: env(safe-area-inset-top);
+}
+
+header, .mobile-header, #mobile-header {
+  padding-top: env(safe-area-inset-top);
 }
 
 .nav-container {
@@ -140,6 +158,11 @@ body.menu-open {
 
 .view.active {
   display: block;
+}
+
+.view, .vista {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Animaciones y transiciones sutiles al estilo iOS */
@@ -768,13 +791,18 @@ h1, h2, h3 {
   transform: translateX(100%);
   transition: transform 0.3s ease;
   z-index: 999;
-  padding-top: 50px;
+  padding-top: calc(50px + env(safe-area-inset-top));
+  padding-bottom: env(safe-area-inset-bottom);
   box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
   pointer-events: none;
+  visibility: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 #mobile-menu.visible {
   transform: translateX(0);
   pointer-events: auto;
+  visibility: visible;
 }
 #mobile-menu ul {
   list-style: none;
@@ -831,7 +859,7 @@ h1, h2, h3 {
   /* Centrar y ajustar márgenes/padding */
   .app-container {
     margin: 0 !important;
-    padding: 10px !important;
+    padding: 4.25rem 0.85rem 1.5rem !important;
   }
   body {
     overflow-x: hidden !important;
@@ -841,6 +869,50 @@ h1, h2, h3 {
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important;
+  }
+  .view > h2:first-of-type,
+  .detalle-sobre h2,
+  .movimientos-header h2,
+  .sobres-header h2,
+  .calendar-header h2 {
+    font-size: 1.1rem !important;
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.65rem !important;
+  }
+  .hero-card {
+    margin-top: 0.35rem;
+  }
+  .summary-card-new,
+  .card,
+  .form-card,
+  .sobres-form-card,
+  .export-section,
+  .export-pdf-section {
+    margin-bottom: 1rem;
+  }
+  .summary-card-new .summary-value,
+  .summary-card-sobres .summary-value {
+    font-size: 1.2rem;
+  }
+  .sobres-resumen {
+    margin-bottom: 0.75rem;
+  }
+  .sobres-header {
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .sobres-list {
+    gap: 10px;
+  }
+  .sobre-card {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+  .sobre-nombre {
+    font-size: 0.95rem;
+  }
+  .sobre-saldo {
+    font-size: 1.05rem;
   }
 }
 .event-evento {
@@ -992,6 +1064,29 @@ h1, h2, h3 {
   flex-direction: column;
   gap: 12px;
 }
+#sobres-list p:only-child {
+  display: none;
+}
+.sobres-empty-card {
+  display: none;
+  margin: 0.5rem 0 1rem;
+  padding: 1rem 1.1rem;
+  background: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  color: var(--text-light);
+}
+.sobres-empty-card p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+#sobres-list:empty + .sobres-empty-card,
+#sobres-list:not(:has(.sobre-card)) + .sobres-empty-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .sobre-card {
   /* Card para cada sobre en la lista. Simplificada para mostrar icono, nombre y saldo. */
   display: flex;
@@ -1001,6 +1096,8 @@ h1, h2, h3 {
   background: #f6f0ff;
   cursor: pointer;
   transition: background 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
 
 /* Hover sobre el sobre */
