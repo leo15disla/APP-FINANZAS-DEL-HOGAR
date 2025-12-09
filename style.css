@@ -10,11 +10,9 @@
 --success-color:#4caf50;
 --danger-color:#e53935;
 --header-height:72px;
---safe-top:env(safe-area-inset-top,0px);
---content-top:calc(var(--header-height)+var(--safe-top));
+--content-top:calc(var(--header-height)+1.2rem);
 --radius-base:14px;
---shadow-soft:0 10px 25px rgba(0,0,0,0.08);
---section-gap:1.2rem
+--shadow-soft:0 10px 25px rgba(0,0,0,0.08)
 }
 *{
 box-sizing:border-box;
@@ -28,9 +26,7 @@ background-color:var(--bg-color);
 color:var(--text-color);
 overflow-x:hidden;
 overflow-y:auto;
-padding-top:var(--safe-top);
-scroll-behavior:smooth;
--webkit-overflow-scrolling:touch;
+padding-top:calc(var(--header-height)+env(safe-area-inset-top));
 -webkit-font-smoothing:antialiased
 }
 input,select,textarea{
@@ -73,8 +69,8 @@ width:100%;
 background-color:var(--surface-color);
 box-shadow:0 4px 12px rgba(0,0,0,0.08);
 z-index:1000;
-height:var(--content-top);
-padding:calc(var(--safe-top)+6px) 1rem 12px;
+height:calc(var(--header-height)+env(safe-area-inset-top));
+padding:calc(env(safe-area-inset-top)+6px) 1rem 10px;
 display:flex;
 flex-direction:column;
 justify-content:center;
@@ -88,8 +84,7 @@ max-width:1200px;
 width:100%;
 margin:0 auto;
 padding:0;
-min-height:52px;
-gap:0.75rem
+min-height:48px
 }
 .nav-brand{
 font-weight:700;
@@ -126,15 +121,13 @@ box-shadow:0 8px 16px rgba(0,0,0,0.14)
 .app-container{
 max-width:1200px;
 margin:0 auto;
-padding:calc(var(--content-top)+0.75rem) 1rem 2.5rem;
-width:100%;
-position:relative
+padding:1.25rem 1rem 2.5rem
 }
 .view{
 display:none
 }
 .view.active{
-display:flex
+display:block
 }
 .view,.vista{
 overflow-y:auto;
@@ -144,20 +137,13 @@ overflow-y:auto;
 opacity:0;
 transform:translateY(10px);
 transition:opacity 0.3s ease,transform 0.3s ease;
-min-height:calc(100vh - var(--content-top));
-padding:0 0 1.6rem;
-flex-direction:column;
-gap:var(--section-gap)
+min-height:calc(100vh - var(--header-height) - env(safe-area-inset-top));
+padding-top:0.5rem;
+padding-bottom:1.5rem
 }
 .view.active{
 opacity:1;
 transform:translateY(0)
-}
-.view>*{
-margin:0
-}
-.view>*+*{
-margin-top:var(--section-gap)
 }
 @keyframes fadeIn{
 from{
@@ -201,11 +187,7 @@ box-shadow:var(--shadow-soft);
 padding:1.1rem;
 flex:1 1 250px;
 min-width:250px;
-border:1px solid rgba(0,0,0,0.03);
-min-height:140px;
-display:flex;
-flex-direction:column;
-gap:0.65rem
+border:1px solid rgba(0,0,0,0.03)
 }
 .summary-card{
 position:relative;
@@ -264,9 +246,7 @@ box-shadow:var(--shadow-soft);
 display:flex;
 flex-direction:column;
 gap:0.35rem;
-border:1px solid rgba(125,91,166,0.08);
-min-height:120px;
-justify-content:center
+border:1px solid rgba(125,91,166,0.08)
 }
 .summary-card-new h3{
 font-size:1rem;
@@ -582,23 +562,16 @@ gap:0.5rem;
 background-color:var(--surface-color);
 border-radius:16px;
 box-shadow:0 6px 12px rgba(0,0,0,0.05);
-padding:1rem;
-grid-auto-rows:minmax(74px,1fr)
+padding:1rem
 }
 .calendar-cell{
 position:relative;
 padding:0.75rem;
 border-radius:12px;
-min-height:74px;
+min-height:60px;
 background-color:#faf9ff;
 cursor:pointer;
-transition:background-color 0.2s ease;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-gap:0.35rem
+transition:background-color 0.2s ease
 }
 .calendar-cell:hover{
 background-color:#ede7f6
@@ -684,12 +657,11 @@ border-left:5px solid #5cb85c
 }
 #mobile-header{
 display:none;
-padding:6px 0;
+padding:8px 0;
 justify-content:space-between;
 align-items:center;
-min-height:48px;
-gap:12px;
-width:100%
+min-height:46px;
+gap:10px
 }
 #mobile-header #btn-menu-mobile{
 font-size:1.7rem;
@@ -697,44 +669,33 @@ background:none;
 border:none;
 color:var(--primary-color);
 cursor:pointer;
-padding:10px;
-border-radius:14px;
+padding:6px 10px;
+border-radius:12px;
 line-height:1;
-box-shadow:0 8px 18px rgba(0,0,0,0.08);
-background:rgba(125,91,166,0.08);
-display:grid;
-place-items:center;
-min-width:44px;
-min-height:44px
+box-shadow:0 6px 14px rgba(0,0,0,0.08);
+background:rgba(125,91,166,0.08)
 }
 #mobile-title{
 font-weight:700;
 font-size:1.05rem;
 color:var(--primary-dark);
-letter-spacing:0.02em;
-flex:1;
-text-align:center;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis
+letter-spacing:0.02em
 }
 #mobile-menu{
 position:fixed;
 top:0;
 right:0;
-width:min(82vw,320px);
+width:260px;
 height:100vh;
 background:var(--surface-color);
 transform:translateX(100%);
 transition:transform 0.3s ease;
 z-index:999;
-padding:calc(var(--safe-top)+60px) 1.1rem 2rem;
+padding-top:calc(env(safe-area-inset-top)+60px);
 box-shadow:-6px 0 18px rgba(0,0,0,0.12);
 pointer-events:none;
 visibility:hidden;
-overflow-y:auto;
--webkit-overflow-scrolling:touch;
-border-radius:16px 0 0 16px
+overflow-y:auto
 }
 #mobile-menu.visible{
 transform:translateX(0);
@@ -775,28 +736,16 @@ body{
 overflow-x:hidden !important
 }
 .app-container{
-padding:calc(var(--content-top)+0.5rem) 0.95rem 2.2rem !important;
+padding:calc(var(--content-top)+env(safe-area-inset-top)) 0.85rem 2rem !important;
 width:100%
 }
- .card{
- padding:1rem !important;
- font-size:0.95rem !important
- }
- .movimientos-actions{
- flex-direction:column;
- align-items:stretch;
- width:100%
- }
- .search-bar{
- width:100%
- }
- .search-bar input{
- width:100%;
- max-width:100%
- }
- .card h3{
- font-size:1.05rem !important
- }
+.card{
+padding:1rem !important;
+font-size:0.95rem !important
+}
+.card h3{
+font-size:1.05rem !important
+}
 .card .monto{
 font-size:1.25rem !important
 }
@@ -1403,16 +1352,13 @@ font-weight:600
 }
 .form-group input,.form-group select,.form-group textarea{
 width:100%;
-padding:0.75rem 0.85rem;
+padding:0.65rem 0.75rem;
 border:1px solid #d9d3e6;
 border-radius:12px;
 font-size:1rem;
 background-color:#faf7ff;
 transition:border-color 0.2s ease,box-shadow 0.2s ease;
-box-shadow:0 2px 6px rgba(0,0,0,0.04);
-appearance:none;
-line-height:1.4;
-background-clip:padding-box
+box-shadow:0 2px 6px rgba(0,0,0,0.04)
 }
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{
 outline:none;
