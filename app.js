@@ -152,9 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       return normalizado;
     });
-    if (changed) {
-      localStorage.setItem('sobres', JSON.stringify(sobres));
-    }
+    aplicarReglasInteligentes(sobres);
+    localStorage.setItem('sobres', JSON.stringify(sobres));
   }
 
   /**
@@ -496,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function generarHTMLDetalleSobre(sobre) {
     const format = (val) => formatCurrency(val);
     return `
-      <div class="detalle-sobre">
+      <div class="detalle-sobre" data-sobre-id="${sobre.id}">
         <!-- Botón para volver a la lista de sobres -->
         <button id="btn-volver-sobres" class="btn btn-secondary" style="margin-bottom: 1rem;">Volver a sobres</button>
         <h2>${sobre.icono || ''} ${sobre.nombre}</h2>
@@ -521,6 +520,54 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3>Temporada Activa</h3>
         <p>Meses: ${Array.isArray(sobre.mesesActivos) ? sobre.mesesActivos.join(', ') : ''}</p>
         ` : ''}
+        <div class="sobre-reglas">
+          <h3>Reglas automáticas</h3>
+          <div class="sobre-regla-item">
+            <div class="sobre-regla-label">
+              <span>Proteger saldo</span>
+              <small>Evita usar este sobre para cubrir otros</small>
+            </div>
+            <label class="sobre-switch">
+              <input type="checkbox" class="sobre-regla-toggle" data-regla="protegido" ${sobre.protegido ? 'checked' : ''} />
+            </label>
+          </div>
+          <div class="sobre-regla-item">
+            <div class="sobre-regla-label">
+              <span>Congelar</span>
+              <small>Detiene asignaciones automáticas</small>
+            </div>
+            <label class="sobre-switch">
+              <input type="checkbox" class="sobre-regla-toggle" data-regla="congelado" ${sobre.congelado ? 'checked' : ''} />
+            </label>
+          </div>
+          <div class="sobre-regla-item">
+            <div class="sobre-regla-label">
+              <span>Auto-llenado</span>
+              <small>Llenar hasta meta o límite con cada ingreso</small>
+            </div>
+            <label class="sobre-switch">
+              <input type="checkbox" class="sobre-regla-toggle" data-regla="autollenado" ${sobre.autollenado ? 'checked' : ''} />
+            </label>
+          </div>
+          <div class="sobre-regla-item">
+            <div class="sobre-regla-label">
+              <span>Auto-limpiar al cierre</span>
+              <small>Reinicia saldo al final del mes</small>
+            </div>
+            <label class="sobre-switch">
+              <input type="checkbox" class="sobre-regla-toggle" data-regla="autolimpiar" ${sobre.autolimpiar ? 'checked' : ''} />
+            </label>
+          </div>
+          <div class="sobre-regla-item">
+            <div class="sobre-regla-label">
+              <span>Rollover</span>
+              <small>Conserva saldo para el mes siguiente</small>
+            </div>
+            <label class="sobre-switch">
+              <input type="checkbox" class="sobre-regla-toggle" data-regla="rollover" ${sobre.rollover ? 'checked' : ''} />
+            </label>
+          </div>
+        </div>
         <h3>Historial</h3>
         <div class="historial-sobre">
           ${Array.isArray(sobre.historial) && sobre.historial.length > 0 ? sobre.historial.map(h => `
@@ -534,16 +581,51 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  function actualizarReglaSobre(sobreId, regla, activo) {
+    cargarSobres();
+    const sobre = sobres.find((s) => s.id === sobreId);
+    if (!sobre) return;
+    const mensaje = validarConflictosReglas(sobre, regla, activo);
+    if (mensaje) {
+      alert(mensaje);
+      return;
+    }
+    sobre[regla] = activo;
+    if (regla === 'protegido') {
+      sobre.esProtegido = activo;
+    }
+    if (regla === 'autolimpiar' && activo) {
+      sobre.rollover = false;
+    }
+    if (regla === 'rollover' && activo) {
+      sobre.autolimpiar = false;
+    }
+    if (regla === 'congelado' && activo) {
+      sobre.autollenado = false;
+    }
+    aplicarReglasInteligentes(sobres);
+    guardarSobres();
+    actualizarVistaSobres();
+    abrirFichaSobre(sobreId);
+  }
+
   /**
    * Distribuye un ingreso entre los sobres.
    */
   function distribuirIngresoEnSobres(montoTotal, fecha, fuente) {
     cargarSobres();
     let restante = parseFloat(montoTotal) || 0;
+    const fechaActual = fecha || new Date().toISOString().split('T')[0];
+    // Priorizar sobres con autollenado siempre que no estén congelados
+    restante = cubrirSobresAutollenado(sobres, restante, [], fechaActual);
     // Ordenar sobres fijos/deudas que aún no han alcanzado su límite mensual por prioridad (alta -> media -> baja)
     const fijos = ordenarPorPrioridad(
       sobres.filter(
-        (s) => (s.tipo === 'fijo' || s.tipo === 'deuda') && s.limiteMensual && s.saldo < s.limiteMensual
+        (s) =>
+          !s.congelado &&
+          (s.tipo === 'fijo' || s.tipo === 'deuda') &&
+          s.limiteMensual &&
+          s.saldo < s.limiteMensual
       )
     );
     fijos.forEach((s) => {
@@ -561,7 +643,7 @@ document.addEventListener('DOMContentLoaded', () => {
       restante -= asignar;
     });
     // Ordenar sobres variables por prioridad para una distribución coherente
-    const variables = ordenarPorPrioridad(sobres.filter((s) => s.tipo === 'variable'));
+    const variables = ordenarPorPrioridad(sobres.filter((s) => s.tipo === 'variable' && !s.congelado));
     if (restante > 0 && variables.length > 0) {
       const metodo = localStorage.getItem('metodoDistribucionSobres') || metodoDistribucionSobres || 'prioridad';
       if (metodo === 'prioridad' || metodo === 'equitativa') {
@@ -596,6 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
         restante = 0;
       }
     }
+    aplicarReglasInteligentes(sobres);
     guardarSobres();
     // Actualizar la distribución en el dashboard tras asignar ingresos
     actualizarDistribucionSobresEnDashboard();
@@ -613,6 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const ahora = new Date().toISOString().split('T')[0];
       sobre.ultimoMovimiento = ahora;
       sobre.congelado = false;
+      aplicarReglasInteligentes(sobres);
       guardarSobres();
       // Animación de gasto
       animarGastoSobre(sobre.id, monto);
@@ -633,6 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const ahora = new Date().toISOString().split('T')[0];
       sobre.ultimoMovimiento = ahora;
       sobre.congelado = false;
+      aplicarReglasInteligentes(sobres);
       guardarSobres();
       animarGastoSobre(sobre.id, monto);
     }
@@ -3089,6 +3174,26 @@ document.addEventListener('DOMContentLoaded', () => {
       showView('movimientos');
     });
   }
+
+  document.addEventListener('change', (ev) => {
+    if (!ev.target.classList.contains('sobre-regla-toggle')) return;
+    const detalle = ev.target.closest('.detalle-sobre');
+    const sobreId = detalle ? detalle.dataset.sobreId : null;
+    if (!sobreId) return;
+    const regla = ev.target.dataset.regla;
+    const activo = ev.target.checked;
+    const mensaje = validarConflictosReglas(
+      sobres.find((s) => s.id === sobreId),
+      regla,
+      activo
+    );
+    if (mensaje) {
+      ev.target.checked = !activo;
+      alert(mensaje);
+      return;
+    }
+    actualizarReglaSobre(sobreId, regla, activo);
+  });
 
   // Asignar eventos a los chips de categoría para selección rápida
   const categoryChips = document.querySelectorAll('.category-chip');
