@@ -1,0 +1,2399 @@
+/*
+ * Estilos principales para la aplicación "Finanzas del Hogar".
+ * La estética se inspira en la interfaz de iOS con tonos púrpuras,
+ * superficies limpias, sombras suaves y bordes redondeados.
+ */
+
+/* Variables de colores para una fácil personalización */
+:root {
+  --primary-color: #7d5ba6;
+  /* Púrpura principal */
+  --primary-light: #b39ddb;
+  /* Versión más clara */
+  --primary-dark: #5e3d87;
+  /* Versión más oscura */
+  --accent-color: #9575cd;
+  /* Color de acento */
+  --bg-color: #f5f5f5;
+  /* Fondo general */
+  --surface-color: #ffffff;
+  /* Tarjetas y superficies */
+  --text-color: #333333;
+  /* Color principal del texto */
+  --text-light: #666666;
+  /* Color secundario del texto */
+  --success-color: #4caf50;
+  /* Para ingresos */
+  --danger-color: #e53935;
+  /* Para gastos */
+}
+
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  /* Ocultamos el desplazamiento horizontal en general pero permitimos
+     el desplazamiento vertical.  La clase .menu-open se aplicará al
+     <body> para bloquear el scroll únicamente cuando el menú móvil
+     esté abierto. */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Bloquear el desplazamiento global cuando el menú móvil está abierto */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* =====================
+   Configuraciones de accesibilidad
+   ===================== */
+/* Tamaños de fuente configurables aplicados al elemento raíz.
+   El script de ajustes añadirá las clases correspondientes a
+   document.documentElement según la selección del usuario. */
+.font-small {
+  font-size: 14px;
+}
+
+.font-med {
+  font-size: 16px;
+}
+
+.font-large {
+  font-size: 18px;
+}
+
+/* Alto contraste para usuarios con necesidades visuales.
+   Reasigna variables de color para maximizar el contraste. */
+.contrast-high {
+  --bg-color: #ffffff;
+  --surface-color: #ffffff;
+  --text-color: #000000;
+  --primary-color: #6a1b9a;
+  --primary-light: #ce93d8;
+  --primary-dark: #38006b;
+  --accent-color: #7b1fa2;
+  --success-color: #2e7d32;
+  --danger-color: #c62828;
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--surface-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+}
+
+.nav-brand {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nav-item {
+  color: var(--text-color);
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.nav-item:hover {
+  background-color: var(--primary-light);
+  color: var(--surface-color);
+}
+
+.nav-item.active {
+  background-color: var(--primary-color);
+  color: var(--surface-color);
+}
+
+/* Contenedor principal */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 1rem 2rem;
+  /* El padding-top deja espacio para la barra de navegación fija */
+}
+
+/* Vistas (secciones) */
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+/* Animaciones y transiciones sutiles al estilo iOS */
+.view {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.view.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación de fade‑in para tarjetas */
+.card,
+.mov-card,
+.loan-card,
+.account-card,
+.budget-card,
+.summary-card-new,
+.form-card,
+.prestamo-form-card,
+.presupuesto-form-card {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* Transición para botones */
+.btn {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Animación de barras de progreso */
+.loan-progress span,
+.budget-progress span,
+.distribution-bar {
+  transition: width 0.6s ease;
+}
+
+/* Títulos */
+h1,
+h2,
+h3 {
+  color: var(--primary-dark);
+  margin-bottom: 0.5rem;
+}
+
+/* Tarjetas resumen en dashboard */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  padding: 1rem;
+  flex: 1 1 250px;
+  min-width: 250px;
+}
+
+.summary-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-card h2 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.summary-card .amount {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* ====== Nuevos componentes del Dashboard ====== */
+
+/* Tarjeta principal del dashboard */
+.hero-card {
+  background-color: #9c6bff;
+  /* color púrpura vibrante */
+  color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.hero-icon {
+  font-size: 2.5rem;
+  margin-right: 1rem;
+}
+
+.hero-text h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.hero-text p {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: #f3e5f5;
+}
+
+/* Grid de resumen mensual */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card-new {
+  background-color: #ede7f6;
+  /* lila muy claro */
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.summary-card-new h3 {
+  font-size: 0.95rem;
+  color: var(--primary-dark);
+  margin-bottom: 0.5rem;
+}
+
+.summary-card-new .summary-value {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+/* Tarjeta de distribución 50/30/20 */
+.distribution-card {
+  margin-bottom: 2rem;
+}
+
+.distribution-card h3 {
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+.distribution-bars {
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 40px;
+  font-size: 0.75rem;
+  color: #fff;
+  text-align: center;
+}
+
+.distribution-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.distribution-bar.need {
+  background-color: #42a5f5;
+  /* azul */
+}
+
+.distribution-bar.want {
+  background-color: #ffa726;
+  /* naranja */
+}
+
+.distribution-bar.saving {
+  background-color: #66bb6a;
+  /* verde */
+}
+
+/* Tarjeta del gráfico */
+.chart-card {
+  margin-bottom: 2rem;
+}
+
+.chart-card h3 {
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+/* Bar chart inherits styles from previous definition */
+.chart-card .bar-chart {
+  height: 180px;
+}
+
+/* Tarjeta de cuentas bancarias */
+.accounts-card {
+  margin-bottom: 2rem;
+}
+
+.accounts-card h3 {
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+.accounts-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.account-metric {
+  flex: 1 1 150px;
+  background-color: #f3e5f5;
+  border-radius: 10px;
+  padding: 0.75rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.account-metric h4 {
+  font-size: 0.8rem;
+  color: var(--primary-dark);
+  margin-bottom: 0.25rem;
+}
+
+.account-metric p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.wallet-placeholder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.wallet-card-placeholder {
+  flex: 1 1 200px;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+  color: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
+}
+
+/* ====== Módulo Movimientos ====== */
+.movimientos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.movimientos-header h2 {
+  color: var(--primary-dark);
+  margin: 0;
+}
+
+.movimientos-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.search-bar {
+  position: relative;
+}
+
+.search-bar input {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  border: 1px solid #d9c7ff;
+  border-radius: 20px;
+  background-color: #faf9ff;
+  font-size: 0.9rem;
+  width: 180px;
+}
+
+.search-bar .search-icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: var(--primary-light);
+  pointer-events: none;
+}
+
+.filters-advanced {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+}
+
+.filter-group label {
+  margin-bottom: 0.25rem;
+  color: var(--text-light);
+}
+
+.filter-group select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d9c7ff;
+  border-radius: 10px;
+  background-color: #faf9ff;
+  font-size: 0.9rem;
+  min-width: 120px;
+}
+
+/* Buttons for history */
+.btn-secondary {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--primary-light);
+  background-color: #faf9ff;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary-light);
+  color: #fff;
+}
+
+/* ====== Elementos utilitarios ====== */
+.hidden {
+  display: none !important;
+}
+
+.btn-nav {
+  background-color: transparent;
+  border: none;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.btn-nav:hover {
+  color: var(--primary-dark);
+}
+
+.btn-danger {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: none;
+  background-color: var(--danger-color);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-danger:hover {
+  background-color: #c62828;
+}
+
+/* ====== Módulo Préstamos ====== */
+.prestamos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.prestamo-form-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.loan-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.loan-form input,
+.loan-form select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d9c7ff;
+  border-radius: 10px;
+  background-color: #faf9ff;
+  font-size: 0.9rem;
+}
+
+.prestamos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.loan-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.loan-card:hover {
+  transform: translateY(-3px);
+}
+
+.loan-card .loan-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: var(--primary-dark);
+}
+
+.loan-card .loan-info {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.loan-card .loan-progress {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.loan-card .loan-progress span {
+  display: block;
+  height: 100%;
+  background-color: var(--primary-color);
+}
+
+.loan-card .loan-metrics {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.prestamo-detalle {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.prestamo-detalle h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--primary-dark);
+}
+
+.prestamo-detalle table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.prestamo-detalle th,
+.prestamo-detalle td {
+  padding: 0.5rem;
+  text-align: right;
+}
+
+.prestamo-detalle th {
+  background-color: #f3e5f5;
+  color: var(--primary-dark);
+  font-weight: normal;
+}
+
+.prestamo-detalle tr:nth-child(even) {
+  background-color: #faf9ff;
+}
+
+.prestamo-detalle tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* ====== Módulo Calendario ====== */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
+.calendar-cell {
+  position: relative;
+  padding: 0.75rem;
+  border-radius: 12px;
+  min-height: 60px;
+  background-color: #faf9ff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.calendar-cell:hover {
+  background-color: #ede7f6;
+}
+
+.calendar-cell.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.calendar-cell .day-number {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--primary-dark);
+}
+
+.calendar-cell .event-dots {
+  margin-top: 0.25rem;
+  display: flex;
+  gap: 3px;
+}
+
+.event-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.event-movimiento {
+  background-color: #fdd835;
+  /* amarillo */
+}
+
+.event-prestamo {
+  background-color: var(--primary-color);
+  /* morado */
+}
+
+.event-pago-fijo {
+  /* Color morado claro para pagos fijos de sobres */
+  background-color: var(--accent-color);
+}
+
+/* ====== Pestañas del calendario y agenda financiera ====== */
+.calendario-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.calendario-tabs button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.calendario-tabs button.tab-activa {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+/* ====== Estilos para la agenda financiera ====== */
+.agenda-resumen {
+  background: var(--surface-color);
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.agenda-item {
+  background: var(--surface-color);
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.agenda-item .texto {
+  font-size: 0.9rem;
+}
+
+.agenda-item .monto {
+  font-weight: bold;
+}
+
+.agenda-item.pendiente {
+  border-left: 5px solid #d9534f;
+  /* rojo */
+}
+
+.agenda-item.proximo {
+  border-left: 5px solid #f0ad4e;
+  /* amarillo */
+}
+
+.agenda-item.ok {
+  border-left: 5px solid #5cb85c;
+  /* verde */
+}
+
+/* ===================== Estilos para menú móvil y responsive ===================== */
+/* HEADER MÓVIL */
+#mobile-header {
+  display: none;
+  padding: 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#mobile-header #btn-menu-mobile {
+  font-size: 1.7rem;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+#mobile-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+/* MENÚ MOBILE */
+/*
+ * Utilizamos transform y pointer-events para que el menú no bloquee los
+ * toques cuando está oculto. Por defecto, el menú está fuera de la
+ * pantalla a la derecha usando translateX(100%). Cuando se agrega la
+ * clase `.visible`, se mueve dentro de la pantalla. pointer-events se
+ * establece en none cuando está oculto para permitir que los clics
+ * pasen a la vista principal. Cuando está visible, pointer-events es
+ * auto para que el usuario pueda interactuar con el menú.
+ */
+#mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100vh;
+  background: var(--surface-color);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 999;
+  padding-top: 50px;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+
+#mobile-menu.visible {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+#mobile-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#mobile-menu li {
+  padding: 16px;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #eee;
+  color: #555;
+  cursor: pointer;
+}
+
+#mobile-menu li:hover {
+  background: #f3eaff;
+  color: var(--primary-color);
+}
+
+/* =====================
+   ONBOARDING UX (Fase A)
+   ===================== */
+
+/* Contenedor de tarjeta de onboarding */
+.onboarding-card {
+  max-width: 520px;
+  margin: 24px auto;
+  padding: 24px;
+}
+
+.onboarding-card.center {
+  text-align: center;
+}
+
+/* Spinner elegante (simple CSS keyframes) */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(125, 91, 166, 0.2);
+  border-left-color: var(--primary-color);
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Campos de formulario estilo iOS/Material limpios */
+.field {
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.field span {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9c7ff;
+  border-radius: 12px;
+  background-color: #faf9ff;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(125, 91, 166, 0.15);
+}
+
+/* Utilitarios de texto */
+.muted {
+  color: var(--text-light);
+}
+
+.tiny {
+  font-size: 0.8rem;
+}
+
+.error {
+  color: var(--danger-color);
+}
+
+.center {
+  text-align: center;
+}
+
+/* Layout flex simple */
+.row {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+/* Lista de opciones (Access Method) */
+.choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.choice {
+  text-align: left;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--surface-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+}
+
+.choice:hover {
+  background: #f3eaff;
+  border-color: var(--primary-light);
+}
+
+.choice[aria-pressed="true"] {
+  background: #f3eaff;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 4px 12px rgba(125, 91, 166, 0.15);
+}
+
+.choice strong {
+  color: var(--primary-dark);
+  font-size: 1rem;
+}
+
+/* Código (Invite / OTP) */
+.code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--primary-dark);
+}
+
+/* Botones pequeños */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* Clases de visibilidad reforzadas para el sistema de vistas */
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+  animation: fadeIn 0.4s ease both;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===================== Responsive ajustes para iPhone ===================== */
+@media (max-width: 768px) {
+
+  /* Ocultar menú de escritorio y mostrar header móvil */
+  nav.desktop-menu {
+    display: none !important;
+  }
+
+  #mobile-header {
+    display: flex !important;
+  }
+
+  /* Ajustar título de la app en móvil (si aplica) */
+  .app-title {
+    margin-top: 5px !important;
+    font-size: 1.4rem !important;
+  }
+
+  /* Tarjetas compactas en móvil */
+  .card {
+    padding: 14px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .card h3 {
+    font-size: 1rem !important;
+  }
+
+  .card .monto {
+    font-size: 1.3rem !important;
+  }
+
+  /* Ajustar barra de distribución para que no se corte */
+  .distribution-bars {
+    width: 100% !important;
+    display: flex !important;
+    height: 38px !important;
+  }
+
+  .distribution-bar {
+    height: 100% !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Centrar y ajustar márgenes/padding */
+  .app-container {
+    margin: 0 !important;
+    padding: 10px !important;
+  }
+
+  body {
+    overflow-x: hidden !important;
+  }
+
+  /* Dashboard en columna */
+  .dashboard-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+}
+
+.event-evento {
+  background-color: #42a5f5;
+  /* azul */
+}
+
+.calendar-details {
+  margin-top: 1rem;
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
+.calendar-details h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+.calendar-details .detail-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-details .detail-item {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.calendar-details .detail-item span:last-child {
+  font-weight: bold;
+}
+
+/* ====== Módulo Presupuesto ====== */
+.presupuesto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.presupuesto-form-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.budget-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.budget-form input,
+.budget-form select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d9c7ff;
+  border-radius: 10px;
+  background-color: #faf9ff;
+  font-size: 0.9rem;
+}
+
+.presupuesto-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.budget-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  position: relative;
+}
+
+.budget-card .budget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.budget-card .budget-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--primary-dark);
+}
+
+.budget-card .budget-type {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.budget-card .budget-progress {
+  height: 10px;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.budget-card .budget-progress span {
+  display: block;
+  height: 100%;
+}
+
+.budget-card .budget-metrics {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  display: flex;
+  justify-content: space-between;
+}
+
+.budget-progress.green span {
+  background-color: var(--success-color);
+}
+
+.budget-progress.yellow span {
+  background-color: #fbc02d;
+}
+
+.budget-progress.red span {
+  background-color: var(--danger-color);
+}
+
+/* ====== Módulo Sobres (sistema de envelopes) ====== */
+.sobres-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Acciones agrupadas dentro del encabezado de sobres */
+.sobres-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sobres-resumen {
+  margin-bottom: 1rem;
+}
+
+.sobres-summary-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.summary-card-sobres {
+  flex: 1;
+  min-width: 180px;
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
+.summary-card-sobres h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: var(--primary-dark);
+}
+
+.summary-card-sobres .summary-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-dark);
+}
+
+.sobres-list {
+  /* Contenedor de la lista de sobres en la vista de presupuesto.  */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sobre-card {
+  /* Card para cada sobre en la lista. Simplificada para mostrar icono, nombre y saldo. */
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f6f0ff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* Hover sobre el sobre */
+.sobre-card:hover {
+  background: #e8d8ff;
+}
+
+/* Icono grande a la izquierda */
+.sobre-icono {
+  font-size: 1.8rem;
+  margin-right: 10px;
+}
+
+/* Contenedor de información */
+.sobre-info {
+  flex: 1;
+}
+
+.sobre-nombre {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.sobre-saldo {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* Contenedor de badges */
+.sobre-tags {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  display: flex;
+  gap: 6px;
+}
+
+.sobre-tag {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+  font-size: 0.7rem;
+}
+
+.sobres-form-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.sobres-form .form-group {
+  margin-bottom: 1rem;
+}
+
+/* ===================== Animaciones de Sobres ===================== */
+/* Contenedor principal de cada sobre: permite overflow para chips */
+.sobre-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Pulso cuando entra dinero al sobre */
+.sobre-income-anim {
+  animation: sobreIncomePulse 0.8s ease-out;
+  box-shadow: 0 0 0 2px rgba(125, 91, 166, 0.25);
+}
+
+@keyframes sobreIncomePulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(125, 91, 166, 0.4);
+  }
+
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 6px rgba(125, 91, 166, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(125, 91, 166, 0);
+  }
+}
+
+/* Temblor cuando sale dinero del sobre */
+.sobre-expense-anim {
+  animation: sobreExpenseShake 0.4s ease;
+}
+
+@keyframes sobreExpenseShake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-3px);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+
+  75% {
+    transform: translateX(-3px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Capa para chips flotantes */
+.sobre-anim-layer {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  pointer-events: none;
+}
+
+/* Chips flotantes para ingresos y gastos */
+.sobre-chip {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: #fff;
+  margin-top: 0.15rem;
+  opacity: 0;
+  transform: translateY(5px);
+  animation: chipFloat 0.9s ease-out forwards;
+}
+
+.sobre-chip.ingreso {
+  background-color: var(--success-color);
+}
+
+.sobre-chip.gasto {
+  background-color: var(--danger-color);
+}
+
+@keyframes chipFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+/* ================== Vista de Detalle de Sobre =================== */
+.detalle-sobre {
+  padding: 16px;
+}
+
+.detalle-sobre h2 {
+  margin-bottom: 8px;
+}
+
+.detalle-sobre .saldo {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  .detalle-sobre {
+    padding: 12px;
+  }
+}
+
+.sobres-form input,
+.sobres-form select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d9c7ff;
+  border-radius: 10px;
+  background-color: #faf9ff;
+  font-size: 0.9rem;
+}
+
+/* ====== Módulo Exportar ====== */
+.export-section,
+.export-pdf-section {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.export-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.export-options label {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  gap: 0.25rem;
+}
+
+.export-format {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* ====== Módulo Ajustes ====== */
+.settings-form {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  max-width: 500px;
+}
+
+.settings-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.settings-form input,
+.settings-form select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d9c7ff;
+  border-radius: 10px;
+  background-color: #faf9ff;
+  font-size: 0.9rem;
+}
+
+.version-info {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Dark mode styles - toggled via body.dark-mode */
+body.dark-mode {
+  --bg-color: #121212;
+  --surface-color: #1e1e1e;
+  --text-color: #ffffff;
+  --text-light: #cccccc;
+  --primary-color: #b39ddb;
+  --primary-light: #d1c4e9;
+  --primary-dark: #9575cd;
+  --success-color: #66bb6a;
+  --danger-color: #ef5350;
+}
+
+.movimientos-history {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Summary boxes for Movimientos */
+.movimientos-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.summary-box {
+  flex: 1 1 150px;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: #ede7f6;
+  text-align: center;
+}
+
+.summary-box span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.summary-box p {
+  margin: 0.25rem 0 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.summary-box.ingreso {
+  background-color: #e8f5e9;
+  /* verde muy claro */
+  color: var(--success-color);
+}
+
+.summary-box.gasto {
+  background-color: #ffebee;
+  /* rojo muy claro */
+  color: var(--danger-color);
+}
+
+.summary-box.balance {
+  background-color: #f3e5f5;
+  /* lila claro */
+  color: var(--primary-color);
+}
+
+/* Lista de movimientos */
+.movimientos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mov-card {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mov-card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.mov-card-body {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.mov-card-footer {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  text-align: right;
+}
+
+.mov-card.ingreso .mov-card-amount {
+  color: var(--success-color);
+}
+
+.mov-card.gasto .mov-card-amount {
+  color: var(--danger-color);
+}
+
+/* ====== Módulo Cuentas ====== */
+.cuentas-header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cuentas-header h2 {
+  margin: 0;
+  color: var(--primary-dark);
+}
+
+.cuentas-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cuentas-stack {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.account-card {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+  color: #fff;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: -80px;
+  /* stacked effect */
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.account-card:hover {
+  transform: translateY(-5px);
+}
+
+.account-card .account-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.account-card .account-type {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+.account-card .account-balance {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.account-card .account-updated {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+/* Formulario de cuentas */
+.cuenta-form-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.cuenta-form-card h3 {
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.cuenta-form-card .form-group {
+  margin-bottom: 1rem;
+}
+
+.cuenta-form-card input,
+.cuenta-form-card select,
+.cuenta-form-card textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d9c7ff;
+  border-radius: 10px;
+  background-color: #faf9ff;
+  font-size: 1rem;
+}
+
+.cuenta-form-card input:focus,
+.cuenta-form-card select:focus,
+.cuenta-form-card textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(125, 91, 166, 0.2);
+}
+
+/* Colors for summary cards controlled via JS */
+#income-card {
+  background: linear-gradient(135deg, var(--success-color), var(--primary-light));
+  color: #fff;
+}
+
+#expense-card {
+  background: linear-gradient(135deg, var(--danger-color), var(--primary-light));
+  color: #fff;
+}
+
+#balance-card {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: #fff;
+}
+
+/* Chart container */
+.chart-container {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  height: 200px;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.bar {
+  flex: 1;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  background-color: var(--primary-light);
+  transition: height 0.3s ease;
+}
+
+.bar.income {
+  background-color: var(--success-color);
+}
+
+.bar.expense {
+  background-color: var(--danger-color);
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+/* Formulario */
+.form {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* ====== Formulario de registro de movimiento ====== */
+.form-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-card h2 {
+  color: var(--primary-dark);
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.movement-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.movement-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.movement-form input[type="number"],
+.movement-form input[type="date"],
+.movement-form select,
+.movement-form textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #d9c7ff;
+  border-radius: 10px;
+  background-color: #faf9ff;
+  font-size: 1rem;
+  color: var(--text-color);
+  transition: border-color 0.2s ease;
+}
+
+.movement-form input:focus,
+.movement-form select:focus,
+.movement-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(125, 91, 166, 0.2);
+}
+
+.movement-form textarea {
+  resize: vertical;
+}
+
+/* Chips de categorías rápidas */
+.quick-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.category-chip {
+  background-color: #f3e5f5;
+  color: var(--primary-dark);
+  border: 1px solid #e0cde9;
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.category-chip:hover {
+  background-color: var(--primary-light);
+  color: #fff;
+  border-color: var(--primary-light);
+}
+
+.category-chip.selected {
+  background-color: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+
+/* Toast de confirmación */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2000;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* Tabla de movimientos */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.table th {
+  background-color: var(--primary-light);
+  color: #fff;
+  font-weight: normal;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Wallet cards */
+.wallet {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.wallet-card {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
+.wallet-card-header {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+.info-text {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .nav-item {
+    padding: 0.5rem 0;
+  }
+
+  .card-container {
+    flex-direction: column;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* ================ Nuevas tarjetas de sobres y ficha de detalle ================ */
+/* Contenedor de la lista de sobres */
+.sobres-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tarjeta de sobre */
+.sobre-card {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #f5edff;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.sobre-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+/* Icono del sobre */
+.sobre-icono {
+  font-size: 1.9rem;
+  margin-right: 10px;
+}
+
+/* Información del sobre */
+.sobre-info {
+  flex: 1;
+}
+
+.sobre-nombre {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sobre-saldo {
+  font-weight: 700;
+}
+
+/* Etiquetas del sobre */
+.sobre-tags {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.75rem;
+}
+
+.sobre-tag {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Detalle del sobre */
+.detalle-sobre {
+  padding: 16px;
+}
+
+.detalle-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.detalle-saldo {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.detalle-section {
+  margin-top: 12px;
+}
+
+/* Barra de meta en detalle */
+.barra-meta {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.barra-meta-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #9b5bff;
+}
+
+/* Historial dentro del detalle */
+.historial-sobre {
+  margin-top: 8px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 8px;
+}
+
+.hist-mov {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.hist-mov:last-child {
+  border-bottom: none;
+}
+
+.hist-vacio {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* =================== EVENTOS Y AGENDA FINANCIERA (Fase 3) =================== */
+/* Estilos para eventos de pagos fijos en el calendario */
+.evento-fijo {
+  background: #f9f1ff;
+  padding: 4px 6px;
+  margin-top: 4px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Lista para la agenda del mes */
+.agenda-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+/* Elemento individual de la agenda */
+.agenda-item {
+  display: flex;
+  background: #faf7ff;
+  padding: 10px;
+  border-radius: 12px;
+  gap: 10px;
+}
+
+.agenda-icono {
+  font-size: 1.8rem;
+}
+
+.agenda-info {
+  flex: 1;
+}
+
+.agenda-nombre {
+  font-weight: 600;
+}
+
+.agenda-detalles {
+  font-size: 0.85rem;
+  margin-top: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Tabs para el calendario/agenda */
+.calendario-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.calendario-tabs button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #ece3ff;
+  cursor: pointer;
+}
+
+.calendario-tabs .tab-activa {
+  background: #9b5bff;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .evento-fijo {
+    font-size: 0.65rem;
+  }
+
+  .agenda-item {
+    padding: 8px;
+  }
+
+  .agenda-icono {
+    font-size: 1.4rem;
+  }
+}
+
+/* Botón para volver desde el detalle */
+.btn-volver-sobres {
+  border: none;
+  background: transparent;
+  color: #8a3bff;
+  font-weight: 600;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+/* Ajustes móviles */
+@media (max-width: 768px) {
+  .detalle-sobre {
+    padding: 12px;
+  }
+
+  .sobre-card {
+    padding: 10px 12px;
+  }
+}
+
+/* Reporte de distribución de ingresos entre sobres */
+#reporte-distribucion {
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: #f5edff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* =================== Estilos para el cierre mensual =================== */
+/* Contenedor de la lista de sobres en el cierre mensual */
+.cierre-sobres-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Ítem individual del cierre mensual */
+.cierre-sobre-item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f6f2ff;
+}
+
+.cierre-sobre-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.cierre-sobre-icono {
+  font-size: 1.6rem;
+}
+
+.cierre-sobre-body {
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cierre-sobre-linea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.cierre-sobre-linea input,
+.cierre-sobre-linea select {
+  flex: 1;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #d1c3ff;
+}
+
+.cierre-acciones {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.cierre-resumen {
+  margin-top: 14px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .cierre-sobre-linea {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cierre-acciones {
+    flex-direction: column;
+  }
+}
+
+/* ====== Salud del Presupuesto (Dashboard Premium) ====== */
+.budget-health-card {
+  margin-bottom: 2rem;
+}
+
+.budget-metrics-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.budget-metric {
+  flex: 1 1 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 0.25rem;
+}
+
+.metric-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--primary-dark);
+}
+
+.metric-value.warning {
+  color: #ff9800;
+  /* Naranja standard */
+}
+
+.metric-value.danger {
+  color: var(--danger-color);
+}
